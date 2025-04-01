@@ -1,0 +1,626 @@
+//anaconda prompt
+-n 意思是后面跟name
+conda activate pytorch #进入pytorch环境
+pip list #查看当前环境中有哪些工具包
+
+-pytorch环境下
+jupyter notebook #进入jupyter notebook
+jupyter notebook --notebook-dir=D:  #如果文件路径不在C盘, 可以通过这种方式进入相应盘目录的jupyter, 随后选择所需文件路径即可
+
+//pycharm
+1.anaconda\library\bin\conda.bat #随后选择pytorch, 为自定义conda编译器的位置
+2.ctrl+f #选定区域后可以用于搜索
+3.可以在settings中搜索keymap(快捷键栏), 从而得知对应模块的快捷键
+4.在形如tensor_img = tensor_trans()中可以将光标移至()中, 按ctrl+p得知其中需要什么参数
+5.ctrl+/ 块注释
+6.块选中+tab 块缩进
+7.(p13)中写初始化__init__可以借助pycharm中的工具
+上端选项卡Code -> Generate -> 两个选择: 
+Override Methods 重写这个方法
+Implement Methods 实现这个方法
+选择重写, 就能自动完成写初始化的过程
+8.(建议与p13结合看)我们再进行一个debug, 看看整个流程，首先在本行打一个断点，因为本行是整个程序的开始，前面的内容不会进行执行的，除非调用才会执行。
+随后按右上角小甲虫,下方Threads & Variables为变量区, 会显示我们当前创建了哪些变量或那些变量名被赋了值, 然后看下框中上边缘有'step into my code'按键, 意思是每次执行下一步的时候,
+程序运行到我们代码当中的哪一步(哪一行), 我们点一下就会发现, 为了调用Tudui(),首先要进行一个父类的初始化操作super().__init__()等等, 通过这种方式，我们可以看到程序的完整运行过程
+9.在遇到bug报错时控制台会显示"Traceback (most recent call last):"的提示, 找到其中你所写的文件的路径并点击, 就能自动定位到出现错误的地方
+如下述所示
+Traceback (most recent call last):
+  File "D:\Tech\pycharm\program\pytorch\p15_神经网络_卷积层\nn_conv2d.py", line 40, in <module>
+    writer.add_images("output", output, step)
+  File "D:\Tech\pytorch\envs\pytorch\Lib\site-packages\torch\utils\tensorboard\writer.py", line 669, in add_images
+    image(tag, img_tensor, dataformats=dataformats), global_step, walltime
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+其中, 很显然你应该点击"D:\Tech\pycharm\program\pytorch\p15_神经网络_卷积层\nn_conv2d.py"
+
+
+-terminal终端
+1.pip install opencv-python  #安装cv2环境
+2.tensorboard --logdir=logs  #其中logdir=事件文件所在的文件夹绝对路径, 随后点击终端中的网址即可，如下所示
+#tensorboard --logdir="D:\Tech\pycharm\program\pytorch\p7_tensorboard的使用(一)\logs"
+#上述代码默认打开6006端口, 为了避免端口冲突，我们可以指定端口，如下所示
+#tensorboard --logdir="D:\Tech\pycharm\program\pytorch\p7_tensorboard的使用(一)\logs" --port=6007
+3.ls 查看当前目录(含各文件大小, windows系统)
+
+-python控制台, 常用于测试调试
+img_path = "D:\\Tech\\pycharm\\program\\pytorch\\data_set\\hymenoptera_data\\train\\ants\\0013035.jpg"  #得到一个字符串对象, 作为图片路径
+#这里图片的绝对路径原先为D:\Tech\pycharm\program\pytorch\data_set\hymenoptera_data\train\ants\0013035.jpg, 但在python环境下, 要改为\\表示转义, 
+或者可以写成
+img_path = r"D:\Tech\pycharm\program\pytorch\data_set\hymenoptera_data\train\ants\0013035.jpg"  #其中, 字符串前的r用于取消转义
+dir_path = "data_set/hymenoptera_data/train/ants"  #得到一个文件夹的地址, 使用相对地址/则不用再补一个相同的符号
+img = Image.open(img_path)  #读入图片, 并且在python控制台下我们可以看到图片的属性，这行代码要用到from PIL import Image
+img.size  #输出图片size大小
+img.show()  #读取并显示对应位置图片
+import os  #python中关于系统的一个库用于获取图片所有的地址
+img_path_list = os.listdir(dir_path)  #这里是用到os库中的os.listdir()函数，作用是dir_path所指文件夹下的东西变成一个列表
+img_path_list[0]  #输出第一个文件的名称
+
+root_dir = "data_set/hymenoptera_data/train"
+label_dir = "ants"
+path = os.path.join(root_dir, label_dir)  #这里的os.path.join()函数的作用是两个路径拼接起来, 通过系统函数避免如linux何windows不同系统间转义的报错
+img_path = os.listdir(path)  #获取文件夹当中所有图片的地址，并以列表的形式存入列表里
+idx = 0
+img_name = img_path[idx]    #这里的img_name的字符串值为'0013035.jpg'
+img_item_path = os.path.join(root_dir, label_dir, img_name) #获得图片的相对路径，其字符串值为'data_set/hymenoptera_data/train\\ants\\0013035.jpg'
+len(img_path)  #列表长度就是数据集有多长
+
+Note:在用python控制台验证函数写的是否正确时, 要删去'self.' 详见p6.Dataset类实战. 但在用python控制台测试的时候, 可以将python文件中的所有代码复制进去,按回车, 也不用删'.self',也可将部分代码复制进去
+在p6.Dataset类实战中, 我们是将类复制进去而未创建实例, 随后才将创建实例的代码复制进去.
+如下述创建实例, 获取蚂蚁和蜜蜂的数据集
+root_dir = "data_set/hymenoptera_data/train"
+ants_label_dir = "ants"
+bees_label_dir = "bees"
+ants_dataset = MyData(root_dir, ants_label_dir)  #其中MyData()是事先创建好的类
+bees_dataset = MyData(root_dir, bees_label_dir)
+ants_dataset[0]  #获取蚂蚁数据集中的第一个变量, 会返回一个Image和一个label
+img, label = ants_dataset[0]  #因为返回的是两个变量，所以可以这样写
+img.show()  #显示图片
+
+#整个数据集应该是ants数据集和bees数据集的集合，所以我们可以这样写，以拼接数据集（在数据集不够训练的时候我们可以仿造数据集并拼接）
+train_dataset = ants_dataset + bees_dataset
+#其中我们可以看到
+len(train_dataset)  
+245
+len(ants_dataset)
+124
+len(bees_dataset)
+121
+
+//jupyter
+import torch  #验证当前环境中有没有pytorch (pytorch环境下均适用)
+shift+回车  #调整到下一个代码块，且运行上一个代码块, 在jupyter中是以每一个块作为一个运行的整体
+torch.cuda.is_available()  #验证torch的cuda是否可以运行可用 (pytorch环境下均适用)
+-jupyter的创建与使用
+conda activate pytorch #进入pytorch环境
+jupyter notebook #进入jupyter notebook, 会默认进入anaconda prompt中显示的目录
+jupyter notebook --notebook-dir=D:  #如果文件路径不在C盘, 可以通过这种方式进入相应盘目录的jupyter, 随后选择所需文件路径即可
+创建新文件时选择Python[conda env:pytorch]*提供pytorch环境
+
+-比较python文件, python控制台, jupyter代码运行
+代码是以块为一个整体运行的话：
+python文件的块是所有行的代码, 需要从头运行
+python控制台的块是以每一行为块, 运行的, 可以显示每行变量的属性
+jupyter以任意行为块运行的
+Note:python控制台也可以以任意行为块进行运行, shift + 回车可以以多行为块运行
+
+
+//pytorch
+-对于一个package
+dir() #打开, 看见该软件包中有什么东西, 如dir(torch), 输出1,2,3,4..., 我们可以继续看其中的3分割区有什么, dir(pytorch.3), 输出会是a,b,c工具
+help() #说明书, 可以查看a道具有什么作用, help(a), 输出a的用法
+
+-其中，形如'cuda', 仍是一个分隔区, 仍可以继续用dir(), 进一步查看，但形如'__sub__', 则是一个具体的函数(工具),  不能再继续用dir(), 可以使用help(),
+但需注意形如help(torch.cuda.is_available)中的is_available()的()要被去掉, 可以理解为它被打劫了(), 所以要help
+
+
+-pytorch中如何加载数据
+读取数据主要涉及两个类
+Dataset 提供一种方式获取数据及其label
+Dataloader 为后面网络提供不同的数据形式(打包)
+1.Dataset
+-在pycharm的一个python文件下
+from torch.utils.data import Dataset  意思是从torch中常用的工具区utils("utils"是"实用工具"的缩写, 通常指一组用于执行常见任务的函数和类)中的data区, import Dataset
+from PIL import Image  读入图片
+-在jupyter中(一般在有大段文字出现的时候建议在jupyter中使用, 整理的比较清晰)
+输入from torch.utils.data import Dataset 
+help(Dataset) 查看官方文档中Dataset是如何使用的
+或者输入Dataset?? 可以得到更加清晰的表达形式
+
+Note: 另一种常见的方法为将image和label分开, 详见P6.Dataset类实战中的anather_commonMethod
+因为有的时候label会比较多, 比如包含左上角坐标和右下角坐标的时候, 我们就不可能仅在图片上命名, 所以可以采用这种方法
+
+//tensorboard
+1.tensorboard
+可以用于演示transform的结果, 涉及到运行完一个对应的方法后要展示这个图像, 如展示训练过程中loss是如何变化的, 从而得知训练过程是否是按照我们预想的变化
+或训练过程是否属于一个正常的状态, 也可从相应的loss当中判断我们需要选择怎样的模型, 比如说训练到多少步的时候这个模型比较符合我们的预期
+2.transform
+主要用于对图像的变换, 如将图像统一为某个统一的尺寸, 或对图像其中的某一个数据进行一个类的转化
+
+(1)tensorboard
+pycharm中的p7.tensorboard的使用(一)中的test_tb.py中
+from torch.utils.tensorboard import SummaryWriter  #tensorboard主要涉及的方法和类, 从torch常用的工具箱(utils)当中的tensorboard, 导入了SummaryWriter类
+--SummaryWriter类的使用
+在pycharm中, 按住ctrl键, 把鼠标移动到SummaryWriter,并点击, 就能看到它的官方文档
+writer = SummaryWriter('logs')  #对SunnaryWriter类创建一个实例
+#在这个实例当中, 我们主要会使用到两个方法
+writer.add_image()    #添加图片
+writer.add_scalar()   #添加标量(数)
+writer.close()  #最后需要将它close
+--add_scalar()的使用, 详见pycharm中的p7.tensorboard的使用(一)中的test_tb.py中
+add_scalar(tag, scalar_value, global_step)  其中tag是标题名, scalar_value和global_step分别为x轴(训练的步数, 为int型), y轴
+
+--add_image()的使用, 详见pycharm中的p7.tensorboard的使用(二)中的test_tb.py中
+add_image(tag, img_tensor, global_step)  其中tag是图像的标题名, img_tensor是指图像的数据类型(这里可以是torch.Tensor, 或numpy.array, string),  global_step是训练的步数(也是int型)
+<-python控制台下测试->   
+image_path = "p8.tensorboard的使用(二)/data_set/hymenoptera_data/train/ants/0013035.jpg"  #读入图片所在路径
+from PIL import Image
+img = Image.open(image_path)  #读入图片，在控制台右侧可以看到图片是PIL.jpegImage...类型的, 不满足要求
+print(type(img))   #或者通过这种方式查验图片类型，输出为<class 'PIL.JpegImagePlugin.JpegImageFile'>, 不满足要求
+#Note:可以利用Opencv读取图片, 获得numpy型图片数据（Opencv读取的图片就是numpy型）
+#下面我们利用numpy.array(), 对PIL图片进行转换
+import numpy as np  #导入numpy
+img_array = np.array(img)  #将img的PIL型转为numpy型
+print(type(img_array))  #输出为<class 'numpy.ndarray'>, 满足要求, 通过这种方式我们可以获得add_image(tag, img_tensor, global_step), 所需的img_tensor(图像的数据类型)
+
+--调用tensorboard
+tensorboard --logdir=logs  #其中logdir=事件文件所在的文件夹绝对路径, 随后点击终端中的网址即可，如下所示
+#tensorboard --logdir="D:\Tech\pycharm\program\pytorch\p7_tensorboard的使用(一)\logs"
+#上述代码默认打开6006端口, 为了避免端口冲突，我们可以指定端口，如下所示
+#tensorboard --logdir="D:\Tech\pycharm\program\pytorch\p7_tensorboard的使用(一)\logs" --port=6007
+
+(2)transform
+transform的结构及用法 (详见p9)
+打开transform的官方文档后(ctrl+左键), 可以通过点击左侧的structure查看其有哪些方法和类
+transform.py工具箱有诸如totensor(把一个数据类型转为tensor数据类型), resize等工具, 图片经过这些工具的处理从而得到我们想要的图片类型
+
+-transform如何使用(python)
+我们在使用的时候, 需要根据totensor, resize等(模具)去创建自己的工具(实例化), 如tool = transforms.ToTensor(), 然后才能使用 result = tool(input)
+-为什么我们需要Tensor数据类型
+tensor数据类型可以理解为一个包装了反向神经网络所需要的一些理论基础的参数
+
+读取PIL型图片我们已知,而读取numpy.ndarray型图片最常用的则是用Opencv去读取
+import cv2  #引入opencv库
+cv_img = cv2.imread(img_path)  #读入numpy.ndarray型图片, 但使用opencv要求路径中不能有中文, 否则会报错
+
+-常见的Transforms, 其使用方法详见p10
+主要需要关注不同的方法是需要输入什么类型，输出什么类型
+*输入 *PIL  *Image.open()   #PIL就是用Image.open()打开得到的
+*输出 *tensor *ToTensor()   #tensor就是用ToTendor得到的
+*作用 *narrays *cv.imread() #narrays矩阵主要是通过opencv得到的
+
+1.Compose类用于将不同的transforms类结合在一起(把一系列操作结合在一起)
+2.ToTensor类用于将"PIL Image"或"numpy.ndarray"类型转换为"tensor"数据类型
+3.ToPILImage类用于将"tensor"或"ndarray"转换为"PIL Image"数据类型(不常用)
+4.Normalize归一化,通过平均值和标准差归一化一个"tensor"类型的图片,即要求输入必须为"tensor"数据类型, 能够将每个信道的输入进行归一化
+5.Resize函数是用来改变张量的大小形状的函数, 要求输入为"PIL Image"或"tensor"类型的图片, 输出为"PIL Image"数据类型的图片.在训练和使用神经网络模型中很有用, 可以用来调整输入数据的形状以适应不同的模型结构和需求, 如可以将一个3*3的矩阵调整为一个1*9的向量。
+其中, 在深度学习中, 张量是一个多维数组, 可以用来表示向量, 矩阵或更高维度的数据。在TensorFlow等深度学习框架中, 数据通常以张量的形式传递和处理
+6.RandomCrop()随机裁剪, 要求输入一个"PIL Image", 输出也为"PIL Image"。用于进行数据增强,随机裁剪输入数据的部分区域, 以形成不同的训练样本,从而增加训练集的多样性。有助于提高模型的泛化能力,并防止过拟合
+#其他的transform类用到不是很多，主要就是知道调用他们的方式方法,可以通过ctrl+左键去查看相应的官方文档,尤其要注意它的输入是什么类型, 输出是什么类型.
+#总结使用方法：
+#1.要使用一个transform方法首先要关注它的输入和输出类型
+#2.多看官方文档, 比csdn，百度等别的什么要准确的多(毕竟是作者写的)
+#3.关注方法需要什么参数
+#4.如若不知道输出是什么类型可以print打印出来，也可断点运行，先点击代码行左侧出现红点，然后点击右上角爬虫形状运行符，再在下方点击Threads & Variables查看参数即可
+#可以为print()或print(type())
+
+#如看一个类的官方文档：
+#先看def __init__(self, padding, fill=0, padding_mod='constant'):
+#其中self不用看，是用于能把它所指代的变量给后面的函数使用，相当于指定了一个类当中的全局变量
+#后面的有参数的，如fill,padding_mod也不用管,为默认值即可，故调用()内只需对padding进行设置，然后到'Args'参数中看padding的详细用法,若没有提及则看该类方法的介绍即可,通常在类名下方
+
+Note:归一化是一个数据预处理步骤，通常用于处理输入数据的尺度不同所造成的影响，目的是将数据缩放到一个固定的范围，
+以便让模型更容易学习数据的分布，提高算法的收敛速度和准确性。
+-ToTensor的使用, Normalize归一化操作的使用, 见p10
+
+
+
+
+在之前内容中我们多是对单个或少量图片进行处理,本节将对数据量较大的数据集的处理进行讲解
+-数据集(Datasets) (p11)
+--我们可以在pytorch官网的docs的pytorch domins中找到如torch视觉部分的torchvision(左边可以选择0.9.0的官方文档版本号)的datasets模块(torchvision.datasets), 有官方提供的数据集(datasets)的api文档(api是用于交换数据的),我们只要写代码的时候指定相应的数据集并设置些参数, 它就能够自己去下载, 使用这些标准数据集, 很方便
+如COCO数据集(30多个G)常用于目标检测, 语义分割等(语义分割是一种计算机视觉任务，其目的是为图像上每个像素赋予语义标签, 从而将图像中的不同物体或区域分割并区分出来.通常情况下,语义分割任务要求对图像中的每个像素进行分类, 将其归类到指定的类别中, 如人, 车, 树等)
+CIFAR-10数据集(十几M)用于物体识别, 以及教科书中常见的数据集MNIST手写文字
+--torchvision中也有io模块(torchvision.oi),即输入输出模块,不常用
+--torchvision.model模块则提供了一些比较常见的神经网络, 有的神经网络已经预训练好了
+--torchvision.ops模块则是torchvision提供的一些少见的操作, 基本用不到
+--torchvision.transfroms已经讲解过了
+--torchvision.utils模块提供了一些常见的小工具, 如我们之前使用tensorboard
+
+1.torchvision.datasets和torchvision.transform的联合使用  (p11)
+(1)如何使用torcchvision提供的标准数据集 (p11)
+以CIFAR-10数据集为例,查看它的官方文档,在"Parameters:"一栏中,我们可以看到需要设置如下参数
+"root" 必须要设置的参数，指明数据集在怎样的位置
+"train" 如果为True,创建的数据集就是一个训练集(train set),如果为False,就创建了一个测试集(test set)
+"transform" 意思就是我们想要对数据集中的所有数据进行一个怎样的变化, 我们把transform写在这里即可(可以不写)
+"target_transform" 对target(tag标签)进行transform(可以不写)
+"download" 设置为True, 就会在网上自动下载这个数据集, False则不会下载, 不用手动下载, 很方便
+
+
+
+
+dataset只是告诉程序, 数据集在什么位置, 有多少个数据, 及一、二个(等等)数据是什么, 而dataloader则是一个加载器, 用于将数据加载到神经网络当中
+dataloader所做的事是每次从dataset中去取数据, 取多少, 怎么取由dataloader的参数设置
+-Dataloader (p12)
+--在pytorch官网的docs中(左侧可以选择1.0.1的官方文档版本号), 在左侧搜索栏中搜索dataloader, 可以看到dataloader出现在torch.utils.data.DataLoader包下
+torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False, sampler=None, batch_sampler=None, num_workers=0, collate_fn=<function default_collate>, pin_memory=False, drop_last=False, timeout=0, worker_init_fn=None)
+# dataloader其中的参数有些多, 但很容易发现, 很多参数都有默认值, 只有dataset没有默认值, 我们只需将dataset实例化放入其中即可, 其他参数由于都有默认值, 所以在实际过程中我们只需设置少量的参数即可 
+常见的参数设置:
+"dataset" 需将dataset实例化放入其中即可, 用于告诉程序, 数据集在什么位置, 有多少个数据, 及一、二个(等等)数据是什么
+"batch_size" 如果把dataset比作一摞牌, batch_size = 2 的时候, 意思就是每次去抓牌的时候要抓2张
+"shuffle" 是否打乱数据的意思, 如果为True, 则打乱数据的顺序(洗牌致使第二局中牌堆的顺序与第一局不同), 如果为False, 则不打乱数据顺序(第二局牌堆的顺序与第一局相同), 默认设为False, 但我们常喜欢设置为True
+"num_workers" 意思是多进程, 即加载数据时是采用单个进程,还是采用多个进程进行加载(多进程一般速度更快), 默认设为0, 意思是采用主进程进行加载  # Note:部分反馈称num_workers > 0时在windows中系统中会报错(含有"BrokenPipeError"的字眼), 这时我们就可以考虑下将num_workers设置为0, 看看会不会解决这个问题
+"drop_last" 比如说我们有100张牌, 每次取3张牌, 最后100 / 3 = 33余1, 那最后剩下的这1张牌是舍去还是不舍去, 如果为True, 就只要前面99张牌, 如果为False, 那么除了前面的99张, 剩下的1张牌也是要是要取出来的
+# Note:由于batch_size打包，在用tensorboard展示时, writer.add_image()中要补充说明 dataformats="NCHW"
+# 因为print(imgs.shape)的输出为torch.Size([4, 3, 32, 32])等的形式, 意思是4张图片, 3通道, 32*32
+# 如可以写成: writer.add_image("test_data", imgs, step, dataformats="NCHW")
+
+
+
+
+-神经网络的基本骨架 nn.Module 的使用 (p13)
+--神经网络的搭建是一个很重要的环节, 在pytorch官网的docs中(左侧可以选择1.0.1的官方文档版本号), 在左边我们可以看到一些 Python API , 这也就是我们之前所提到的 Package , 也就是一些不同的包, 提供了一些不同的工具。
+我们关于神经网络的一些工具就主要在torch.nn里, 其中 .nn 主要来自神经网络的英文(Neural network)的缩写, torch.nn 可以用于搭建一些神经网络。在文档中, 我们可以看到torch.nn分为不同的类别, 例如第一个Containers, 翻译成中文为容器, 其实更好的叫法是"骨架".
+Containers主要是给我们的神经网络定义了一些"骨架", 就是定义了一些结构, 只要往这些结构中添加一些不同的内容, 就可以组成我们的一个神经网络(在这一节中主要就是学习Containers, 也就是学习神经网络骨架的一个基本搭建).
+既然有了骨架, 我们就想往里面填充一些东西, 让骨架变得丰满起来, Containers后面的这些都是我们需要往骨架中填充的东西, 如Convolution Layers(卷积层), Pooling layers(池化层), Padding Layers(常称为Padding,又称填充层), 
+Non-linear Activations(非线性激活), Normalization Layers(正则化层) 等等。这些是我们组成"卷积神经网络"的核心的一些操作部分, 会在后面逐个讲解.
+
+(1) Containers
+在官方文档中点击 Containers 发现其中有 6 个模块, 我们主要最常用的就是 Module 模块
+"Module"  对于所有神经网络模块的一个基本的类, 也就是说给我们所以神经网络提供一个基本的骨架
+--点击"Module", 查看其官方文档, 有以下注意事项
+用于搭建的所有神经网络都是从 torch.nn.Module类 继承的, 以一个小的案例为例:
+
+# 定义了一个名为Model的神经网络, 它继承了nn.Module类, 相当于 nn.Module 是 Model 的父类, 相当于 nn.Module 给我们所有的神经网络提供了一个模板, 我们继承它, 就是拿这个模板过来用,
+# 我们对其中不满意的部分进行一个修改, 就类似于我们买了个nn.module玩具赛车, 想对其进行一些修改, 如换个马达, 导向轮之类的. 基本上绝大多数神经网络定义的模板就类似于这样
+import torch.nn as nn
+import torch.nn.functional as F
+class Model(nn.Module):   # 先写个class, 然后定义自己的一个神经网络的名字, 然后()中写nn.Module, 相当于继承了nn.Module类模板
+    def __init__(self) -> None:    # 其中主要是写两个函数, 第一个是__init__函数, 进行初始化
+        super().__init__()         # 初始化的过程中, 本行这一步是必须要的, 就是我们首先要对我们的模板, 即父类nn.Module, 调用它的初始化函数
+        self.conv1 = nn.Conv2d(1, 20, 5)  # 后面这两行的部分是我们自己写的, nn.Conv2d是进行了卷积操作
+        self.conv2 = nn.Conv2d(20, 20, 5)
+
+    # 还有个比较重要的函数, forward()函数, 直译为"向前". 向一个神经网络中，输入一个input, 得到输出output, 这个神经网络经过的运算步骤其实就是forward()函数, 这个过程称为前向传播
+    def forward(self, x):  # ()中定义类一个self, 就是指Model这个类, 是必备的, 还定义了x(任意定义), 作为输入
+        x = F.relu(self.conv1(x)) # 对输入x先经过一次卷积(conv1), 然后经过一次非线性处理(relu),其中F代表了函数库torch.nn.functional, 该库提供了一系列的常用神经网络函数,如激活函数，损失函数等。F.relu()则是一个常用的激活函数，用于实现非线性处理操作
+        return F.relu(self.conv2(x)) # 然后x又经过了一遍上述操作, 最后进行返回(输出)
+
+死后往下翻官方官方文档, 看下forward() 它主要是定义了一个计算, 应该在每个子类中都进行重写, 所以我们在使用nn.Module中要在 __init__ 和 forward() 中写一些必要的条件即可 
+
+
+
+
+-卷积操作 (p14)
+# 卷积操作可以理解为, 卷积核上对应区域大小 与 被匹配输入图像(即重叠区域)的对应区域大小相乘后相加(相加操作范围为两者重叠区域), 然后输出到对应区域, 卷积核移动到下一位置, 重复上述操作, 并将输出输出到下一位置
+# 卷积操作主要用于特征提取、参数共享、局部连接等方面，从而提高模型的性能和效率。通过卷积，模型能够学习到输入数据中的重要模式和结构，进而用于分类、检测等任务。
+在卷积操作中, 卷积核会对输入数据的局部区域进行滑动操作, 并计算该区域和卷积核之间乘积的和, 这样可以有效地提取出图像的特征.
+本节主要讲解神经网络当中一些基本神经结构的使用, 官方文档中选择pytorch, 和神经网络相关的工具都放在torch.nn中, 本节讲解Convolution Layers(卷积层)
+进入Convolution Layers(卷积层)的官方文档, 可以看到如下内容
+"nn.Conv1d"  取了Convolution的前4个字母, 加上1d, 代表就是一维的, 称为一维卷积
+"nn.Conv2d"  2d 就代表是二维的, 像图片就是二维图片, 称为二维卷积
+其他的不是很常用, 用法相似, 这里主要来讲解"nn.Conv2d", 打开其官方文档
+
+Note: 在官方文档中左侧的API栏中能找到torch.nn, 和torch.nn.functional,两者区别如下
+torch.nn 是对 torch.nn.functional 的一个封装。一般情况下, torch.nn更利于我们的使用, torch.nn.function可以比作你开车时齿轮的运转, 而torch.nn则是将齿轮各种东西封装好了, 直接提供给你方向盘
+但是我们像更细致了解下卷积的具体操作, 还是要回到 torch.nn.functional (其实只要学习会了torch.nn即可, torch.nn.function 其实是不需要做了解的)
+--torch.nn.functional
+torch.nn.functional 官方文档中右端有和torch.nn各个操作相对应的函数, 如Convolution functions 和Convolution Layers 对应
+
+打开其中"conv2d"的官方文档 (输入, 卷积核, 步长的图示化理解详见"土堆说卷积操作"一节视频, 很形象)
+# torch.nn.functional.conv2d(input, weight, bias=None, stride=1, padding=0, dilation=1, groups=1) → Tensor
+"input" 输入, 尺寸(shape)要求包含 (minibatch,in_channels,iH,iW), 四个参数, 其中minibatch参数指定了每次卷积操作使用的样本数量, 其余三个参数分别指输入通道数, 图片高, 宽
+"weight" 权重(卷积核)  尺寸(shape)要求包含(out_channels, in_channels/group, kH, kW), 输出通道数，输入通道数/group, group一般取1, 高, 宽, pytorch提供了尺寸变换的方法(p14)
+"bias" 偏置, 在实际卷积操作的运用中, 为了增强模型的表达能力和灵活性, 有时会在卷积操作中添加偏置项(bias)。 偏置项是一个可学习的参数,在每个卷积层中都会有一个偏置项与之对应, 它与卷积核的权重一起参与计算输出特征图。偏置项的作用是在卷积操作中引入一定偏移量, 可以让模型更好的拟合数据, 提高模型的表达能力 
+"stride" 步长, 是指卷积核在对输入数据进行扫描的步长
+"padding" 填充, 指的是在输入图像的边缘周围填充额外的像素值, 主要决定要填充多大, 这样做是为了在进行卷积操作时保持输入图像的尺寸不变, 或者减小特征图的尺寸, 默认情况下是不进行填充的(其示范也在"土堆说卷积操作", 有图示化理解), padding=1 的时候, 会在原图像边缘(行，列), 增加一圈数值为 0 的像素值
+
+
+
+
+-神经网络_卷积层Convolution Layers (又被称为CNN, 即卷积神经网络) (p15)
+本节开始讲解神经网络的一些基本结构, 这一节就讲解一下卷积层的使用, 官方文档中选择pytorch, 点击torch.nn, 点击Convolution Layers(卷积层), 其中
+"nn.Conv1d" 一维卷积
+"nn.Conv2d" 二维卷积, 我们这里就主要讲解"nn.Conv2d", 因为图像的话就是一个二维矩阵, 1d和3d在图像当中用的很少
+"nn.Conv3d" 三维卷积  
+后面其余的卷积层很少用到, 用到的话其实和"nn.Conv2d"是类似的, 所以这一节就主要讲解"nn.Conv2d"的使用
+
+--"nn.Conv2d"
+# torch.nn.Conv2d(in_channels, out_channels, kernel_size, stride=1, padding=0, dilation=1, groups=1, bias=True, padding_mode='zeros', device=None, dtype=None)
+# 可以看到, 只有in_channels, out_channels, kernel_size是我们需要进行设置的, 在日常应用中, 其实就前五个参数需要自行设置
+"in_channels" 输入通道数(int)  
+"out_channels" 输出通道数(int)
+"kernel_size" 卷积核大小(int或tuple(元组, 如"(1, 2)"就为1*2的卷积核, 而如果为"2"则为2*2的卷积核)), 其值在训练过程中常不断调整. 卷积核决定了卷积核在输入数据上滑动窗口的大小, 可以理解为卷积的长和宽, 较大的kernel_size可以捕捉更大的范围特征, 能捕捉更多的信息, 但可能导致模型参数过多, 增加训练难度和计算复杂度； 而较小的kernel_size可以捕捉更细粒度的特征, 减少模型参数, 提高计算效率, 但可能导致信息缺失。
+"stride" 横向或纵向步长大小 (上一节有叙述)
+"padding" 填充, 卷积过程中是否需要对输入图像的边缘padding(填充)的操作 (上一节有叙述)
+"dilation" 用于控制卷积核中元素之间的间隔, 当dilation设置为1时, 卷积核的元素是紧密排列的, 而当dilation大于1时, 卷积核的元素之间会有间隔(所以也被称为空洞卷积), 从而扩大感受野(感受野是指网络中某一层神经元所能"看到"的输入数据的区域, 扩大感受野使得神经元能够结合来自更大范围的输入信息，从而学习到更抽象的特征。), 可以点击"link", 能很清楚地看出padding, stride和dilation的作用
+"groups" 一般都设为1, 很少有改动. 本参数允许用户将输入通道和输出通道分成多个组进行卷积操作。这个参数的使用可以实现一些特殊的卷积操作,如分组卷积(grouped convolution)(几乎用不到)和深度卷积(depthwise convolution)
+"bias" 常年设置为"True", 即对卷积后的结果是否再加上一个常数
+"padding_mode" 在选择"padding"的时候, 可以选择以怎样的模式进行填充, 常设为zeros, 即进行padding过程中, 将填充的地方都设置为0
+
+# 关于in_channels, out_channels (视频中有形象实例)
+Note:以一个5*5图像作为输入图像, 由于输入图像只有1层, 所以 in_channels = 1(若为彩色图像, RGB, 则in_channels = 3), 而 out_channels = 1 时,意味着只有"1"层卷积核得到了"1"层卷积后的输出
+而当 out_channels = 2 时, 就会生成两个卷积核, 就会多得到一个输出, 会将两个"卷积后的输出"叠加起来作为输出
+
+import torch用于导入PyTorch的核心库, 提供基础的深度学习功能
+import torchvision用于导入计算机视觉相关的扩展库, 提供数据集、预处理、预训练模型等功能。
+
+
+
+
+-神经网络_最大池化层Pooling layers的使用 (p16)
+本节继续讲解pytorch神经网络的其他一些基本操作, 这节就讲解一下池化层, 官方文档中选择pytorch, 点击torch.nn, 点击, 其中Pooling layers(池化层)
+# 最大池化操作可以理解为, 卷积核上对应区域大小 与 被匹配输入图像(即重叠区域)的对应区域中去取池化核所覆盖的数字中的最大值, 然后输出到对应区域, 卷积核移动到下一位置, 重复上述操作, 并将输出输出到下一位置
+# 最大池化的目的就是想要保留输入的特征同时把数据量减小, 使网络中需要计算的参数变少, 从而使训练地更快。最大池化的直观感觉就是相当于看视频由1080p转为了720p
+# 本节视频中4:32处有池化层的图示化讲解
+"nn.MaxPool2d" 最大池化, 有时也被称为下采样, 最常用
+"nn.MaxUnpool2d" 最大池化的相反, 称为上采样
+
+--"nn.MaxPool2d"
+# torch.nn.MaxPool2d(kernel_size, stride=None, padding=0, dilation=1, return_indices=False, ceil_mode=False)
+# 可以看到, 其中的参数设置的很简单, 只要一个kernel_size(池化核), 但需注意, 在深度学习中，"kernel_size" 和 "池化核"（Pooling Kernel）是相关但不同的概念。
+# 在卷积层中，kernel_size指的是卷积核的大小，即在进行卷积操作时，卷积核覆盖的输入区域的尺寸。可以是一个整数（如3，表示3x3的卷积核）或一个元组（如(3, 3)，表示高度和宽度）。用于提取特征
+# 在池化层中，池化核的大小也被称为pool_size，它指的是在进行池化操作时，池化窗口覆盖的输入区域的尺寸。池化核的作用是对特征图进行下采样。用于减少特征图的尺寸，降低计算复杂度，同时保留重要的特征
+# 一般情况下, 进行最大池化我们只需要设置kernel_size即可
+"kernel_size" 用来设置取最大值的窗口的大小, 如设置为3, 就会生成一个3*3的窗口, 设置(1, 2), 就会生成1*2大小的窗口(池化核) 
+"stride" 横向或纵向步长大小 (上一节有叙述), 但默认值和卷积层(卷积层中默认为1)不一样, 池化层中"stride"的默认值则是"kernel_size"的大小
+"dilation" 用于控制卷积核中元素之间的间隔, 当dilation设置为1时, 卷积核的元素是紧密排列的, 而当dilation大于1时, 卷积核的元素之间会有间隔(所以也被称为空洞卷积), 从而扩大感受野(感受野是指网络中某一层神经元所能"看到"的输入数据的区域, 扩大感受野使得神经元能够结合来自更大范围的输入信息，从而学习到更抽象的特征。), 可以点击"link", 能很清楚地看出padding, stride和dilation的作用(在上一节中的link中有提及), 一般情况下不对其进行设置
+"return_indices" 可以帮助我们在进行下采样的同时，记录每个池化窗口中最大值的索引。这在某些情况下非常有用，例如在实现反向传播或进行特征重建时。(较少用到)
+"ceil_mode" 默认设为False, 当设置为True, 就会使用ceil这种模式, 而不是floor这种模式(若池化核移动"stride"后, 发现池化核覆盖区域超出了输入图像的区域, ceil模式则保留说覆盖的区域的数据, 仍继续进行池化操作， 而floor模式则舍弃这些数据, 不对其进行池化操作)
+要求输入图像尺寸：
+Input: (N, c, Hin, Win) or (C, Hin, Win)
+Outout: (N, C, Hout, Wout) or (C, Hout, Wout), where
+
+Note: (p16 python文件中)
+1.# 转换格式:现在可以是(C, H, W)的输入了, 但视频里仍介绍了转换为(N, C, H, W)的方法
+input = torch.reshape(input, (-1, 1, 5, 5))  # -1是想让它自己计算batch_size的N, 因为我们这是1层, 5*5的
+
+2.# 对于报错：AssertionError: size of input tensor and input format are different. tensor shape: (64, 3, 32, 32), input_format: CHW, 所以我们这里要声明dataformats="NCHW"
+writer.add_image("input2", imgs, step, dataformats="NCHW")  
+
+
+
+
+# -padding layers(填充层) 是用于对输入图像进行各种填充的方式, 但几乎用不到, 而且用到的话, 其实和我们绝大多数的卷积层, 如Conv2d中都是可以实现的,  比如说最简单的
+# "nn.ZeroPad2d" 在input的tensor数据类型的周围用0进行填充, 这一点和我们进行卷积操作时padding=0 用0填充是一样的
+# "nn.ConstantPad2d" 用常数进行填充
+# 这里就不进行介绍了(几乎用不到, 绝大多数的卷积层, 如Conv2d中都是可以实现padding操作的)
+
+
+
+
+-神经网络_非线性激活Non-linear Activations (p17)
+今天我们继续讲解神经网络的一些其他结构, 非线性激活.官方文档中选择pytorch, 点击torch.nn, 点击 Non-linear Activations
+# 非线性激活就是用于给神经网络当中去引入非线性特征, 使得神经网络能学习和表示复杂的函数关系, 没有非线性激活函数, 神经网络的每一层都是线性变换, 最终的模型将无法捕捉到输入数据中的复杂模式
+# 因为非线性特征越多, 才能训练出符合各种曲线或各种特征的模型, 提高模型的泛化能力
+# 比如说其中常用的
+"nn.ReLU" input >= 0 时, output取input的原始值, input < 0 时, output取0
+"Sigmoid" output = 1/(1+exp(-x))
+Note:
+Input: (*), where * means any number of dimensions 即输入对shape(形状)并不做限制
+Output: (*), same shape as the input 即输出和输入相同的shape(形状)
+# 只要回来其中一个, 其他的无非就是非线性的处理公式不太一样
+
+--ReLU()
+# torch.nn.ReLU(inplace=False) inplace默认为False
+input = -1 
+ReLU(input, inplace=True) 时 即便不进行返回, input = 0 (原地修改, -1丢失, inplace就是替换的意思, 即在不在原来的位置进行替换)
+ReLu(input, inplace=False) 时 ReLu()处理完后输入 input = -1 不变, 返回 output = 0
+# 一般情况下, 我们取 inplace = False, 因为这种情况下我们可以保留原始数据, 防止原始数据丢失
+
+
+
+
+
+-神经网络_线性层及其它层介绍 (p18)
+继续讲解神经网络当中的其他结构, 官方文档中选择pytorch, 点击torch.nn, 点击 Non-linear Activations
+--Normalization Layers(归一化层)
+用的不是很多, 主要是通过将输入数据或中间层的激活值标准化, 减少内部协变量偏移, 使得每一层的输入保持在一盒相对稳定的分布中, 从而加快神经网络的训练速度和提高模型的稳定性
+# 归一化通常是指将数据缩放到一个1特定的范围, 目的是将不同特征的值缩放到统一尺度上从而避免某些特征对模型训练的影响过大
+# 内部协变量偏移(Internal Covariate Shift) 是指在训练神经网络时, 随着网络参数的更新, 某一层的输入分布发生变化的现象, 这种变化会导致后续层的输入分布随之变化, 从而使得模型的训练变得不稳定和缓慢
+# torch.nn.BatchNorm2d(num_features, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True, device=None, dtype=None)
+# 只需设置num_features, 要求 input:(N, C, H, W) , 其中N为batch_size, 输出与输入的shape相同, 也为(N, C, H, W). 后面的参数默认即可, 用的不是很多, 这里不再进行介绍
+
+--Recurrent Layers(递归层) (又被称为RNNs, 即递归神经网络)
+其中有"nn.RNN", "nn.LSTM" 等, 在文字识别中常用到这些网络结构, 具体看实际需要, 用到的概率不是很多(在特定的网络当中才会使用到)
+
+--Transformer Layers(Transformer层)
+是在特定的网络结构当中, 提出的一种结构. pytorch把它作为一个已经写好的神经网络层来进行一个实现, 如果遇到具体情况可以使用这个层, 但绝大多数情况是用不到的(在特定的网络当中才会使用到)
+
+--Linear Layers(线性层), 在视频中有图示化讲解
+是神经网络中的一种基本构建块. 其主要作用是对输入进行线性变换, 通常用于将输入特征映射到输出特征(在特定的网络当中才会使用到)
+可以理解为, 我们现在有一个5*5的图片,我们想把这个5*5的图片展成一行, 就变成了1*25格, 然后通过 "Linear Layers"线性层 就可以变成1*3格, 本节的python文件就来做这个事情 
+# torch.nn.Linear(in_features, out_features, bias=True, device=None, dtype=None)
+# 'torch.nn.Linear' 是一个用于创建全连接层（Fully Connected Layer）的模块
+# 我们只需设置in_features, out_features, bias 即可
+"in_features" 输入特征的数量(int), 即input输入特征的"个数"
+"out_features" 输出输出特征的数量(int), 即output输出特征的"个数"  output... = k... * input... + b..., 其中k为weight(权重), 是在分布中采样和初始化的, 而加不加b是由"bias"决定的, 若为"True"则加b, 若为"False"则不加b
+"bias" 偏置, 在实际卷积操作的运用中, 为了增强模型的表达能力和灵活性, 有时会在卷积操作中添加偏置项(bias)。 偏置项是一个可学习的参数,在每个卷积层中都会有一个偏置项与之对应, 它与卷积核的权重一起参与计算输出特征图。偏置项的作用是在卷积操作中引入一定偏移量, 可以让模型更好的拟合数据, 提高模型的表达能力
+其中, 必须自行设置"in_features", "out_features"
+
+Note: output = torch.flatten(input, start_dim=0, end_dim=-1) 
+# flatten展平, 可以将输入的数据展平, 输出为一维张量, 可以用以替换reshape操作(但reshape功能更加强大, 可以指定尺寸进行变换)
+# 只需设置input参数, 且input要求为tensor数据类型
+# 可以将形如
+# t = torch.rensor([[1,2],
+#                  [3,4]],
+#                 [[5,6],
+#                  [7,8]])
+# torch.flatten(t)   展平为
+# t = ([1, 2, 3, 4, 5, 6, 7, 8])
+
+--Dropout Layer(Dropout层)
+在训练的过程中, 我们会随机的将输入的tensor数据其中的一些元素删去(变为0), 变成0的概率为p, 目的是为了防止过拟合
+# 过拟合(Overfitting) 是机器学习和深度学习中的一个常见问题, 指的是模型在训练数据上表现得非常好, 但在未见过的测试数据或验证数据上表现不佳的现象.换句话说, 过拟合是指
+# 模型学习到了训练数据中的噪声和细节, 而不是学习到数据的潜在规律和一般化的特征
+
+--Sparse Layers(稀疏层)
+是指在神经网络中使用稀疏连接的层, 这种层的特点是大部分神经元之间的连接是0, 只有少数的连接是非0的, 可以帮助减少模型的复杂度, 提高计算效率, 并在某些情况下提高模型的泛化能力(在特定的网络当中才会使用到)
+# 稀疏连接是指在神经网络中, 神经元之间的连接并不是全连接的, 而是只有一部分连接存在, 其他连接被设置为0。这种连接方式与传统的全连接层(每个神经元与前一层的每个神经元都有连接)形成对比
+
+--Distance functions(距离函数)
+距离函数(Distance Function是s)是用于衡量两个数据点之间的相似度或差异度的数学函数.
+
+--Loss Functions(损失函数)
+Loss Functions(损失函数) 是机器学习和深度学习中的一种数学函数, 用于衡量模型的预测结果与实际结果之间的差异或误差。
+
+# 这些内容会放到后面来讲解
+
+->我们现在会自己搭建网络网络模型了, 但是我们有的时候可以直接用pytorch提供的一些网络模型, 进入pyrorch官网, 点击pytorch domins, 进入torchvision中, 左侧选择0.9.0官方文档版本, 点击torchvision.models, 其中就提供了一些网络结构, 有时直接调用即可, 其中, 右侧给出了类别, 如
+Object Detection, Instance Segmentation and Person Keypoint Detection等(目标检测, 实例分割, 人体关键节点检测等), 可以利用提供的网络结构, 包括训练好的网络就可以满足绝大多数需求
+
+
+
+
+
+-神经网络_搭建实战和Sequential(序列)的使用 (p19)
+本节将讲下Containers中的Sequential(序列), nn.Sequential是一个非常实用的容器, 用于按顺序构建神经网络的各个层. 可以将多个层(如卷积层、激活函数、池化层等) 依次添加到这个容器中, 数据会按定义的顺序依次通过这些层.
+官方文档中选择pytorch, 点击torch.nn, 点击 Containers, 进入Sequential的官方文档
+
+# Sequential的使用方法很简单, 下面给出实例
+# Example of using Sequential
+model = nn.Sequential(
+          nn.Conv2d(1,20,5),
+          nn.ReLU(),
+          nn.Conv2d(20,64,5),
+          nn.ReLU()
+        )
+
+output = model(input)  # 就会将input依次进行Conv2d卷积, ReLU非线性激活, Conv2d,  ReLU的操作
+
+# Sequential序列能使代码书写简单易懂, 本节将以搭建一个网络模型, 向其中添加Sequential, 进行讲解, 看看代码是不是会变得更容易管理.
+# 本节写一个对CIFAR-10数据集进行分类的一个简单神经网络(详见对应python文件), 即根据图片内容识别图片属于哪一类, 其中"CIFAR-10"中的"10"是指有10个类别, CIFAR10 model structure (CIFAR-10模型的网络结构) 在视频中有图示化讲解(2:00), 讲的结合了前几节内容, 很详细
+Note:
+# 调用tensorboard时
+# add_graph()是添加计算图到tensorboard中, 以便进行可视化, 对理解模型结构和调试很有帮助, 其中model为实例化得到的神经网络模型, input是你创建或事先有的数据
+writer = SummaryWriter("logs")
+writer.add_graph(model, input)  # 很有用
+writer.close()
+随后在tensorboard中双击对应神经网络等模块即可查看Sequential及其所包含的网络层, 以及送到网络的数据的尺寸大小, 网络的参数等内容
+
+
+
+
+
+-损失函数与反向传播 (p20)
+本节主要讲解torch.nn里面的损失函数("Loss Functions"), 它是用于评估模型预测值与真实值之间差异的函数. 损失函数的值越小，说明模型的预测结果与实际值越接近，模型的性能越好。
+其作用为
+1. 计算实际输出和目标之间的差距
+2. 为我们更新输出提供一定的依据 (反向传播) (以降低loss)   
+# 比方说, 举个例子
+# 目标 target: a = 30, b = 30, c = 40.  实际输出 output: a = 10, b = 10, c = 10
+# loss = (30-10) + (30-10) + (40-10) = 70, 我们发现因为c造成loss值影响过大, 所以我们针对c着重训练, 就能使loss下降, 即根据loss, 计算图, 才能得到每个参数应怎么更新
+
+--"Loss Functions"
+#"Loss Functions"看公式可能很绕, 但一定要注意看官方文档中其函数input的格式即可
+# 使用"Loss Functions"时一定要根据你的需求去使用, 而且在使用过程中, 你只需要注意所使用的Loss Function所要你输入数据input的shape(形状)是什么样, target(目标)及output(输出)的形状是什么样就可以了
+"nn.L1Loss" (绝对误差损失)
+# torch.nn.L1Loss(size_average=None, reduce=None, reduction='mean'), 其中reduction可为'mean'取平均值, 也可为'sum'相加取值, 默认为'mean'
+# “nn.L1Loss” 是 PyTorch 中的一个损失函数，用于计算 L1 损失，也称为绝对误差损失（Mean Absolute Error, MAE）。L1 损失函数衡量的是预测值与真实值之间的绝对差的平均值。它在回归问题中广泛使用，尤其是在对异常值（outliers）不太敏感的情况下。
+loss = nn.L1Loss()  # 实例化
+output = loss(input, target)  # 要求input为任意数据类型(现在仅要求为(*), 老版本要求为(N, *), 其中N为batch_size, *指任意数据类型, 当然现在两种写法都行, 前者更简洁), output为与input相同的数据类型, target为目标与input为相同数据类型
+# 对于L1Loss(reduction默认取'mean'时), 若input为[1, 2, 3]，target为[1, 2, 5] 则 L1loss = ((1-1)+(2-2)+(5-3))/3 = 2/3 = 0.6667, 输出为tensor(0.6667)
+
+若为
+loss = nn.L1Loss(reduction='sum') 
+output = loss(input, target)  # print输出为tensor(2.)
+
+"MSELOSS" (均方误差)
+# torch.nn.MSELoss(size_average=None, reduce=None, reduction='mean')
+# "MSELoss" 是一种用于计算均方误差（Mean Squared Error, MSE）的损失函数，常用于机器学习和深度学习中的回归任务。它的主要作用是衡量模型预测值与真实值之间的差异，并作为优化算法的目标，以指导模型的训练过程。
+loss_mse = nn.MSELoss()
+result_mse = loss_mse(inputs, targets) # 要求input为任意数据类型(*), target为目标与input为相同数据类型
+# 同样以上面输入输出为例, MSE=(0+0+2^2)/3=4/3=1.3333
+
+"CrossEntropyLoss" (交叉熵损失) (视频中及对应python文件目录下有图示化讲解)
+# torch.nn.CrossEntropyLoss(weight=None, size_average=None, ignore_index=-100, reduce=None, reduction='mean', label_smoothing=0.0)
+# CrossEntropyLoss 被称为交叉熵损失, 是 PyTorch 中用于分类任务的损失函数，尤其适合多类分类问题，用于衡量模型预测的概率分布与真实标签之间的差异。
+# 要求Input: (C), 或(N, C), 其中N为batch_size, C为你分的类别的数量
+# Target：(N) 即有多少batch_size
+
+
+
+
+
+-优化器(p21)
+本节讲解优化器. 前面提到反向传播, 其中说到了, 当我们使用损失函数的时候, 我们可以调用损失函数的backward(), 就可以得到一个反向传播, 反向传播的话就能求出我们每个需要调节的参数对应的梯度, 
+有了梯度, 我们就可以利用优化器, 让优化器根据梯度对参数进行调整, 以达到整体误差降低的目的
+打开pytorch官网, 选择其官方文档, 选择1.8.1版本, 打开 TORCH.OPTIM ("optim"的翻译是“最优”或“最佳”, 在不同的上下文中，它可能与“优化”相关联)
+
+# 我们可以看到 TORCH.OPTIM 的官方文档相对口语化一些, 会告诉你比如说, 如何使用优化器, 并给出使用步骤
+
+"Constructing it" (首先要"构造它")
+给出一个案例:
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)  # 在构造过程中, optim.SGD 为选择对应的一个优化器的算法, 然后在优化器当中(), model.parameters() 是指放入模型的参数 (必备),  lr=0.01 为学习速率, 学习速率几乎是每个优化器都有的参数, 后面的 momentum=0.9 参数使我们特定的优化器算法当中, 对应的需要设置的一些参数, optim.SGD 是 PyTorch 中实现随机梯度下降（SGD）优化算法的类。SGD 是一种常用的优化方法，特别是在深度学习中。它通过在每次迭代中随机选择一小部分数据（称为小批 量）来更新模型参数，从而减少计算资源的消耗。
+optimizer = optim.Adam([var1, var2], lr=0.0001)
+
+"Taking an optimization step" (即"进行一次优化步骤")  # 即为优化器的使用方法, 很简单
+构造好优化器后就可以调用优化器的step方法, step方法就是它现在就会利用我们之前得到的梯度来对参数进行更新
+我们可以看到步骤:
+for input, target in dataset:
+    optimizer.zero_grad()  # 这一步是一定要写的, 不然就会导致模型训练出很多问题, 原因在 optimizer.step() 一行有说明
+    output = model(input)  # 输入经过模型得到输出
+    loss = loss_fn(output, target)  # 输出会跟真实target计算出loss，即它的误差
+    loss.backward()  # 然后调用误差loss的backward(), 即反向传播, 得到每个要更新参数的梯度
+    optimizer.step()  # 然后当我们调用 optimizer.step(), 即 优化器.step 的时候, 这里的每个参数都会根据 loss.backward() 得到的梯度进行优化. 即调用这一步时, 其实像卷积核当中的一些参数就会进行一个调整. 调整完后, 就会再进行一个循环, 循环后又到了 optimizer.zero_grad() 这步, 当我们调用这步的时候, 我们需要把我们上一步 loss.backward() 求出来每个参数对应的梯度清零, 以防上一步的梯度造成的影响 
+
+#end
+
+"Algorithms" (即"算法")  # 核心部分
+Algorithms 一栏往下翻可以看到一些不同优化器的算法, 以下述为例
+torch.optim.Adadelta(params, lr=1.0, rho=0.9, eps=1e-06, weight_decay=0) # 其中 params (parameters, 即参数), 即将模型的参数放进去, 因为只有这样, 我们的优化器才知道模型长什么样, 其中可以调节的参数有哪些. lr=1.0 即学习速率(learning rate 学习速率), 后面的参数都是特定的算法当中需要去设置的
+
+# 我们可以看到不同的优化器, 除了前两项 params(要传入的模型参数), 和 lr (学习速率) 是一样的, 后面的参数都是有所差距, 异同的 (如果我们只是入门阶段的话, 我们一定要注意关注, 我们只需要去设置一个 params, lr, 即可, 是一个固定的套路, 后面的其它参数可以采用默认, 或者参考别人使用的一些参数)
+
+
+
+
+
+-现有网络模型的使用及修改(p22)
+本节讲解pytorch提供的一些现有的网络模型, 包括这些网络模型该如何去使用, 对现有的网络模型进行修改, 以及添加一些自己想要的一些网络模型结构
+我们的教程基本上都是以官方文档为主, 因为官方文档其实是你以后写代码的时候, 重要的依据和来源, 打开pytorch的官方文档的torchvision部分, 选择0.9.0版本的官方文档
+
+在torchvision当中是关于一些关于图像的一些模型, 打开 torchvision.models, 可以看到, 在右侧有不同的一些分类, 比如说有一些用于 Classfication(分类)的 model
+还有一些是关于 Semantic Segmentation的 model 等等类别(语义分割, 旨在将图像中的每个像素分配到特定的类别.与目标检测不同,语义分割不仅识别图像中的物体,还对每个像素进行分类, 提供更细致的图像理解)
+
+本节主要讲解一个简单的分类模型 VGG, 选用 CIFAR-10 (这个数据集主要是用来分类的)
+VGG 包含有 vgg11, vgg13, vgg16, vgg19等, 其中最常用的就是 vgg16, 我们来讲解下vgg16
+# torchvision.models.vgg16(*, weights: Optional[VGG16_Weights] = None, progress: bool = True, **kwargs: Any) → VGG
+Parameters: (参数)
+"weights"  默认为 None, 用于指定加载的预训练权重, 若为 weights='DEFAULT', 函数就会加载在大规模数据集(如 ImageNet) 上预训练的 VGG16 模型权重. 这意味着模型已经在大量图像上进行了训练, 能够提取出有效的特征. 若为 weights=None , 函数将返回一个随机初始化的 VGG16 模型, 这种情况下, 模型的权重是随机生成的, 通常需要更多的训练时间和数据来达到良好的性能
+"progress"  若为 True, 则会显示一个下载进度条, 若为 False, 则不显示
+# 模型默认下载到了D:\Tech\pycharm\program\model (自行设置的)
+
+# 我们现在想要考察"weights", 我们就需要下载 ImageNet 数据集, 然后我们通过设置这个参数是 True 或 False 来看下模型在数据集上的表现效果
+找到官方文档中 torchvision.datasets, 在右侧找到 ImageNet (下面一行代码不能下载ImageNet数据集, 因为该数据集不再公开访问, 需手动下载到相应目录, 且因数据集所需存储空间过大, 所以在python文件中, 我们选取了其他例子) 
+# torchvision.datasets.ImageNet(root: str, split: str = 'train', download: Union[str, NoneType] = None, **kwargs) → None
+Parameters:
+"root" 下载路径
+"split" 若为"train"则加载训练数据集, 若为"val"则加载验证集数据, 若为"test"则加载测试集数据, 和下载 CIFAR-10 数据集的参数"train"类似
+"transform" 是否对图像进行变换
+"target_transform" 是否在 target 上进行变换
+"loader" 用于指定如何加载图像数据, 通常是通过一个函数来实现
+
+# 在网络结构最后一层后再添加一层
+vgg16_true.add_module('add_linear', nn.Linear(1000,10))  # 在pytorch中, add_module() 是 torch.nn.Module类 的一个方法, 用于向模型中添加新的层或模块, 这里是向VGG16中添加新的线性层, 它的in_features=1000, out_features=10
+vgg16_true.classifier.add_module('add_linear', nn.Linear(1000,10))  # 上一行是在VGG16下一个层级添加的, 本行是在classifier所在层级添加
+
+# 另一种方法, 对最后一个层级进行修改, 将最后一层线性层的out_features=1000 修改为 out_features=10, 这里以vgg16_false为例
+print(vgg16_false)  # 确定所在位置
+vgg16_false.classifier[6] = nn.Linear(4096,10)
+
+
+
+
+
+-网络模型的保存与读取(p23)
+截止本节, 我们现在已经学会pytorch中基本上所有的架构了, 包括在优化器那节, 可以看到, 我们基本上已经开始在训练我们的模型了. 后面我们可以看到, 我们还差个模型的保存
+还没有说, 包括模型的加载, 至此, 我们整个训练过程基本上讲完了, 接下来我们来讲解一下 完整的模型训练套路-GPU训练 以及 完整的模型验证套路 再来看一下 GitHub 上一些
+常见的代码, 因为其中有一些陷阱, 对新手来说可能不会使用, 比如说其中有些参数的设定, 如果没有接触过的话就不是很了解, 所以会再看下 GitHub 上一些优秀的代码是如何写的
+(Note: 而对于完整的模型训练套路, 我们一定要注意要从一开始就养成一个优秀的写法, 或一个优秀的套路模板, 而这个模板, 最推荐的就是看pytorch官网给我们提供的一些教程, 或者说提供的一种程序, 所以在这节, 我们就会以pytorch教程当中的模板进行讲解, 
+其实就相当于把它的模板拿过来稍微改动一下, 改成自己的模型或者数据集, 其中的步骤, 训练的套路, 我们就按照它的来)
+本节讲解 模型的保存和读取   
+
+--print(model)后所输出的(features)(avgpool)(classifier)的含义分别如下
+(features) 通常指模型的特征提取部分, 这一部分由多个卷积层、激活函数(如ReLU)、池化层等组成, 能通过一系列卷积操作, 从输入图像中提取有用的特征
+(avgpool) 是指平均池化层, 通常在特征提取部分的后面, 通过计算特征图中每个小区域的平均值来降低特征图的尺寸, 从而减少运算量和过拟合的风险, 有助于在保留重要特征的同时, 减少数据的复杂性
+(classifier) 通常指模型的分类部分, 在特征提取和池化后,通过包括一个或多个全连接层, 和激活函数, 将提取到的特征映射到最终的输出类别 
+

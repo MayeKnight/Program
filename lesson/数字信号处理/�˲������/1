@@ -1,0 +1,170 @@
+% 使用巴特沃斯滤波器设计IIR数字滤波器
+Fs = 8000; % 采样频率 (Hz)
+fp = 440;  % 通带频率 (Hz)
+fs = 370;  % 截止频率 (Hz)
+Ap = 1;    % 通带波动 (dB)
+As = 50;   % 阻带衰减 (dB)
+
+% 归一化频率
+Wp = fp / (Fs / 2); % 归一化通带频率
+Ws = fs / (Fs / 2); % 归一化截止频率
+
+% 计算滤波器的阶数和截止频率
+[n, Wn] = buttord(Wp, Ws, Ap, As); % 计算所需的阶数和截止频率
+[b, a] = butter(n, Wn); % 设计巴特沃斯滤波器
+
+% 频率响应
+[H, F] = freqz(b, a, 1024, Fs); % 计算频率响应
+
+% 绘制幅度响应
+figure;
+subplot(2, 1, 1);
+plot(F, 20*log10(abs(H)));
+title('IIR巴特沃斯滤波器幅度响应');
+xlabel('频率 (Hz)');
+ylabel('幅度 (dB)');
+grid on;
+axis([0 Fs/2 -100 5]); % 设置坐标轴范围
+
+% 绘制相位响应
+subplot(2, 1, 2);
+plot(F, angle(H));
+title('IIR巴特沃斯滤波器相位响应');
+xlabel('频率 (Hz)');
+ylabel('相位 (弧度)');
+grid on;
+axis([0 Fs/2 -pi pi]); % 设置坐标轴范围
+
+% 显示滤波器阶数
+disp(['滤波器阶数: ', num2str(n)]);
+
+
+
+
+
+% 使用双线性变换法设计CBI型IIR数字滤波器
+Fs = 8000; % 采样频率 (Hz)
+fp = 440;  % 通带频率 (Hz)
+fs = 370;  % 截止频率 (Hz)
+Ap = 1;    % 通带波动 (dB)
+As = 40;   % 阻带衰减 (dB)
+
+% 归一化频率
+Wp = fp / (Fs / 2); % 归一化通带频率
+Ws = fs / (Fs / 2); % 归一化截止频率
+
+% 计算滤波器的阶数和截止频率
+[n, Wn] = buttord(Wp, Ws, Ap, As); % 计算所需的阶数和截止频率
+[b, a] = butter(n, Wn); % 设计巴特沃斯滤波器（CBI型）
+
+% 读取音频信号
+[x, fs] = audioread('Dhexian.wav'); % 读取Dhexian.wav音频文件
+
+% 应用滤波器
+y = filter(b, a, x); % 使用设计的滤波器对音频信号进行滤波
+
+% 绘制原始信号和滤波后信号的波形
+figure;
+subplot(2, 1, 1);
+plot(x);
+title('原始音频信号');
+xlabel('样本');
+ylabel('幅度');
+grid on;
+
+subplot(2, 1, 2);
+plot(y);
+title('滤波后音频信号');
+xlabel('样本');
+ylabel('幅度');
+grid on;
+
+% 播放滤波后的音频信号
+sound(y, fs); % 播放滤波后的音频信号
+
+% 频率响应
+[H, F] = freqz(b, a, 1024, Fs); % 计算频率响应
+
+% 绘制幅度响应
+figure;
+subplot(2, 1, 1);
+plot(F, 20*log10(abs(H)));
+title('CBI型IIR数字滤波器幅度响应');
+xlabel('频率 (Hz)');
+ylabel('幅度 (dB)');
+grid on;
+axis([0 Fs/2 -100 5]); % 设置坐标轴范围
+
+% 绘制相位响应
+subplot(2, 1, 2);
+plot(F, angle(H));
+title('CBI型IIR数字滤波器相位响应');
+xlabel('频率 (Hz)');
+ylabel('相位 (弧度)');
+grid on;
+axis([0 Fs/2 -pi pi]); % 设置坐标轴范围
+
+% 显示滤波器阶数
+disp(['滤波器阶数: ', num2str(n)]);
+
+
+
+
+% 设置采样频率和设计指标
+Fs = 8000; % 采样频率 (Hz)
+fp = 440;  % 通带频率 (Hz)
+fs = 370;  % 截止频率 (Hz)
+Ap = 1;    % 通带波动 (dB)
+As = 50;   % 阻带衰减 (dB)
+
+% 归一化频率
+Wp = fp / (Fs / 2); % 归一化通带频率
+Ws = fs / (Fs / 2); % 归一化截止频率
+
+%% 1. BW型滤波器设计
+[n_bw, Wn_bw] = buttord(Wp, Ws, Ap, As); % 计算BW型滤波器的阶数和截止频率
+[bw_b, bw_a] = butter(n_bw, Wn_bw); % 设计BW型滤波器
+
+% 绘制零极点分布图
+figure;
+zplane(bw_b, bw_a);
+title('BW型IIR数字滤波器零极点分布');
+grid on;
+
+%% 2. CBI型滤波器设计
+[n_cbi, Wn_cbi] = buttord(Wp, Ws, Ap, As); % 计算CBI型滤波器的阶数和截止频率
+[cbi_b, cbi_a] = butter(n_cbi, Wn_cbi, 'high'); % 设计CBI型滤波器
+
+% 绘制零极点分布图
+figure;
+zplane(cbi_b, cbi_a);
+title('CBI型IIR数字滤波器零极点分布');
+grid on;
+
+%% 3. CBII型滤波器设计
+% 选择一个合适的带阻频率范围
+Wn_cbii = [430 450] / (Fs / 2); % 设计带阻滤波器的频率范围
+[n_cbii, Wn_cbii] = buttord(Wn_cbii, [0.4 0.5], Ap, As); % 计算CBII型滤波器的阶数
+[cbii_b, cbii_a] = butter(n_cbii, Wn_cbii, 'stop'); % 设计CBII型滤波器
+
+% 绘制零极点分布图
+figure;
+zplane(cbii_b, cbii_a);
+title('CBII型IIR数字滤波器零极点分布');
+grid on;
+
+%% 4. 椭圆型滤波器设计
+[n_ellip, Wn_ellip] = ellipord(Wp, Ws, Ap, As); % 计算椭圆型滤波器的阶数和截止频率
+[ellip_b, ellip_a] = ellip(n_ellip, Ap, As, Wn_ellip); % 设计椭圆型滤波器
+
+% 绘制零极点分布图
+figure;
+zplane(ellip_b, ellip_a);
+title('椭圆型IIR数字滤波器零极点分布');
+grid on;
+
+% 显示滤波器阶数
+disp(['BW型滤波器阶数: ', num2str(n_bw)]);
+disp(['CBI型滤波器阶数: ', num2str(n_cbi)]);
+disp(['CBII型滤波器阶数: ', num2str(n_cbii)]);
+disp(['椭圆型滤波器阶数: ', num2str(n_ellip)]);
