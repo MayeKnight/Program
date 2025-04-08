@@ -30,8 +30,8 @@ public:
         }
     }
 
-    //构造方法
-    GraphAdjList(const vector<vector<Vertex*>>& edges)
+    //构造方法(或构造函数)是类的一种特殊方法, 用于初始化类的对象. 即构造方法就是使用类的方法
+    GraphAdjList(const vector<vector<Vertex*>>& edges)  
     {
         //添加所有顶点和边
         for (const vector<Vertex*>& edge : edges)
