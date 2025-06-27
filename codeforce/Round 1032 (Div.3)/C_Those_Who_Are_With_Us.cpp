@@ -34,13 +34,13 @@ void solve() {
                 continue;
             }
             for (int j : row[i]) {  //遍历row[i]中所有列索引j
-                if (--mp[j] == 0) {
+                if (--mp[j] == 0) {  //如若本行该列(j列)还包含其他数, 则mp[j]不能被erase
                     mp.erase(j);
                 }
             }
-            if (mp.size() <= 1) {
-                cout << mx - 1 << endl;
-                return;
+            if (mp.size() <= 1) {      //三种情况, mp.size()==0时，指移除某一行后, 所有mx都被覆盖, 选择该行和任意一列即可
+                cout << mx - 1 << endl;  //mp.size() == 1时, 移除某一行后, 剩余的mx只集中于某一列(假设列j), 则选择该行和该列即可, 该行所有的mx都减一(覆盖部分mx), 列j所有的mx减一(覆盖剩余mx)
+                return;                  //mp.size() > 1时, 剩余的mx分布在多列, 选择行r, 列c，只能覆盖行r所有的mx和列c所有的mx，其他列的mx不会被覆盖, 因此最大值仍为mx
             }
             for (int j : row[i]) {
                 mp[j]++;
@@ -48,7 +48,7 @@ void solve() {
         }
     }
 
-    //检查列操作
+    //检查列操作, 行处理只能检查"移除某一行"能否解决问题, 在某些情况下, 移除某一列可能更有效, 而行处理无法发现这种情况
     {
         vector<vector<int>> col(m);
         map<int, int> mp;
