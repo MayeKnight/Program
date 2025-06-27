@@ -1,0 +1,57 @@
+1.Error: value of 00000001dcd65200 too large for field of 4 bytes at 00000000000001c8
+数组占用大量内存, 超出系统限制, 可以尝试将所设 a[MOD] 中的 MOD = 1'000'000'007 依据题意修改, 如修改为 2e6 + 5 等
+'
+2.关于codeforce提交
+C++ Submit 中 Language 选择 GNU G++高版本即可
+C Submit 中 Language 选择 GNU GCC高版本即可
+
+3.Idleness limit exceeded on test 1
+codeforce出现上述报错, 表示你的程序没有及时处理输入或输出,
+C 检查scanf是否正确使用
+并且这个错误通常出现在交互式编程题中, 表示你的程序没有及时处理输入或输出, 导致评测系统认为你的程序“卡住”了
+需要刷新输出缓冲区, 即在每次print后添加 fflush(stdout) 来强制刷新输出缓冲区。
+
+4.set<int> s; //round 1029 C 贪心
+set"集合"是C++标准模板库(STL)中的一个容器, 它的特点是:
+(1)不允许重复元素
+(2)自动排序(默认按升序排列)
+(3)常见底层实现是红黑树(balanced binary search tree)
+常见操作如下:
+s.insert(x) 插入元素x
+s.erase(x) 删除元素x(如果存在)
+s.empty(x) 集合s判空, 若为空则返回1, 否则返回0
+s.count(x) 返回0或1, 判断是否包含x
+s.find(x) 返回指向x的迭代器, 找不到返回s.end()
+s.clear(x) 清空所有元素
+s.size() 返回元素个数
+
+5.关于vector
+vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组（vector），包含 n 个元素，每个元素是 int 类型，初始值为 0。
+for (ll i = 0; i < n; i++) {
+    cin >> a[i];
+}
+
+6.map<int, int> mp; //round 1032 C 图 用于对行列分别操作
+map"映射"是C++标准模板库(STL)中的一个关联容器，用于存储键值对
+如 map<string, double> studentGrades; //键类型为string, 值类型为double
+它的特点是:
+(1)键唯一性:每个键map中只能出现一次,如果插入相同的键, 新值会覆盖旧值
+(2)自动排序:map中的元素会根据键自动按升序排列(默认情况下)
+(3)高效查找:基于红黑树实现, 时间复杂度为O(logn)
+常见操作如下:
+map[i]++  键为i的对应值+1
+mp.insert(make_pair(1, 100))  插入键值对(1, 100)
+mp.insert({2, 200})  //插入键值对(1, 200), C++11支持的花括号初始化
+mp[3] = 300  直接赋值, 如果键3不存在, 会自动创建
+int value = mp[1] 获取键1对应的值, 如果不存在会自动插入(值为默认值)
+int value = mp.at(1)  获取键1对应的值如果不存在会抛出异常
+mp.find(1)  返回指向1的迭代器, 若未找到则返回mp.end()
+mp.erase(1)  删除键为1的元素
+mp.empty()  检查是否为空
+mp.size()  获取mp大小
+mp.clear()  清空mp
+
+7.声明二维数组
+vector<vector<int>> edg(n, vector<int>());  //只确定n行时, 这里意为声明一个含有n个元素, 且元素类型为vector<int>并初始化为空的二维数组edg
+vector<vector<int>> g(n, vector<int>(m));  //确定n行m列时
+vector<vector<int>> row(n);  //只确定n行时
