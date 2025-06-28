@@ -34,7 +34,7 @@ void solve() {
                 continue;
             }
             for (int j : row[i]) {  //遍历row[i]中所有列索引j
-                if (--mp[j] == 0) {  //如若本行该列(j列)还包含其他数, 则mp[j]不能被erase
+                if (--mp[j] == 0) {  //这个判断条件的意思是本列其他行均没有最大值了，在该列只有本行有最大值，此时可以将本列erase掉
                     mp.erase(j);
                 }
             }
