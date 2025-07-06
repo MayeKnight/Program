@@ -55,3 +55,21 @@ mp.clear()  清空mp
 vector<vector<int>> edg(n, vector<int>());  //只确定n行时, 这里意为声明一个含有n个元素, 且元素类型为vector<int>并初始化为空的二维数组edg
 vector<vector<int>> g(n, vector<int>(m));  //确定n行m列时
 vector<vector<int>> row(n);  //只确定n行时
+
+8.accumulate计算累加和 (区间为左闭右开)
+accumulate(起始迭代器, 结束迭代器, 初始值), 用于计算范围内元素的累加和 (区间为左闭右开), 0ll是0的long long类型字面量, 确保累加时使用64位整数运算, 避免溢出
+例:
+ll s1 = accumulate(a.begin(), a.begin() + n / 2, 0ll);   0ll是0的long long类型字面量, 确保累加时使用64位整数运算, 避免溢出
+ll s2 = accumulate(a.begin() + n / 2, a.end(), 0ll);
+(1)
+输入:
+a = [1, 2, 3]
+输出:
+s1 = 1   // 1
+s2 = 5   // (2+3)
+(2)
+输入:
+a = [1, 2, 3, 4]
+输出:
+s1 = 3  // (1+2)
+s2 = 7  // (3+4)
