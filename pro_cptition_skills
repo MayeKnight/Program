@@ -1,15 +1,18 @@
 1.Error: value of 00000001dcd65200 too large for field of 4 bytes at 00000000000001c8
 数组占用大量内存, 超出系统限制, 可以尝试将所设 a[MOD] 中的 MOD = 1'000'000'007 依据题意修改, 如修改为 2e6 + 5 等
 '
+
 2.关于codeforce提交
 C++ Submit 中 Language 选择 GNU G++高版本即可
 C Submit 中 Language 选择 GNU GCC高版本即可
+
 
 3.Idleness limit exceeded on test 1
 codeforce出现上述报错, 表示你的程序没有及时处理输入或输出,
 C 检查scanf是否正确使用
 并且这个错误通常出现在交互式编程题中, 表示你的程序没有及时处理输入或输出, 导致评测系统认为你的程序“卡住”了
 需要刷新输出缓冲区, 即在每次print后添加 fflush(stdout) 来强制刷新输出缓冲区。
+
 
 4.set<int> s; //round 1029 C 贪心
 set"集合"是C++标准模板库(STL)中的一个容器, 它的特点是:
@@ -25,11 +28,13 @@ s.find(x) 返回指向x的迭代器, 找不到返回s.end()
 s.clear(x) 清空所有元素
 s.size() 返回元素个数
 
+
 5.关于vector
 vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组（vector），包含 n 个元素，每个元素是 int 类型，初始值为 0。
 for (ll i = 0; i < n; i++) {
     cin >> a[i];
 }
+
 
 6.map<int, int> mp; //round 1032 C 图 用于对行列分别操作
 map"映射"是C++标准模板库(STL)中的一个关联容器，用于存储键值对
@@ -51,10 +56,12 @@ mp.empty()  检查是否为空
 mp.size()  获取mp大小
 mp.clear()  清空mp
 
+
 7.声明二维数组
 vector<vector<int>> edg(n, vector<int>());  //只确定n行时, 这里意为声明一个含有n个元素, 且元素类型为vector<int>并初始化为空的二维数组edg
 vector<vector<int>> g(n, vector<int>(m));  //确定n行m列时
 vector<vector<int>> row(n);  //只确定n行时
+
 
 8.accumulate计算累加和 (区间为左闭右开)
 accumulate(起始迭代器, 结束迭代器, 初始值), 用于计算范围内元素的累加和 (区间为左闭右开), 0ll是0的long long类型字面量, 确保累加时使用64位整数运算, 避免溢出
@@ -73,3 +80,104 @@ a = [1, 2, 3, 4]
 输出:
 s1 = 3  // (1+2)
 s2 = 7  // (3+4)
+
+
+9.关于unordered_map<type, type>哈希表, unordered_set<type> 哈希集合, map<type, type> 映射, set<type> 集合  (其中type为数据类型), multiset<type> 多重集合
+(1)unordered_map<type, type> 哈希表(无序映射)
+可用于在定长滑动窗口中记录每个元素出现的个数
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\定长滑动窗口\2841. 几乎唯一子数组的最大和.cpp"
+
+也可用于解决在不定长滑动窗口中元素种类有限, 同时要求元素数量(最多)的问题
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\904. 水果成篮.cpp"
+需要注意的是
+对于声明了
+unordered_map<int, int> fruitCount;
+fruitCount.size(); //.size()指的是元素种类的数量(即当前窗口中不同水果的种类数量)
+如:
+如果 fruitCount = { {3:2}, {1:3}, {2:1} }，那么 fruitCount.size() == 3 (因为有 3 种不同的水果: 3、1、2)。
+例：
+// 如果窗口内水果种类超过2, 移动left缩小窗口
+while (fruitCount.size() > 2) {
+    fruitCount[fruits[left]]--;
+    if (fruitCount[fruits[left]] == 0) {
+        fruitCount.erase(fruits[left]); // 如果数量归零，移除该水果
+    }
+
+(2)unordered_set<type> 哈希集合
+可用于在不定长滑动窗口中记录在当前窗口中存储有哪些元素(可用于避免窗口内有重复字符.)
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\3. 无重复字符的最长子串.cpp"
+
+(3)map<type, type> 映射(有序映射)
+其与unordered_map的区别和联系如下
+相同点:
+都存储键值对(key-value pairs)
+都提供类似的接口(如insert, find, erase等)
+每个键都只能出现一次(不允许重复键)
+都提供高效的查找操作.
+
+主要区别
+map采用红黑树实现, 其中的元素顺序默认按键的升序排列, 查找/插入/删除的时间复杂度均为O(logn), 内存使用相对较少(无哈希表开销)
+unordered_map采用哈希表实现, 其中的元素是无序的, 查找/插入/删除的时间复杂度平均为O(1), 最坏为O(n), 内存使用相对较多(需要维护哈希表)
+
+用于快速查找, 无序, 用哈希表 unordered_map
+用于元素有序或稳定性能, 用映射 map
+
+(4)set<type> 集合
+其与unordered_set的区别和联系如下
+相同点:
+都存储键(keys)
+都提供类似的接口(如insert, find, erase等)
+每个键都只能出现一次(不允许重复键)
+都提供高效的查找操作.
+
+主要区别
+set采用红黑树实现, 其中的元素顺序默认按键的升序排列
+unordered_set采用哈希表实现, 其中的元素是无序的
+
+用于快速查找, 无序, 用哈希集合 unordered_set
+用于元素有序或稳定性能, 用集合 set
+
+(5)multiset<type> 多重集合
+可用于解决每个字符最多出现几次的最长子字符串的问题
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\3090. 每个字符最多出现两次的最长子字符串.cpp"
+其与set 集合的区别如下:
+
+multiset<type> 多重集合
+默认按值升序排序存储
+允许重复元素(可以存储多个相同的值)
+每次插入都会成功, 即使元素已存在, 可以通过.count() 返回当前多重集合中有多少个该元素
+底层同样采用红黑树实现
+示例:
+std::multiset<int> ms;
+ms.insert(1);  // 成功
+ms.insert(1);  // 成功，集合现在包含两个1
+
+set<type>
+默认按值升序排序存储
+不允许重复元素(每个元素必须是唯一的)
+如果尝试插入已存在的元素, 插入操作会被忽略
+底层通常采用红黑树实现
+示例:
+std::set<int> s;
+s.insert(1);  // 成功
+s.insert(1);  // 被忽略，集合仍只包含一个1
+
+需要注意的是, 其在erase删除操作上有所不同
+s.erase(a); 这里s为set， 没有影响, 只会删除集合s中一个a(因为集合中只有一个a)
+而 
+ms.erase(a); 这里ms为multiset, 则会删除多重集合ms中所有的a
+所以当我们想只删除ms中第一个a时, 就需要通过找到其迭代器实现
+即
+auto it = ms.find(a); 找到第一个a的迭代器
+ms.erase(it); 删除迭代器对应的元素
+可以简写为
+ms.erase(ms.find(a));
+
+上述是想删除ms中第一个a, 但如果我们是想删除第二个a呢?
+方法如下
+示例:
+std::multiset<int> ms = {1, 2, 2, 3, 4};  //multiset默认按值升序排序存储
+auto it = ms.begin();
+std::advance(it, 1); // 移动到第二个元素（从0开始计数）
+ms.erase(it); // 删除第二个元素
+// 结果：{1, 2, 3, 4} (删除了第一个2)
