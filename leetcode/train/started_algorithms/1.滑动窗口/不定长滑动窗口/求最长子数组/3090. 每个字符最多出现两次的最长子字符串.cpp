@@ -4,7 +4,7 @@ public:
         int n = s.size(), ans = 0, left = 0;
         multiset<char> res;  //multiset<type> 多重集合, 允许重复元素(可以存储多个相同的值)
         for (int i = 0; i < n; i++) {
-            while (res.count(s[i]) > 1) {
+            while (res.count(s[i]) > 1) {  //这里是因为随后要插入一个s[i], 如果已经有大于1(即两个s[i]了, 则需删除)
                 res.erase(res.find(s[left]));  // .find()返回指向res中第一个s[i]的迭代器以删去第一个s[i]
                 left++;
             }

@@ -143,7 +143,7 @@ unordered_set采用哈希表实现, 其中的元素是无序的
 其与set 集合的区别如下:
 
 multiset<type> 多重集合
-默认按值升序排序存储
+默认按值升序排序存储  //但是通过res.erase(res.find(ak[left]));  res.find(ak[left])即可实现按序删除ak左端的元素, 即查找ak[left], 并删除.
 允许重复元素(可以存储多个相同的值)
 每次插入都会成功, 即使元素已存在, 可以通过.count() 返回当前多重集合中有多少个该元素
 底层同样采用红黑树实现
@@ -181,3 +181,6 @@ auto it = ms.begin();
 std::advance(it, 1); // 移动到第二个元素（从0开始计数）
 ms.erase(it); // 删除第二个元素
 // 结果：{1, 2, 3, 4} (删除了第一个2)
+
+10.substr提取字符串
+s.substr(pos, len)指从字符串s的索引pos处开始提取长度为len的字符串
