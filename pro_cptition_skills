@@ -103,6 +103,9 @@ while (fruitCount.size() > 2) {
         fruitCount.erase(fruits[left]); // 如果数量归零，移除该水果
     }
 
+unordered_map<char, int> res;
+res.size() 返回的是键值对的数量， 即当前存储的唯一键的种类数 (因为unordered_map要求键(key)必须唯一)
+
 (2)unordered_set<type> 哈希集合
 可用于在不定长滑动窗口中记录在当前窗口中存储有哪些元素(可用于避免窗口内有重复字符.)
 详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\3. 无重复字符的最长子串.cpp"
@@ -182,5 +185,75 @@ std::advance(it, 1); // 移动到第二个元素（从0开始计数）
 ms.erase(it); // 删除第二个元素
 // 结果：{1, 2, 3, 4} (删除了第一个2)
 
+
 10.substr提取字符串
 s.substr(pos, len)指从字符串s的索引pos处开始提取长度为len的字符串
+
+
+11.vector<vector<int>> nums;
+nums.size()返回的是vector<vector<int>>这个二维vector的第一维的大小, 也就是外层vector包含的inner vector(即行)的数量
+如:
+vector<vector<int>> nums = {
+    {1, 2, 3},    // 第 0 行
+    {4, 5},        // 第 1 行
+    {6, 7, 8, 9}   // 第 2 行
+};
+nums.size() 返回3, 因为有3个inner vector, 即3行
+而如果要获取每行的列数, 需要用nums[i].size()
+nums[0].size() 返回3, 因为第0行有3个元素
+nums[1].size() 返回2, 因为第1行有2个元素
+nums[2].size() 返回4, 因为第2行有4个元素
+
+
+12.pair<>的声明和初始化
+使用详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\求最短子数组\632. 最小区间.cpp"
+// 默认构造函数
+pair<int, int> p1; // 两个int都被初始化为0
+
+// 使用make_pair函数
+pair<int, int> p2 = make_pair(10, 20);
+
+// 使用初始化列表 (C++11及以上)
+pair<int, int> p3 = {30, 40};
+
+// 直接构造
+pair<int, int> p4(50, 60);
+
+
+13. 字符'0', '1' 转为数字0, 1
+使用详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\求子数组个数\越短越合法\3258. 统计满足 K 约束的子字符串数量 I.cpp"
+除了
+'0' - '0' == 0, 
+'1' - '0' == 1 
+更高效的为 s[i] & 1 == 0或1  (s[i]为'0' 或 '1')
+因为'0'的ASCII码为00110000, 与1与运算, 即 00110000 & 00000001 = 00000000  (0)
+因为'1'的ASCII码为00110000, 与1与运算, 即 00110001 & 00000001 = 00000001  (0)
+&1 为按位与运算会保留数字的最低位(最右边一位), 其他全部置0
+
+类似的, 连续字母, 
+'a' - 'a' = 0, 
+'b' - 'a' = 1
+
+
+14.map实现数组中 最大值-最小值
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\求子数组个数\越短越合法\2762. 不间断子数组.cpp"
+可以通过map实现, 因为map存储默认按键从小到大排序
+.rbegin()返回指向最后一个元素的反向迭代器 (即键最大的元素的迭代器)
+.begin()返回指向第一个元素的的迭代器 (即返回最小元素的迭代器)
+迭代器需要通过 ->first 访问值, res.rbegin() -> first; 等价于 (*res.rbegin).first;
+
+
+15.以 1e9 + 7 (1000000007) 为底取模时
+需注意1e9为double类型, 不能与int类型的int进行取模运算
+
+如这里 ans 为 int 类型, 需写为
+return ans % 1'000'000'007                                                                                                            '
+
+
+16.函数ranges::max(nums) 找到数组的最大值  ranges::min(nums) 找到数组的最小值
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\求子数组个数\越长越合法\2962. 统计最大元素出现至少 K 次的子数组.cpp"
+如
+vector<int> nums(n);
+int mx = ranges::max(nums);  返回的mx为数组nums的最大值
+int mi = ranges::min(nums);  返回的mi为数组nums的最小值
+
