@@ -6,11 +6,11 @@ public:
         int ans = 0, left = 0, res = 0;
         for (int i = 0; i < nums.size(); i++) {
             res += nums[i];
-            while (left <= i && res >= goal) {
+            while (left <= i && res >= goal) {  //left <= i 这里既避免了left超出nums.size(), 也避免了超出i (right)
                 res -= nums[left];
                 left++;
             }
-            ans += left;
+            ans += left; //i的每一次自增就意味着原先原先已计数的子数组还要再计一次，所以这里直接用 ans += left 处理
         }
         return ans;
     }

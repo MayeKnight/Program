@@ -2,6 +2,14 @@
 -n 意思是后面跟name
 conda activate pytorch #进入pytorch环境
 pip list #查看当前环境中有哪些工具包
+python  进入python环境
+exit()  退出当前环境, 如退出python环境
+
+关于opencv
+已通过anaconda prompt在pytorch环境下的D:\Tech\opencv 目录下安装
+该目录下有image_matting 图像分割文件夹
+
+anaconda安装路径: D:\Tech\anaconda\
 
 -pytorch环境下
 jupyter notebook #进入jupyter notebook
