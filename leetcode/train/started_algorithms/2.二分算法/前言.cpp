@@ -64,6 +64,8 @@ ll lower_bound3(vector<int>& nums, ll target) {
 
 //对于lower_bound(), 若问 >=target, 而数组中所有数均小于taregt, 此时left == len(nums);
 
+//个人常用lower_bound()
+
 
 
 
