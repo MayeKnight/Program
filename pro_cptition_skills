@@ -257,6 +257,49 @@ vector<int> nums(n);
 int mx = ranges::max(nums);  返回的mx为数组nums的最大值
 int mi = ranges::min(nums);  返回的mi为数组nums的最小值
 
+
 17.返回一个数组
 如果数组中不存在目标值 target, 返回 [-1, -1]
 return { -1, -1 };
+
+
+18.C++排序
+C++20中引入了ranges库, 其中包含了ranges::sort, 它可以直接作用于整个范围(如容器, vector), 而无需使用begin和end迭代器。
+传统的std::sort需要传递两个迭代器, 指定排序的范围。
+
+vector<int> arr(5);
+//C++20的ranges库
+ranges::sort(arr);  //对数组arr进行排序
+//传统方法
+using namespace std;
+sort(arr.begin(), arr.end()); //对数组arr进行排序
+
+
+20.计算前缀和
+见"D:\Tech\Code\Program\leetcode\train\started_algorithms\2.二分算法\2389. 和有限的最长子序列.cpp"
+partial_sum 是C++标准库中的一个算法，用于计算序列的部分和(前缀和).它位于 <numeric> 头文件中.
+
+#include <numeric>
+using namespace std;
+
+//partial_sum()计算前缀和
+partial_sum(nums.begin(), nums.end(), result.begin())  //从nums.begin()到nums.end()计算数组nums的前缀和, 并将其存储到result数组中
+示例:
+vector<int> nums = {1, 2, 3, 4, 5};
+vector<int> result(5);
+partial_sum(nums.begin(), nums.end(), result.begin());
+结果:
+result[0] = 1;
+result[1] = 1 + 2 = 3;
+result[2] = 1 + 2 + 3 = 6;
+result[3] = 1 + 2 + 3 + 4 = 10;
+result[4] = 1 + 2 + 3 + 4 + 5 = 15;
+
+//前缀和原地计算
+partial_sum(nums.begin(), nums.end(), nums.begin());
+将前缀和计算的结果存回数组nums中
+//现在 nums = {1, 3, 6, 10, 15};
+
+
+
+
