@@ -301,5 +301,30 @@ partial_sum(nums.begin(), nums.end(), nums.begin());
 //现在 nums = {1, 3, 6, 10, 15};
 
 
+21.快速排序 QuickSort
+视频内容详见"https://www.bilibili.com/video/BV1vP411g7J3/?spm_id_from=333.337.search-card.all.click&vd_source=d87bfce5f3f31ab12142d953a0599436"
 
+//快速排序主要是基于递归实现.
+void QuickSort(vector<int>& nums, int low, int high) {
+    if(low < high) {
+        int pivotpos = Partition(nums, low, high);  // Partition函数是用于找到划分位置, 比方说把 nums[0] = 50 作为基准元素pivot, 进行一轮partition后, 基准元素pivot左边的元素比50小, 右边的元素比50大, Partition函数最终返回基准元素pivot放置的位置
+        QuickSort(nums, low, pivotpos - 1);  //再分别对其子表进行划分
+        QuickSort(nums, pivotpos + 1, high);
+    }
+}
 
+//关键是要仔细看下 Partition 函数是怎样实现的
+int Partition(vector<int>& nums, int low, int high) {
+    int pivot = nums[low]; //常取nums[low]作为基准元素 pivot
+    while(low < high) {
+        while(low < high && nums[high] >= pivot)
+            high--;
+        nums[low] = nums[high]; // 若nums[high]比基准元素小, 则将nums[high]放到nums[low]的位置
+        
+        while(low < high && nums[low] <= pivot)
+            low++;
+        nums[high] = nums[low];
+    }
+    nums[low] = pivot; //这里也可以写成 a[high] = pivot , 因为此时 high == low .
+    return low;
+}

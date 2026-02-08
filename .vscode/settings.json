@@ -14,7 +14,8 @@
         "unordered_set": "cpp",
         "forward_list": "cpp",
         "chrono": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "functional": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
