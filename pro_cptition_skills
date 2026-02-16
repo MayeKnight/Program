@@ -328,3 +328,112 @@ int Partition(vector<int>& nums, int low, int high) {
     nums[low] = pivot; //这里也可以写成 a[high] = pivot , 因为此时 high == low .
     return low;
 }
+
+Note:但手写快速排序可能会导致部分样例超时而不通过, 这时可以使用<algorithm>头文件中的 
+    sort(arr.begin(), arr.end()); 对数组内的元素进行排序
+
+
+22.遍历字符串中的各个字符
+下述例子中是统计字符串s中最小字符的数目
+例子见"D:\Tech\Code\Program\leetcode\train\started_algorithms\2.二分算法\1170. 比较字符串最小字母出现频次.cpp"
+int f(string &s) {
+        int cnt = 0;
+        char ch = 'z';
+        for (auto c : s) {  
+            if (c < ch) {
+                ch = c;
+                cnt = 1;
+            } else if (c == ch) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+
+//范围 -based for 循环
+for(auto element : container) {
+    //处理element
+}
+//等价于传统 for 循环
+for(size_t i = 0; i < s.size(); i++) {
+    auto element = s[i];  //值拷贝
+    //处理element
+}
+
+
+23.向上取整
+C++ 默认 a/b 是向下取整
+若想要 a/b 向上取整, 应写为 (a + b - 1) / b
+
+
+24.二分查找(折半查找)
+详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\2.二分算法\前言.cpp"
+但手写二分查找可能会导致部分样例超时而不通过, 此时可以考虑使用 "前言.cpp" 中的 Note.
+
+
+25.数位和
+数位和是指将一个数字的每一位上的数字相加, 直到求和结果为止
+如数字 1234 的数位和 = 1 + 2 + 3 + 4 = 10
+//计算数位和
+int f(int num) {
+    int sum = 0;
+    for (int i = num; i > 0; i /= 10) {
+        sum += i % 10;
+    }
+    return sum;
+}
+
+
+26.关于for循环
+for (初始化; 条件判断; 更新语句) {
+    循环体;
+}
+完整执行步骤：
+(1)初始化(只执行一次)
+(2)判断条件 → 如果为假，直接结束循环
+(3)执行循环体(如果条件为真)
+(4)执行更新语句(对x的处理, 例如 i++)
+(5)回到第2步, 再次判断条件
+
+
+27.遍历map或unordered_map键值对中的值, 基于范围for循环实现  (很常用)
+map<elementype key, elementype value> m; //遍历map键-值对 中的值, 可以采用 基于范围的for循环 实现
+for(auto pair : m){
+    cout << pair.first << ":" << pair.second << endl;
+}
+其中
+auto 自动推导为 pair<elementype key, elementype value> 类型
+
+例子见""
+for(auto pair : mp){
+            ans += f(pair.second);
+        }
+        return ans;
+
+
+29.采用实数(浮点数)除法, 而非整数除法, 即int强制转换float或double的浮点数类型除法
+在C++中, 如果两个操作数都是整数int类型, / 运算符执行整数除法, 结果截断小数部分. 如果要强制使用浮点数除法(实数除法), 
+就需要至少将其中一个操作数转换为浮点数类型(float, double等), 这样编译器就会进行浮点数除法, 得到带小数的精确结果.
+常用的强制转换方法如下:
+(1)使用 static_cast (C++推荐)
+int width = 12, height = 10;
+double res = static_cast<double>(width) / height;
+
+
+30.有关键值对的在 范围for循环 中的用法
+unordered_map<int, int> cnt;
+for(auto& [_, c] : cnt){   
+
+}
+//是C++17引入的结构化绑定在范围for循环中的用法, 编译器会自动将cnt中的每个元素(即 键值对pair<const int, int>) 解构成两个变量: "_"绑定到键"const int", "c" 绑定到值"int", 
+//这里的"_"只是一个普通的变量名, 通常用作占位符, 表示我们不关心键, 它并非特殊语法, 只是习惯用法, 这样写可以避免显式地使用 pair.first 和 pair.second , 使代码更简洁
+//与上述"27.遍历map中的值, 基于范围for循环实现"等效
+
+
+30."1LL"保证乘法在 long long 范围内进行, 避免整数溢出
+例.
+for (auto& pair : mp) {
+    res = 1LL * pair.second * (pair.second - 1) / 2;  //1LL保证了乘法在 long long 范围内进行, 避免整数溢出
+    ans += res * cnt;
+    cnt += res;
+}

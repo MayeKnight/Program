@@ -1,0 +1,37 @@
+1.环境安装
+Note: ultralytics(yolov8, yolov8现在改名了..)
+本操作基于先前已整理的"pytorch"目录下的操作, 亦即我们已安装了anaconda.
+(1)创建虚拟环境, 避免默认环境越来越臃肿
+在 anaconda prompt 下
+conda create -n yolov8 python=3.8   其中 -n 后跟创建环境的名字, python=3.8指明创建的版本
+
+随后可以通过
+conda activate yolov8  激活名为yolov8的环境
+"这个点也是接下来需要注意的, 我们后续的所有操作都需要在当前的环境下进行, 亦即在执行yolov8相关操作时, 要激活名为yolov8的环境这步是十分重要的."
+
+(2)配置国内源, 避免因为要从国外地址下载而影响下载速率
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+
+(3)安装pytorch环境
+由于每个conda环境都是相互隔离的, 安装的包只存在于当前激活的环境中, 虽然先前我们有一个名为pytorch的环境安装了PyTorch, 但新建的名为yolov8的环境是一个全新的环境, 
+目前只包含了 Python 3.8 和最基本的依赖包, 里面并没有 PyTorch. 如果要在名为yolov8的环境中运行 YOLOv8 (它依赖PyTorch) , 就必须在这个环境中安装 PyTorch.
+conda install pytorch==2.1.1 torchvision==0.16.1 torchaudio==2.1.1 pytorch-cuda=12.1 -c pytorch -c nvidia
+
+(4)安装ultralytics(YOLOv8)
+官方文档: https://docs.ultralytics.com/zh/
+
+在下载好的ultralytics源码目录(D:\Tech\Code\Program\yolov8\ultralytics-main)下(且在之前创建好的名为yolov8的环境下)
+pip install -e .   //通过源码安装
+如遇SSL链接问题报错
+pip install -e . -i https://pypi.org/simple  //绕过有问题的清华源进行安装即可
+
+采用这种安装方式, 我们后续在代码上修改, 它就能检测到了
+
+(5)如何正确使用windows中的终端
+除了在 anaconda prompt 中可以使用yolov8
+在 cmd (命令提示符)中其实也可以使用, 不过要先进行初始化操作
+在 cmd 中输入
+conda init cmd.exe  //先让cmd进行下初始化, 随后关闭cmd, 重新打开
+conda activate yolov8  //就可在cmd中激活创建的名为yolov8的环境
+(在powershell中不能激活环境)
+因此在vscode中的终端, 我们也要选择为cmd, 而不是powershell, 这样我们后续启动的所有终端都是cmd的终端, 这样就可以避免后续的很多问题.
