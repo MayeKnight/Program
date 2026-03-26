@@ -269,10 +269,12 @@ C++20中引入了ranges库, 其中包含了ranges::sort, 它可以直接作用�
 
 vector<int> arr(5);
 //C++20的ranges库
-ranges::sort(arr);  //对数组arr进行排序
+ranges::sort(arr);  //对数组arr进行排序(默认是升序排序, 即从小到大排序)
+ranges::sort(a, greater());  //对数组arr进行排序(降序排序, 即从大到小排序)
 //传统方法
 using namespace std;
-sort(arr.begin(), arr.end()); //对数组arr进行排序
+sort(arr.begin(), arr.end()); //对数组arr进行排序(默认是升序排序, 即从小到大排序)
+sort(arr.begin(), arr.end(), greater<ElementType>());  //对数组arr进行排序(降序排序, 即从大到小排序), 其中'ElementType'需指明具体元素类型, 如int
 
 
 20.计算前缀和
@@ -437,3 +439,72 @@ for (auto& pair : mp) {
     ans += res * cnt;
     cnt += res;
 }
+
+
+31.关于取余运算 %
+C++中, 取余 % 运算符遵循向零取整规则, 即"余数的符号与被除数相同"
+即
+-101 % 2 = -1
+101 % 2 = 1
+
+
+32.C++字符串用法
+string s;
+
+int i = s.find(alpha);
+//在字符串s中查找字符alpha第一次出现的位置(索引)
+//返回值, 如果找到, 返回该字符首次出现的下标(从0开始), 如果字符串中不存在该字符, 则返回一个特殊值 string::nops
+//string::npos, 其中的'npos'是'no position'的简写 
+
+int j = s.rfind(alpha);
+//在字符串s中查找字符alpha最后一次出现的位置, 它是从字符串末尾向开头搜索的
+//返回值, 如果找到, 返回最后一次出现的下标, 如果不存在, 同样返回 string::npos
+
+for(char alpha = 'a'; alpha <= 'z'; alpha++){}
+//枚举字符串中的字母
+
+
+33.bool has[26]{};  
+//声明has数组, 并置空
+//相当于
+//vector<bool> has(26);
+vector数组的相关用法
+//vector<int> has;
+//has.push_back(a); //向数组添加a
+
+
+34.reduce(arr.begin(), arr.end()) 累加函数
+reduce是C++标准库算法, 在头文件<numeric>, 类似于 std::accumulate 累加函数, 但支持并行执行, 通常用于对一个范围内的元素进行求和.
+这里是计算从 arr.begin() 到 arr.end() 所有元素的和.
+
+
+35.遍历(枚举)矩阵
+例题详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\常用枚举技巧\枚举中间\3128. 直角三角形.cpp"
+for (auto& row : grid) {             //遍历(枚举)矩阵每一行
+    for (int i = 0; i < n; i++) {    //计算矩阵每一列1的和, 先前声明了  vector<int> col(n, -1);  //初始化为-1, 提前-1
+        col[i] += row[i];
+   }
+}
+
+for (auto& row : grid) {             //遍历(枚举)矩阵每一行
+    int row_sum = reduce(row.begin(), row.end()) - 1;   //计算矩阵每一行1的和
+}
+
+
+36.关于断点调试, debug
+最简单的就是在代码左侧点一下, 运行程序的时候就会停到这里
+我们可以选择'继续', 程序就会像以往一样, 正常执行
+例子详见"https://www.bilibili.com/video/BV1q54y1X7LL/?spm_id_from=333.337.search-card.all.click&vd_source=d87bfce5f3f31ab12142d953a0599436"
+
+
+37.resize()函数
+//使用实例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\前缀和\303. 区域和检索 - 数组不可变.cpp"
+resize()函数可以为声明的数组预先分配足够空间, 以便后续通过下标访问元素, 避免频繁扩容
+vector<int> res;
+res.resize(nums.size() + 1); //数组res的大小变为 nums.size() + 1
+for(int i = 0; i < nums.size(); i++){
+    res[i + 1] += nums[i];
+}
+
+
+38.

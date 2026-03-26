@@ -35,3 +35,34 @@ conda init cmd.exe  //先让cmd进行下初始化, 随后关闭cmd, 重新打开
 conda activate yolov8  //就可在cmd中激活创建的名为yolov8的环境
 (在powershell中不能激活环境)
 因此在vscode中的终端, 我们也要选择为cmd, 而不是powershell, 这样我们后续启动的所有终端都是cmd的终端, 这样就可以避免后续的很多问题.
+
+
+2.模型预测
+(1)模型预测的基本使用
+yolov8支持两种调用方式, 一种是基于命令行的方式, 如下述所示
+yolo task=detect mode=predict model=./yolov8n.pt source="./ultralytics/assets/bus.jpg"
+//参数含义如下
+//yolo 启动命令
+//task=detect 指定做什么任务, detect就是目标检测任务
+//mode=predict 这个参数mode就是让它进行'预测'还是'训练'还是'验证'
+//model=./yolov8n.pt  我们要使用哪个模型进行预测
+//source="./ultralytics/assets/bus.jpg"  这里的source就是对谁进行检测
+//经过这个命令, 它就可以对这个图片进行推理了
+
+以下操作在"D:\Tech\Code\Program\yolov8\ultralytics-main"目录下的终端中进行, 可以通过 cd 文件目录 到目标目录
+conda activate yolov8  //激活先前创建的yolov8环境
+yolo detect predict model=./yolov8n.pt source="./ultralytics/assets/bus.jpg"   //'task='和'mode='可省略, 
+//执行结果以图片形式存放到"D:\Tech\Code\Program\runs\detect"目录下, 在终端中会输出结果, 如本例输出"4 persons, 1 bus, 1 stop sign"
+
+我们先看一下它所对应的代码形式是怎么样的, 在yolov8里面, 我们在做检测的时候就并不需要我们再有一个完整的detect.py了, 我们只需要有三行代码就能检测了
+"D:\Tech\Code\Program\yolov8\ultralytics-main\program\demo_predict.py"路径下演示一下
+
+接下来讲一些常用的参数, 因为如果只是以上述方式运行的话, 会发现其实什么也得不到, 我们就引出一些常用的参数, 来控制它, 得到一个我们想要的结果
+//可选参数
+官方提供的在"D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\cfg\default.yaml"目录下能找到, 在这里面包含了所有可能用到的参数
+在这里面能找到"Predict settings"就是模型预测部分要使用的参数了
+当然这里的参数也不是一个非常全的版本, 要想看到全的版本, 要去官网上的官方文档中右非常详细的参数的介绍(一般来说不会用到那么多)
+比方说常用的
+show: False  # show results if possible, 要不要检测完成后, 把检测结果展现出来
+save_txt: False  # save results as .txt file, 是否在保存目标检测结果时, 将每个检测到的目标以.txt的形式保存下来
+save_conf: False # save results with confidence scores, 是否在保存目标检测结果时, 将每个检测到的目标所对应的置信度分数(confidence score)也一同保存下来, 置信度是模型对预测结果的确信程度, 通常是一个0到1之间的数值, 反映模型认为"当前检测框内确实包含目标, 并且框的位置和大小准确"的把握

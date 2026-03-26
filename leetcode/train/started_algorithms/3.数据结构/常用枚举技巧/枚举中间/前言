@@ -1,0 +1,26 @@
+枚举中间
+对于有三个或者四个变量的问题, 枚举中间的变量往往更好计算
+为什么？比如问题有三个下标，需要满足 0≤i<j<k<n, 对比一下:
+
+枚举 i, 后续计算中还需保证 j<k。
+枚举 j, 那么 i 和 k 自动被 j 隔开，互相独立，后续计算中无需关心 i 和 k 的位置关系。
+所以枚举中间的变量更简单.
+
+常用 后缀最大值/最小值, 前缀最大值/最小值.
+
+枚举中间+前后缀分解(前缀最小值和后缀最小值)详见
+"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\常用枚举技巧\枚举中间\2909. 元素和最小的山形三元组 II.cpp"
+
+vector<int> suf(n); // 后缀最小值
+suf[n - 1] = nums[n - 1];
+for (int i = n - 2; i > 1; i--) {
+    suf[i] = min(suf[i + 1], nums[i]);
+}
+int ans = INT_MAX;
+int pre = nums[0]; // 前缀最小值
+for (int j = 1; j < n - 1; j++) {
+    if (pre < nums[j] && nums[j] > suf[j + 1]) { // 山形
+        ans = min(ans, pre + nums[j] + suf[j + 1]); // 更新答案
+    }
+    pre = min(pre, nums[j]);
+}
