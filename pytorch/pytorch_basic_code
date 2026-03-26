@@ -51,7 +51,7 @@ Traceback (most recent call last):
 
 -python控制台, 常用于测试调试
 img_path = "D:\\Tech\\pycharm\\program\\pytorch\\data_set\\hymenoptera_data\\train\\ants\\0013035.jpg"  #得到一个字符串对象, 作为图片路径
-#这里图片的绝对路径原先为D:\Tech\pycharm\program\pytorch\data_set\hymenoptera_data\train\ants\0013035.jpg, 但在python环境下, 要改为\\表示转义, 
+#这里图片的绝对路径原先为D:\Tech\pycharm\program\pytorch\data_set\hymenoptera_data\train\ants\0013035.jpg, 但在python环境下, 要改为\表示转义, 所以要改为\\
 或者可以写成
 img_path = r"D:\Tech\pycharm\program\pytorch\data_set\hymenoptera_data\train\ants\0013035.jpg"  #其中, 字符串前的r用于取消转义
 dir_path = "data_set/hymenoptera_data/train/ants"  #得到一个文件夹的地址, 使用相对地址/则不用再补一个相同的符号
