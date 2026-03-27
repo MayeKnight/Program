@@ -84,25 +84,25 @@ result = yolo(source="screen")  #对摄像头内容进行检测, 这里由于我
 result = yolo(source=r"D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\assets\bus.jpg", save=True)  #其它参数与此类似, 使用的话, 在这里指定上即可
 
 额外重点的需要再说两个参数conf, IoU
-(1)conf(置信度, Confidence Score): 模型对某个检测框的"确信程度", 通常是一个0到1之间的数值, 如runs 目录下面, 其中的predict文件夹下bus.jpg图片中的数值其实就是conf, 置信度
--它综合了两个方面:
+-(1)conf(置信度, Confidence Score): 模型对某个检测框的"确信程度", 通常是一个0到1之间的数值, 如runs 目录下面, 其中的predict文件夹下bus.jpg图片中的数值其实就是conf, 置信度
+--它综合了两个方面:
 框内包含目标的概率(objectness)
 预测框与真实框的匹配精度(通常由IoU决定)
--作用:用于筛选预测结果
+--作用:用于筛选预测结果
 在推理时, 可以通过设置置信度阈值(如conf=0.25)来过滤掉低置信度的预测, 只保留模型比较确信的结果
 eg.
 result = model.predict(source="bus.jpg", conf=0.5)  # 只保留置信度≥0.5的框
 结合先前内容即
 result = yolo(r"D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\assets\bus.jpg", save=True, conf=0.5)  #只保留置信度>=0.5的框, 可见runs目录下先前所得到的predict4中bus.jpg的置信度为0.26的框, 并没有在本行代码运行后的predict5的bus.jpg中出现  (即conf值设置的越高, 可能出现的框越少)
-(2)IoU(交并比, Intersection over Union): 预测框与真实框(或另一个预测框)的重叠程度, 计算公式为
--含义
+-(2)IoU(交并比, Intersection over Union): 预测框与真实框(或另一个预测框)的重叠程度, 计算公式为
+--含义
 IoU = Area of Overlap / Area of Union, 值也在0和1之间, 越大表示框重合度越高
 其中
 Area of Overlap(交集面积): 指两个框(例如预测框和真实框)重叠区域的面积
 Area of Union(并集面积): 指两个框覆盖的总面积
 计算公式为 
 Union = Area(A) + Area(B) - Overlap
--作用
+--作用
 评估定位精度:判断预测框是否"准"
 非极大值抑制(NMS, Non-Maximum Suppression):去除同一目标上的多个重叠框, 是目标检测中常用的后处理步骤, 它的核心思想是, 保留局部置信度最高的框作为"基准框", 计算该基准框与剩余每个框的IoU(交并比), 若某个剩余框与基准框的IoU大于预设阈值(如0.5), 则认为它们检测的是同一个物体, 则该剩余框移除(抑制)  (iou值设置越高, 可能出现的框就越多)
 结合先前内容即
@@ -112,3 +112,53 @@ result = yolo(r"D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\assets\
 "conf"回答"这个框可信吗?", 用于初步筛选, 决定哪些框值得保留(基于置信度)
 "IoU"回答"这个框和另一个框有多像?", 在初步筛选后, 通过 NMS 去掉重叠度高的冗余框, 保证每个目标只有一个最终结果
 
+
+(2)检测结果使用拓展(Boxes信息, 结果可视化(要将BGR转为RGB))
+-Note:
+--1.Boxes信息:在目标检测模型(如YOLOv8)的输出中, Boxes是指模型预测的所有边界框(bounding boxes)及其相关属性. 通过 result[0].boxes 可以访问这些信息, 通常包含以下内容
+xyxy: 边界框的坐标, 格式为 [x1, y1, x2, y2], 表示左上角和右下角的像素坐标
+conf: 置信度分数(confidence score), 范围0到1, 表示模型对该框的把握程度.
+cls: 类别ID(整数), 对应模型训练时的类别索引.
+xywh(可选): 边界框的中心坐标和宽高 [x_center, y_center, width, height], 常用于后续处理
+
+--2.结果可视化与 BGR <-> RGB 转换
+YOLOv8 (Ultralytics YOLO) 默认使用 OpenCV 读取图像, 
+在 OpenCV 中, 默认的颜色通道顺序是 BGR (蓝-绿-红), 因此读取到的图像是BGR格式. 但在内部处理时, 模型本身需要 RGB 输入(因为模型训练时使用的是RGB数据), 所以 Ultralytics库 会在将图像送入模型前自动将 BGR 转换为 RGB. 
+而大多数图像显示库(如 matplotlib, PIL) 以及网页图像使用的是 RGB (红-绿-蓝). 如果直接用 OpenCV 读取的图像(BGR) 交给 matplotlib 显示，颜色会异常(比如红色变成蓝色). 因此，在可视化时需要将 BGR 转换为 RGB。
+
+-一般我们拿到检测结果后, 一般不仅仅是将它存到本地, 还要做一些额外的处理, 额外处理这部分的信息其实就是存在 Boxes 里面
+"接下来的一系列操作是在jupyter中进行, 在jupyter中运行这部分的代码"
+--对于vscode中使用jupyter, 如果是完全按照先前的方式安装的 yolov8, 是暂时用不了的, 需要在相应环境下的终端安装下
+conda activate yolov8  //激活先前创建的yolov8环境
+cd D:\Tech\Code\Program\yolov8\ultralytics-main  //打开工作目录
+conda install jupyterlab  //安装jupyter
+安装jupyter扩展
+新建.ipynb文件(如"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\predict.ipynb")
+打开该文件, 在右上角选择内核, 选择先前创建的yolov8环境, 随后就可以输入和运行(shift+enter)代码
+如"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\predict.ipynb"所示
+运行完第一个代码块后, 得到一个result, 可以在第二个代码块中输入result, 在 shift+enter 运行下看看 result 是什么, 发现result包含了一系列信息, 外层是一个list, 这里改为 result[0] 再运行下就得到了完整的 result 了
+里面包含了 boxes, orig_img, orig_shape, path 等等信息
+
+先来做绘图(检测结果可视化)这部分工作
+yolov8提供了plt方法, 如上述jupyter文件中第三个代码块所示
+import matplotlib.pyplot as plt  #使用Matplotlib 的 pyplot 模块 进行绘图和显示，所以也可以叫 “pyplot 方式”(通常称为"plt方式")  (也可写为import matplotlib.pyplot as mss, 语法上完全合法, as后面可以是任何有效的python标识符(字母, 数字, 下划线, 不能以数字开头), 但强烈建议使用plt, 因为 plt 是 Matplotlib 社区的标准别名，几乎所有文档、示例、教程都采用这个约定。使用非标准别名会让代码难以被他人理解，也容易与自定义变量混淆。除非有特殊理由（如避免命名冲突），否则应遵循惯例，使用 import matplotlib.pyplot as plt)
+---
+#检测结果可视化
+# %matplotlib inline 是jupyter的魔法命令(magic command), 用于将 Matplotlib 绘制的图形直接嵌入到 Notebook 的单元格输出中, 而不是弹出独立的窗口.
+# 魔法命令 后不能直接跟注释, 否则将导致解释器将 # 及其后的内容当成命令的参数, 导致报错
+import matplotlib.pyplot as plt  #是python中导入模块并赋予别名的常用语法, matplotlin.pyplot 是matpoltlib库的一个子模块, 包含了一系列用于创建图形和绘图的函数(如 plot(), imshow(), show()等)， as plt 给导入的模块起一个别名, 之后在代码中可以用 plt 代替 matplotlib.pyplot, 使代码更简洁易读.
+%matplotlib inline 
+plt.imshow(result[0].plot()) 
+# result是调用model.predict()返回的列表, 列表中的每个元素对应一张输入图像的检测结果(Result对象). 若只预测了一张图像, 则 result[0] 就是该图像的结果对象
+# YOLO 的 Results 对象内置了 plot() 方法, 该方法会在原始图像上绘制检测框, 类别标签和置信度, 并返回一个 BGR 格式的 NumPy 数组 (蓝、绿、红, 因为底层使用 OpenCV 绘图), 这个数组可以直接用于显示、保存或进一步处理
+# plt.imshow() 是 Matplotlib 的 imshow 函数用于显示图像, 默认情况下 imshow 期望输入的是 RGB格式 的图像数据 (即通道顺序为 红、绿、蓝)
+---
+
+如果如上述所示, 只使用 plot() 方法, 会发现得到的图颜色不正常, 这就是因为 plot() 得到的是 BGR 通道, 但直接输入到了 预期为 RGB 的 imshow() 中所致
+如果要将 BGR 转为 RGB, 需要在后面再加一个转换, 如下述所示
+
+---
+import matplotlib.pyplot as plt  
+%matplotlib inline 
+plt.imshow(result[0].plot()[:,:,::-1]) 
+---
