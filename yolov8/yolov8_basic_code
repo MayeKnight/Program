@@ -162,3 +162,78 @@ import matplotlib.pyplot as plt
 %matplotlib inline 
 plt.imshow(result[0].plot()[:,:,::-1]) 
 ---
+Note: [:,:,::-1] 是一种通过 NumPy切片 将 BGR 图像转换为 RGB 图像, 这个技巧在 numpy 中有效, 因为图像数组 shape(H, W, 3), 其中第三个维度索引 0, 1, 2 分别对应 B, G, R, 翻转顺序后变为 R, G, B.
+在三维数组 arr[:,:,::-1]中, arr是形状为(高度, 宽度, 通道)的 Numpy 数组(即(H, W, 3), 其中3为3通道, 这里指B, G, R), 通道顺序为 BGR
+
+切片(slicing)基本形式是Python中用于从序列(如字符串, 列表, 元组, NumPy数组等)中提取子序列的一种灵活操作. 它通过指定[start:stop:step]三个参数来定义要选取的元素范围
+基本语法
+seq[start:stop:step]
+start:起始索引(包含), 默认为0
+stop:结束索引(不包含), 默认为序列长度.  (左闭右开区间)
+step:步长, 默认为1. 可以为负数, 表示反向提取. 也可省略
+eg.
+s = [0, 1, 2, 3, 4, 5]
+print(s[1:4])     # [1, 2, 3]   索引 1 到 3（不包含4）
+print(s[:3])      # [0, 1, 2]   省略 start → 从开头
+print(s[3:])      # [3, 4, 5]   省略 stop  → 直到末尾
+print(s[::2])     # [0, 2, 4]   步长为 2
+print(s[::-1])    # [5, 4, 3, 2, 1, 0]  步长 -1 → 反转
+#负索引
+print(s[-3:-1])   # [3, 4]  （从倒数第3到倒数第1，不包含倒数第1）
+print(s[-1::-1])  # [5,4,3,2,1,0] 从末尾开始反向到开头
+#重要特点
+切片不会修改原序列, 而是返回一个新的序列(浅拷贝或视图, 取决于元素类型)(浅拷贝意味着创建了一个新的容器对象,但其中的元素（如果是可变对象）仍然引用原对象中的相同元素.  视图不复制数据，而是共享原始数组的内存块，只是以不同的形状或步长来访问数据。修改视图中的元素会直接影响原数组)
+对于 NumPy数组, 切片返回的是原数组的视图(view), 修改视图会影响原数组(除非显式复制)
+可以省略任何部分, 但必须保留冒号
+
+[:,:,::-1]表示:
+前两个维度(高度, 宽度)保持不变(:表示全部选取)
+第三个维度(通道)使用 ::-1 即翻转通道顺序, 因此原本 [B, G, R] 变为 [R, G, B], 完成了 BGR -> RGB 的转换
+
+依次执行"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\predict.ipynb"其中的代码块后发现得到的图颜色变为正常
+
+
+--可视化说完了, 接下来看下如何取里面具体的信息
+具体的信息其实都在 result 的 boxes 里面, 由于得到的 result 是一个序列, 而我们这里只导入了一张图片, 故这里为
+result[0].boxes   # 即索引为0的第一张图片的 boxes 信息
+可见 boxes 中包含很多信息, 比方说 boxes 的 data 一栏,  [2.2875e+01, 2.3128e+02, 8.0498e+02, 7.5684e+02, 8.7327e-01, 5.0000e+00], 前四个为属性坐标, 后面一个参数为置信度(confidence score), 最后一个是它的类别
+cls 一栏则是非常明确的类别(class), 和上面的 data 的最后一个参数所在列是对应着的
+conf 一栏则是和上面 data 中的 置信度 (confidence score) 所在列也是对应着的
+xywh 给出中心点 x, y 的坐标, 再给出 宽w, 高h 一个总体的大小
+xywhn 其中 n 即 normalize 归一化, 即在整个图片大小的基础上进行 normalize 归一化, 给出一系列分数
+xyxy 即 xmin, ymin, xmax, ymax, 即左上角和右下角的坐标
+通过这样的方式, 就可以把这个目标从图中框出来
+
+---具体的引用, 可以通过 result[0].boxes.其他 来实现, 比方说
+我们就想要 xywh, 就可以通过如下取到
+result[0].boxes.xywh   #只不过这里得到的还是个 tensor 数据类型, 如果我们想把它转为 numpy 数据类型, 我们还需要先调用一下 cpu(), 再调用一下 numpy()
+result[0].boxes.xywh.cpu().numpy()  # 调用下cpu(), 再调用下numpy(), 将 tensor数据类型 转为 numpy 数据类型
+后续我们就可以根据 numpy 数据, 按照想要的方式将它从图上画出来
+
+
+Note:
+(1)在jupyter使用中, 如果要可视化模型预测结果, 一定要设置 %matplotlib inline  魔法命令, 并且所在行不能有注释, 否则无法使用, 因为 Ultralytics库(yolov8)在运行 plot() 或 show()时, 为了在服务器等无头(headless)环境下稳定运行, YOLO会强制将后端设置为了 Agg.
+Agg后端是 Matplotlib 的一个基础后端, 主要用于生成静态图片文件, 这个后端只负责"画图"和"存图", 不负责"显示", 无法弹出独立的显示窗口, 故直接调用 plot.imshow() 会报错
+而 %matplotlib inline 魔法命令的作用，就是将图形直接“嵌入”到 Notebook 的输出中，从而绕过了对 GUI 后端的需求
+(2)jupyter的使用过程中, 要重新加载模型, 否则预测过程中的参数将不会更新, 除非手动再次给出.
+如果说并不想重新加载模型, 可以将 比如说之前设置的 save_txt 参数拿回来, 然后强制的, 再把它设成 False, 这样的话, 它就不会被刚才我们所设置的参数所影响了
+这个理解过程见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\predict.ipynb"
+
+
+3.数据集构建
+(1)数据准备
+其实, 本身这种检测, 都是对图片进行检测的("图片类型数据"), 如果说我们现在手头的数据就是图片类型的数据, 那这里我们就不需要再进行额外的处理了, 我们就可以直接进行标注
+而如果先现在没有图片这种数据, 而是有视频类型数据("视频类型数据"), 那就要对它进行额外处理, 把它进行抽帧处理, 然后把它导成一张一张的图片
+
+这里图片类型数据就不再演示了, 视频类型数据这里再来演示下抽帧部分代码该如何写, 将视频进行抽帧处理, 导出为图片
+详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\extract.ipynb"  (extract提取)
+右上角选择内核, 选择先前创建的yolov8环境
+执行完前几个代码块后, 同样会遇到图片颜色空间通道需要转换的问题
+---
+# 接下来通过 matplotlib 的 pyplot 方法()来让它可视化一下
+# plt.imshow(frame)  # 先前声明了 plt 是 matplotlib.pyplot 方法的别名
+# 但此时也有和上一节讲的一样的问题 (见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\predict.ipynb")
+# 即这里输出的这一帧 frame 为 BGR, 而不是 plt 所期望的 RGB 的三通道顺序, 故所得到的图颜色不正常
+# 上一节是通过[:,:,::-1]这种方式来翻转通道的, 这里我们可以通过 OpenCV 的 cvtcolor() 方式, 来实现由 BGR 到 RGB 的转换, 其中 cv2.cvtcolor(图片, 模式), 图片选中之前的 frame 帧, 模式选为 cv2.COLOR_BGR2RGB 将图像的颜色空间从 BGR 转换为 RGB
+plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
+---
