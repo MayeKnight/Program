@@ -237,3 +237,21 @@ Agg后端是 Matplotlib 的一个基础后端, 主要用于生成静态图片文
 # 上一节是通过[:,:,::-1]这种方式来翻转通道的, 这里我们可以通过 OpenCV 的 cvtcolor() 方式, 来实现由 BGR 到 RGB 的转换, 其中 cv2.cvtcolor(图片, 模式), 图片选中之前的 frame 帧, 模式选为 cv2.COLOR_BGR2RGB 将图像的颜色空间从 BGR 转换为 RGB
 plt.imshow(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 ---
+通过这种方式, 我们就从视频里面把每一帧抽出来了("D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\extract.ipynb"  (extract提取))
+拿到这些图片之后, 我们就可以对图片进行标注了 (图片保存到了"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\demo_images"目录下)
+
+标注的话, 我们先来介绍下 labelimg 数据集标注, 一个比较方便实用的数据集标注工具
+在先前创建的 yolov8 环境下的终端中进行如下操作
+pip install labelimg  # labelimg 环境安装, note:vscode打开终端的快捷键 ctrl + ~
+labelimg  # labelimg 启动命令
+---
+# 启动 labelimg 后进行标注操作如下
+点击左侧 Open Dir, 选择先前创建的 demo_images 文件夹
+选择完之后, 右下角 File List 就会出现一堆文件, 双击任意一栏就能打开对应图片
+再点击左侧的 Change Save Dir, 选择将标注结果存到新创建的 Annotation 文件夹下  (D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\Annotation) (Annotation 标注, 注释)
+# 接下来就可以进行标注了, 但在标注之前, 推荐做两个设置
+一个是左上角 View 里面有个 Auto Save Mode, 如果是正常安装的话, 这个选项是没有勾上的, 这里要勾上, 就会自动的进行保存
+另一个则是左边一栏的 Change save format, 默认情况下是 PascalVOC, 这里我们要选择 YOLO, 再点击上面的 Save, 保存格式就是 YOLO 了
+# 然后我们就可以进行标注了
+标注的话, 在图片上右键选择 Create RectBox 进行标注  (rectbox 矩形框)
+---
