@@ -253,5 +253,71 @@ labelimg  # labelimg 启动命令
 一个是左上角 View 里面有个 Auto Save Mode, 如果是正常安装的话, 这个选项是没有勾上的, 这里要勾上, 就会自动的进行保存
 另一个则是左边一栏的 Change save format, 默认情况下是 PascalVOC, 这里我们要选择 YOLO, 再点击上面的 Save, 保存格式就是 YOLO 了
 # 然后我们就可以进行标注了
-标注的话, 在图片上右键选择 Create RectBox 进行标注  (rectbox 矩形框)
+标注的话, 在图片上右键选择 Create RectBox 进行标注  (rectbox 矩形框), 选中框后, 可以输入 label 的名字
+标注完后, 在左侧栏选择 Next Image 切到下一张图片进行标注, 我们也可以通过键盘上的快捷键操作, D 就是下一张, A 就是上一张, W 快速选框
+当我们在下一张图片选框时, 就不再需要输入这个名字了, 如果说 label 先前已经创建过了, 直接在下面选择即可
+以此类推, 把整个数据集标注完就可以了
+# 然后我们来看下标注完会产生什么东西
+会发现标注完之后, 在先前创建的 Annotation 文件夹中有一系列和图片名字完全一样的 .txt 文件
+比方说打开"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\Annotation\30.txt"
+会发现有以下 0, 1 两行内容, 分别代表什么意思呢？ 就是说我们一共画了两个框(0, 1为对应标识符), 第一个框是 0, 第二个框是 1, 随后紧跟的四个参数为标签信息, 0, 1 的含义在 Annotation 文件夹中的 classes.txt 文件中可以看到, 即我们刚才设置的 label (标签), 这里先创建的 SiShen, 后创建的 XiaoYing, 所以, SiShen 就是 0, XiaoYing 就是 1.
+0 0.420341 0.793566 0.117234 0.182306   # 后面四个参数的标签信息是 xywh 的形式, 即所画框整体中心的 x, y 坐标, 以及所占整体 宽w, 高h 的比例(经过 Normalize归一化 后的)
+1 0.523547 0.782172 0.101202 0.197051
+其他 Annotation 文件夹下的 .txt 文件与此类似.
+# 通过这种方式就可以把这个数据集标注出来了
+随后对 labelimg 直接关闭即可
 ---
+
+
+下面再给出另一个标注工具, labelimg确实比较简单好用, 但毕竟需要安装, 这里提出一个辅助的标注工具
+make sense数据集标注, 只需要把数据集传上去就可以标了, 我们这里看下它怎么用
+地址: https://www.makesense.ai/
+点击右下角 Get start
+点击 Drop images 上传图片, 在 demo_images 文件夹里 ctrl + A 全选图片, 打开, 会告诉你加载了多少张图片
+接下来会让你选要做一个什么样的任务, 是 Object Detection 目标检测, 还是 Image recognition 图像识别
+这里我们选 Object Detection 目标检测
+随后跳转后会提示"Your label list is empty", 让我们选择一下标签, 因为默认的标签是空的, 我们可以在跳出的小窗口的左上角点击 + 号新建, 第一个标签为 SiShen, 第二个标签为 XiaoYing (如果说已经知道要标多少类, 就可以在这里新建,如果说不知道, 直接点 start project 即可)
+然后我们就可以对图片同样地进行标注了, 直接画框, 甚至都不用像 labelimg 一样 create rectbox
+右边一栏会告诉我们框的结果, 并且会让我们 select label (选择标签), 选择对应的就能把它标注出来了, 以此类推, 会用不同的颜色框把不同的 label 区分出来
+在下方 > 选择下一张, 以此类推
+当我们标注完成之后, 就可以选择左上角的 Actions 里面有个叫 Export Annotation (输出标注), 选择 A.zie package containing files in YOLO format. 即 一个 YOLO 格式的文件的压缩包 点击 Export 导出. 就会把它下载到本地了 ("D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\Annotition_make_sense_method\Annotation")
+打开里面的文件, 比方说"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\Annotition_make_sense_method\Annotation\30.txt", 会发现标注的格式和先前的 labelimg 方式的格式是一样的
+
+make sense 除了能在线进行标注以外, 还有个功能是非常强大的, 就是它可以加载我们本地预先训练好的模型, 来对它进行辅助标注
+在左上角 Actions 里面点击 Run AI locally
+里面有 YOLOv5, COCO SSD, POSE-NET, 这里我们选择 YOLOv5, 选择 Use model
+随后就会跳出窗口, 让我们把 yolov5 模型传上来, 这里尝试过将 yolov8 模型传上来也是用不了的, 只支持 yolov5, 这里暂且跳过
+
+
+(2)roboflow公开数据集
+前面介绍了数据集标注, 但是如果你真的不想标数据, 你就可以去网上找, 但是具体去哪找呢? 现在你打开网页去找, 大部分的可能就是找到一些比较常见的数据集, 什么活塞, 烟雾, 带没带头盔, 车辆, 行人, 等等这些, 而且可能是大家做的比较烂(大街), 比较透的那种
+所以除了这些数据集以外, 我们可以在 roboflow 里找一些数据集
+地址: 
+https://public.roboflow.com/object-detection
+https://univerese.roboflow.com/
+这里(比方说 https://public.roboflow.com/object-detection) 它就提供了非常多的数据集
+比方说 roboflow 100 包含了 100个 datasets (数据集) 都是用于做目标检测的 (需要翻墙, 否则可能出现 page not found)
+那我们如何下载数据集呢? 
+比方说点开一个数据集, 在左侧栏里能看到包含多少张图片, 点击左侧栏的 Dataset 就可以下载了
+比方说 https://public.roboflow.com/object-detection/aquarium 里面有关于数据集的描述, 包括图片的类别(classes)
+在左侧 DOWNLOADS一栏下载, 里面支持下载很多格式, 这里我们选择我们需要的类别, YOLOv8, 选择 Download zip to computer, 点击 continue 下载
+在如上述地址所下载的数据集("D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\datasets\aquarium"), 它帮我们把数据集划分好了, 分为 train训练数据集, valid验证数据集, test测试数据集
+
+在机器学习和深度学习中, 数据集通常划分为三个子集, 
+train训练数据集: 用于训练模型, 即让模型学习数据中的特征和规律, 模型通过多次迭代(epoch)不断调整参数(如权重、偏置), 以最小化损失函数. 通常占总数据集的 60%-80%
+valid验证数据集: 用于在训练过程中评估模型的泛化能力, 并调整超参数(如学习率, 网络结构, 正则化强度等), 每个 epoch 或若干步后, 用验证集计算指标(如准确率、损失), 监控模型是否过拟合. 不用于更新模型参数, 只作为"裁判". 通常占总数据集的 10%-20%
+test测试数据集: 用于最终评估模型的性能, 模拟模型在真实的未知数据上的表现. 仅在模型训练和超参数调整全部完成后使用一次, 得到最终指标(如准确率, mAP), 绝对不参与训练或调参, 以保证结果的客观性. 通常占总数据集的 10%-20%
+划分数据集是为了
+避免过拟合: valid验证数据集用于监控模型是否过度记忆训练数据, 而测试集提供无偏见的最终评价
+公平比较: 所有模型都在同一测试集上评估, 才能比较优劣
+
+比方说我们点开 train训练数据集 的文件夹, 里面包含 images 和 labels 文件夹, 这里数据集的整理, 其实是原本要放到下一章模型训练部分要讲的, 这里我们简单看一下
+images 里面放的就是图片, labels 里面放的就是标签(labels, 即我们先前所述的在 labelimg 中对图片进行标注后, 所得到的在 Annotation 标注文件夹下的 .txt 标注文件)
+具体的类别信息, 我们可以在("D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\datasets\aquarium") 中的 data.yaml 中看到
+---
+nc: 7
+names: ['fish', 'jellyfish', 'penguin', 'puffin', 'shark', 'starfish', 'stingray']
+---
+它会告诉我们包含7类, 每个类别的名称如上所示, 在 labels文件夹下的 .txt 标签文件中, 第一个参数, 0为'fish', 1为'jellyfish', 2为'penguin'以此类推
+
+通过这种方式, 我们就可以非常快速的去训练我们的模型, 验证模型的效果, 我们也不需要再做额外的数据集标注了, 数据划分也不用再做了
