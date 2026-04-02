@@ -438,7 +438,7 @@ if __name__ == '__main__':  确保当降本作为主程序运行时, 内部的�
 
 详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\yolov8-train.py"
 
--解决方法2:如果我们以代码的方式运行, 要将训练代码中 model.train() 中的的 workers参数设为0
+-解决方法2:如果我们以代码的方式运行, 要将训练代码中 model.train() 中的的 workers 参数设为0
 即model.train(data='yolo-fighting_game.yaml', workers=0, epochs=50, batch=16)
 这样也可以避免这个问题, 但养成'解决方法1'中将主要执行代码放入 if __name__ == '__main__': 的习惯也是一个好实践, 可以避免许多和多进程相关的陷阱
 
