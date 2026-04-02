@@ -1,3 +1,7 @@
+Reflection:
+(1)模型训练过程中, 一个在 Windows 上使用 PyTorch 进行多进程训练(例如 YOLO 训练)时非常经典的错误. 根本原因是 Windows 缺乏 fork机制
+
+
 1.环境安装
 Note: ultralytics(yolov8, yolov8现在改名了..)
 本操作基于先前已整理的"pytorch"目录下的操作, 亦即我们已安装了anaconda.
@@ -321,3 +325,122 @@ names: ['fish', 'jellyfish', 'penguin', 'puffin', 'shark', 'starfish', 'stingray
 它会告诉我们包含7类, 每个类别的名称如上所示, 在 labels文件夹下的 .txt 标签文件中, 第一个参数, 0为'fish', 1为'jellyfish', 2为'penguin'以此类推
 
 通过这种方式, 我们就可以非常快速的去训练我们的模型, 验证模型的效果, 我们也不需要再做额外的数据集标注了, 数据划分也不用再做了
+
+
+4.模型训练
+(1)训练前准备
+首先要对训练前的图片进行再次准备, 在上节中, 如果我们已经把图片标注好了得到一个尚未整理(划分)的数据集的话, 就应该是 demo_images 文件夹下所存放的所有抽帧好的图片, 以及 Annotation 里面所存放的所有对应图片的标签文件(label), 以及类别文件 classes.txt
+这里我们要对这个数据集进行一个整理(划分)
+需要把它(数据集)的外层设置成两个文件夹, 如下, 一个 images 文件夹用于存放图片, 一个 labels 文件夹, 用于存放标签, images 文件夹下, 又划分为训练集train, 和验证集val, labels同样分为训练集标签文件(夹)train, 验证集标签文件(夹)val, 需要注意其中的标签文件要与训练集或者验证集的图片名称一一对应
+===
+-images:存放图片
+--train:训练集图片
+--val:验证集图片
+
+-labels:存放标签
+--train:训练集标签文件, 要与训练集图片名称一一对应
+--val:验证集标签文件, 要与验证集图片名称一一对应
+===
+那我们这里对先前的数据集(包含demo_images和Annotation文件夹)简单操作一下
+详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\model_training\fighting_game"
+将 demo_images 重命名为 images
+将 Annotation 重命名为 labels
+在 images 下新建两个文件夹, 一个命名为 train, 另一个命名为 val
+这里, 我们抽一部分图片(约占所有图片的 10%-20%, 这里取120-360这9张图片)放入 验证数据集val 中, 剩下的放到 训练数据集train 里面, 这样 images 就处理好了
+接下来处理 labels, 和先前操作相同, 在 labels 下新建名为 train, val 的文件夹, 我们也是把120-360这9张图片对应的标签文件放入 验证数据集标签文件val 中, 剩下的标签文件放到 训练数据集标签文件train 中, 剩下的 类别文件classes.txt 不动, 还放在labels文件夹下即可, 这样 labels 就处理好了
+这样我们就得到了划分好的名为 fighting_game 的数据集文件 ("D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\model_training\fighting_game")
+
+
+(2)数据集描述文件
+数据集描述文件(如下文所提到的yolo-fighting_game.yaml)在YOLO训练中扮演者"数据配置清单"的角色, 它的核心作用是告诉YOLO框架:你的数据在哪, 以及数据长什么样子.
+接下来往下走, 我们要去做一个数据集的描述, 这是训练部分必须要用的
+yolov8并不像yolov5一样, 数据集放在根目录的哪都可以, 
+我们要把先前划分好的数据集(比如说先前划分好的 fighting_game 数据集)放到 ultralytics-main 根目录下一个名为 datasets 的目录下面 (文件夹, 如果没有就新建一个), 这一步是必须的, 即datasets这个目录是一定要有的
+
+下一步就是要具体的配数据集描述文件, 
+其实在("D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\cfg\datasets")里面是可以看到有一些配置文件, 我们只要对着它照着仿写就可以了
+我们可以把描述文件 copy 一份出来放到外层(比方说ultralytics-main根目录下), 对它进行改写
+详见"D:\Tech\Code\Program\yolov8\ultralytics-main\yolo-fighting_game.yaml"
+这里我们看一下, 
+===
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game  # 数据集根目录, 告诉我们的数据集的图片具体在哪, 这个path的名称不能从整个项目的根目录开始写起, 而要从整个项目的 datasets 下的目录开始写起, 故这里为 fighting_game
+train: images/train  # 训练集文件夹名, 训练数据集的图片的位置(fighting_game数据集文件夹下)
+val: images/val  # 验证集文件夹名, 验证数据集图片的位置(fighting_game数据集文件夹下)
+test:  # 测试集文件夹名, 可写可不写
+
+# Classes, 在接下来要写类别, 按照我们之前的 classes.txt, 写出来即可
+names:
+  0: SiShen
+  1: XiaoYing
+===
+这样的话, 我们的数据集描述文件也就搞定了.
+下面我们就可以进行正式的模型训练了.
+
+
+(3)模型训练与常用参数
+模型训练也分为两种方式, yolov8可以以命令的方式去写, 也可以以写代码的方式去写
+我们先来执行一下这种以命令行的方式去运行
+yolo task=detect mode=train model=./yolov8n.pt data=yolo-fighting_game.yaml workers=1 epochs=50 batch=16
+其中
+data=  # 数据集描述文件, 这个地方要写先前准备的数据集描述文件的位置, 即先前的 yolo-fighting_game.yaml
+大体上, 这些参数和我们之前做检测其实是类似的, 区别就是这个 mode, 从 predict预测 变成了 train训练, task任务还是不变的为detect目标检测任务
+
+//参数含义如下
+//yolo 启动命令
+//task=detect 指定做什么任务, detect就是目标检测任务
+//mode=train 这个参数mode就是让它进行'预测'还是'训练'还是'验证'
+//model=./yolov8n.pt  我们要使用哪个模型进行预测
+//data=yolo-fighting_game.yaml  数据集描述文件, 这个地方要写先前准备的数据集描述文件的位置, 即先前的 yolo-fighting_game.yaml
+//workers=1 数据加载的工作线程数, 他影响数据预处理和载入模型的速度. 这个必须设置, 如果是windows系统的话, 在使用GPU训练时, 要将其设置为1或0来避免多进程报错(设置成1即可), 这是windows下一种常见的规避方法
+//epochs=50 训练多少轮, 这里训练50轮
+//batch=16 即batch_size批处理大小, 值模型一次性处理多少张图片来更新一次参数, 16是常见值, 应根据gpu显存大小来调整, 显存越大. 可设置的 batch值越大, 有助于训练更稳定
+//经过这个命令, 它就可以对数据集进行训练了
+
+执行上述命令后, 它会先下载 Arial.ttf 字体文件, 下载完成后, 他就可以跑了.
+可以看见
+train: Scanning D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game\labels\train... 41 images, 0 backgrounds, 0 corrupt  # 41 images 训练数据集41张图片, 0 backgrounds 没有检测到背景类(即没有空标签或仅背景的样本, 这是正常的), 0 corrupt 所有标签文件格式正确, 没有损坏
+val: Scanning D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game\labels\val... 9 images, 0 backgrounds, 0 corrupt  # 同理, 验证数据集9张图片
+等等信息.
+
+训练完成后, 得到 
+Results saved to D:\Tech\Code\Program\runs\detect\train2  # 训练结果保存到了这个目录下 
+
+
+上述是基于命令行的方式对模型训练进行了启动, 下面给出写代码的方式对模型训练进行启动
+详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\yolov8-train.py"
+如果想像刚才命令行的方式来训练数据集, 其实只需要写三行代码
+点击右上角运行即可
+
+Note: 
+-Python文件中若包含中文注释, 但没有声明文件编码, 会导致解释器无法解析非 UTF-8 字符(如中文)  (报错信息:SyntaxError: Non-UTF-8 code starting with '\xe6')
+故需要在python文件头部添加编码声明
+# -*- coding: utf-8 -*-
+
+-在模型训练时, 出现
+"RuntimeError: An attempt has been made to start a new process before the    
+current process has finished its bootstrapping phase." 报错
+这是一个在 Windows 上使用 PyTorch 进行多进程训练(例如 YOLO 训练)时非常经典的错误. 根本原因是 Windows 缺乏 fork机制(见下侧), 
+当Python尝试启动多个子进程来加速数据加载(workers参数)时, 必须在主模块入口处进行特殊保护
+
+-fork机制是操作系统创建新进程的一种方式, 常见于Linux/macOS系统, 它的核心行为是: 复制当前进程(父进程)的全部内存状态(包括父进程的代码段, 数据段, 堆, 栈, 文件描述符等等), 生成一个几乎完全相同的子进程,
+而Windows没有fork()的系统调用, Windows创建进程需要使用CreateProcess, 该方式会启动一个全新的进程, 并加载指定的可执行文件, 不会自动继承父进程的内存状态.
+在python的multiprocessing模块中, 默认启动新进程的方式是:
+Linux/macOS: 使用fork(), 子进程自动继承父进程的全局状态(包括已导入的模块, 变量等)
+Windows: 使用spawn() (类似CreateProcess), 启动一个全新的Python解释器, 重新导入主模块.
+当没有使用 if __name__ == '__main__': 保护主模块代码时:
+在Windows上, 子进程重新导入主模块, 会再次执行顶层代码(包括model.train(), 模型训练过程), 导致递归创建进程, 引发 RuntimeError
+
+-解决方法1:将训练代码放入 if __name__ == '__main__': 块中
+为什么这样就能解决?
+if __name__ == '__main__':  确保当降本作为主程序运行时, 内部的代码才会执行(而不是被其他模块导入时)
+当子进程启动时, 他们会导入你的脚本, 但此时 __name__ 不等于 '__main__', 因此不会递归执行 model.train() 的模型训练过程, 避免了循环创建进程
+
+详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\yolov8-train.py"
+
+-解决方法2:如果我们以代码的方式运行, 要将训练代码中 model.train() 中的的 workers参数设为0
+即model.train(data='yolo-fighting_game.yaml', workers=0, epochs=50, batch=16)
+这样也可以避免这个问题, 但养成'解决方法1'中将主要执行代码放入 if __name__ == '__main__': 的习惯也是一个好实践, 可以避免许多和多进程相关的陷阱
+
+(出现这个问题时会发现 ctrl+c 不能终止进程, 这个时候只需把这个终端在右侧直接点击 delate, 随后新建终端采用上述解决方法即可)
+
