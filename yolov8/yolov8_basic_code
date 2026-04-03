@@ -98,7 +98,7 @@ eg.
 result = model.predict(source="bus.jpg", conf=0.5)  # 只保留置信度≥0.5的框
 结合先前内容即
 result = yolo(r"D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\assets\bus.jpg", save=True, conf=0.5)  #只保留置信度>=0.5的框, 可见runs目录下先前所得到的predict4中bus.jpg的置信度为0.26的框, 并没有在本行代码运行后的predict5的bus.jpg中出现  (即conf值设置的越高, 可能出现的框越少)
--(2)IoU(交并比, Intersection over Union): 预测框与真实框(或另一个预测框)的重叠程度, 计算公式为
+-(2)IoU(交并比, Intersection over Union): 预测框与真实框(或另一个预测框)的重叠程度(其中, 真实框是由人工手动标注的, 目标物体在图像中的精确位置和类别, 预测框是模型对图像进行推理后, 自动输出的目标位置和类别), 计算公式为
 --含义
 IoU = Area of Overlap / Area of Union, 值也在0和1之间, 越大表示框重合度越高
 其中
@@ -128,7 +128,7 @@ xywh(可选): 边界框的中心坐标和宽高 [x_center, y_center, width, heig
 --2.结果可视化与 BGR <-> RGB 转换
 YOLOv8 (Ultralytics YOLO) 默认使用 OpenCV 读取图像, 
 在 OpenCV 中, 默认的颜色通道顺序是 BGR (蓝-绿-红), 因此读取到的图像是BGR格式. 但在内部处理时, 模型本身需要 RGB 输入(因为模型训练时使用的是RGB数据), 所以 Ultralytics库 会在将图像送入模型前自动将 BGR 转换为 RGB. 
-而大多数图像显示库(如 matplotlib, PIL) 以及网页图像使用的是 RGB (红-绿-蓝). 如果直接用 OpenCV 读取的图像(BGR) 交给 matplotlib 显示，颜色会异常(比如红色变成蓝色). 因此，在可视化时需要将 BGR 转换为 RGB。
+而大多数图像显示库(如 matplotlib, PIL) 以及网页图像使用的是 RGB (红-绿-蓝). 如果直接用 OpenCV 读取的图像(BGR) 交给 matplotlib 显示,颜色会异常(比如红色变成蓝色). 因此,在可视化时需要将 BGR 转换为 RGB。
 
 -一般我们拿到检测结果后, 一般不仅仅是将它存到本地, 还要做一些额外的处理, 额外处理这部分的信息其实就是存在 Boxes 里面
 "接下来的一系列操作是在jupyter中进行, 在jupyter中运行这部分的代码"
@@ -145,12 +145,12 @@ conda install jupyterlab  //安装jupyter
 
 先来做绘图(检测结果可视化)这部分工作
 yolov8提供了plt方法, 如上述jupyter文件中第三个代码块所示
-import matplotlib.pyplot as plt  #使用Matplotlib 的 pyplot 模块 进行绘图和显示，所以也可以叫 “pyplot 方式”(通常称为"plt方式")  (也可写为import matplotlib.pyplot as mss, 语法上完全合法, as后面可以是任何有效的python标识符(字母, 数字, 下划线, 不能以数字开头), 但强烈建议使用plt, 因为 plt 是 Matplotlib 社区的标准别名，几乎所有文档、示例、教程都采用这个约定。使用非标准别名会让代码难以被他人理解，也容易与自定义变量混淆。除非有特殊理由（如避免命名冲突），否则应遵循惯例，使用 import matplotlib.pyplot as plt)
+import matplotlib.pyplot as plt  #使用Matplotlib 的 pyplot 模块 进行绘图和显示,所以也可以叫 “pyplot 方式”(通常称为"plt方式")  (也可写为import matplotlib.pyplot as mss, 语法上完全合法, as后面可以是任何有效的python标识符(字母, 数字, 下划线, 不能以数字开头), 但强烈建议使用plt, 因为 plt 是 Matplotlib 社区的标准别名,几乎所有文档、示例、教程都采用这个约定。使用非标准别名会让代码难以被他人理解,也容易与自定义变量混淆。除非有特殊理由(如避免命名冲突),否则应遵循惯例,使用 import matplotlib.pyplot as plt)
 ---
 #检测结果可视化
 # %matplotlib inline 是jupyter的魔法命令(magic command), 用于将 Matplotlib 绘制的图形直接嵌入到 Notebook 的单元格输出中, 而不是弹出独立的窗口.
 # 魔法命令 后不能直接跟注释, 否则将导致解释器将 # 及其后的内容当成命令的参数, 导致报错
-import matplotlib.pyplot as plt  #是python中导入模块并赋予别名的常用语法, matplotlin.pyplot 是matpoltlib库的一个子模块, 包含了一系列用于创建图形和绘图的函数(如 plot(), imshow(), show()等)， as plt 给导入的模块起一个别名, 之后在代码中可以用 plt 代替 matplotlib.pyplot, 使代码更简洁易读.
+import matplotlib.pyplot as plt  #是python中导入模块并赋予别名的常用语法, matplotlin.pyplot 是matpoltlib库的一个子模块, 包含了一系列用于创建图形和绘图的函数(如 plot(), imshow(), show()等), as plt 给导入的模块起一个别名, 之后在代码中可以用 plt 代替 matplotlib.pyplot, 使代码更简洁易读.
 %matplotlib inline 
 plt.imshow(result[0].plot()) 
 # result是调用model.predict()返回的列表, 列表中的每个元素对应一张输入图像的检测结果(Result对象). 若只预测了一张图像, 则 result[0] 就是该图像的结果对象
@@ -177,16 +177,16 @@ stop:结束索引(不包含), 默认为序列长度.  (左闭右开区间)
 step:步长, 默认为1. 可以为负数, 表示反向提取. 也可省略
 eg.
 s = [0, 1, 2, 3, 4, 5]
-print(s[1:4])     # [1, 2, 3]   索引 1 到 3（不包含4）
+print(s[1:4])     # [1, 2, 3]   索引 1 到 3(不包含4)
 print(s[:3])      # [0, 1, 2]   省略 start → 从开头
 print(s[3:])      # [3, 4, 5]   省略 stop  → 直到末尾
 print(s[::2])     # [0, 2, 4]   步长为 2
 print(s[::-1])    # [5, 4, 3, 2, 1, 0]  步长 -1 → 反转
 #负索引
-print(s[-3:-1])   # [3, 4]  （从倒数第3到倒数第1，不包含倒数第1）
+print(s[-3:-1])   # [3, 4]  (从倒数第3到倒数第1,不包含倒数第1)
 print(s[-1::-1])  # [5,4,3,2,1,0] 从末尾开始反向到开头
 #重要特点
-切片不会修改原序列, 而是返回一个新的序列(浅拷贝或视图, 取决于元素类型)(浅拷贝意味着创建了一个新的容器对象,但其中的元素（如果是可变对象）仍然引用原对象中的相同元素.  视图不复制数据，而是共享原始数组的内存块，只是以不同的形状或步长来访问数据。修改视图中的元素会直接影响原数组)
+切片不会修改原序列, 而是返回一个新的序列(浅拷贝或视图, 取决于元素类型)(浅拷贝意味着创建了一个新的容器对象,但其中的元素(如果是可变对象)仍然引用原对象中的相同元素.  视图不复制数据,而是共享原始数组的内存块,只是以不同的形状或步长来访问数据。修改视图中的元素会直接影响原数组)
 对于 NumPy数组, 切片返回的是原数组的视图(view), 修改视图会影响原数组(除非显式复制)
 可以省略任何部分, 但必须保留冒号
 
@@ -218,7 +218,7 @@ result[0].boxes.xywh.cpu().numpy()  # 调用下cpu(), 再调用下numpy(), 将 t
 Note:
 (1)在jupyter使用中, 如果要可视化模型预测结果, 一定要设置 %matplotlib inline  魔法命令, 并且所在行不能有注释, 否则无法使用, 因为 Ultralytics库(yolov8)在运行 plot() 或 show()时, 为了在服务器等无头(headless)环境下稳定运行, YOLO会强制将后端设置为了 Agg.
 Agg后端是 Matplotlib 的一个基础后端, 主要用于生成静态图片文件, 这个后端只负责"画图"和"存图", 不负责"显示", 无法弹出独立的显示窗口, 故直接调用 plot.imshow() 会报错
-而 %matplotlib inline 魔法命令的作用，就是将图形直接“嵌入”到 Notebook 的输出中，从而绕过了对 GUI 后端的需求
+而 %matplotlib inline 魔法命令的作用,就是将图形直接“嵌入”到 Notebook 的输出中,从而绕过了对 GUI 后端的需求
 (2)jupyter的使用过程中, 要重新加载模型, 否则预测过程中的参数将不会更新, 除非手动再次给出.
 如果说并不想重新加载模型, 可以将 比如说之前设置的 save_txt 参数拿回来, 然后强制的, 再把它设成 False, 这样的话, 它就不会被刚才我们所设置的参数所影响了
 这个理解过程见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\jupyter\predict.ipynb"
@@ -438,9 +438,130 @@ if __name__ == '__main__':  确保当降本作为主程序运行时, 内部的�
 
 详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\yolov8-train.py"
 
--解决方法2:如果我们以代码的方式运行, 要将训练代码中 model.train() 中的的 workers 参数设为0
+-解决方法2:如果我们以代码的方式运行, 要将训练代码中 model.train() 中的的 workers 参数设为0, 以彻底禁用多进程数据加载, 从而绕过 Windows 上python多进程的启动机制
 即model.train(data='yolo-fighting_game.yaml', workers=0, epochs=50, batch=16)
 这样也可以避免这个问题, 但养成'解决方法1'中将主要执行代码放入 if __name__ == '__main__': 的习惯也是一个好实践, 可以避免许多和多进程相关的陷阱
 
 (出现这个问题时会发现 ctrl+c 不能终止进程, 这个时候只需把这个终端在右侧直接点击 delate, 随后新建终端采用上述解决方法即可)
 
+在刚才的训练过程中, 我们在 model.train()中设置了配置参数(如data, workers, epochs, batch等), 如果我们以命令行的方式还是写代码的方式, 可能每次都要重新写这些参数, 实质上, 它有一套默认的参数, 
+就是说我们额外设置的这些参数, 其实都是去覆盖默认参数的, 这些参数在"D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\cfg\default.yaml"能看到
+由于这里我们是做训练, 所以主要用到前面这些'Train settings'
+可能我们每次训练都需要去指定 model, data, epochs, batch, workers 等等
+为了在每次训练不用再手动设置参数进行训练, 一种方案是直接在 default.yaml 中修改掉, 另一种方案则是把 default.yaml copy一份, 每次从copy的备份中去加载
+
+这里先引出复制全局配置文件的方式
+由于我们现在可以在激活yolov8环境的终端里使用命令行的方式去运行代码了, yolo有一个指令
+yolo copy-cfg  # 复制全局配置文件
+执行完这个命令行后, 可以看建在当前终端的目录下, 会复制出一份 default_copy.yaml, 这里我们就可以把我们想要配置的覆盖原有参数的地方写进去 ("D:\Tech\Code\Program\yolov8\ultralytics-main\default_copy.yaml")
+详见"D:\Tech\Code\Program\yolov8\ultralytics-main\default_copy.yaml"
+比方说, 这里我们修改
+===
+model: yolov8n.pt  # 我们希望每次训练都是基于yolov8n.pt进行训练的
+data: yolo-fighting_game.yaml  # 所用数据集描述文件
+epochs: 50  # 所想要训练轮数
+batch不动, 因为默认为16, 即batch_size批处理大小, 值模型一次性处理多少张图片来更新一次参数, 16是常见值, 应根据gpu显存大小来调整, 显存越大. 可设置的 batch值越大, 有助于训练更稳定
+workers: 0  # workers 参数设为0, 以彻底禁用多进程数据加载, 从而绕过 Windows 上python多进程的启动机制, 否则可能会出现上述多个子进程反复调用训练过程model.train()而造成超时的报错
+===
+通过这种方式, 我们就可以非常快的来启动训练, 而不需要指定特别多复杂的参数了
+比方说在激活yolov8环境的终端中, 输入如下命令行即可开始训练, 甚至连detect, train等也不用写(因为全局配置文件中默认task为detect目标检测任务, mode为train训练)
+yolo cfg=default_copy.yaml
+会发现, 它也开始正常训练了
+
+关于模型训练的基础大致如上
+
+
+每一次启动训练的时候, 都会说它把日志存放到了哪里, 比如这里说
+'Logging results to D:\Tech\Code\Program\runs\detect\train6'
+它就意味着当前训练的结果会存放到哪里
+
+训练完成后, 这里会输出 'Results saved to D:\Tech\Code\Program\runs\detect\train6'
+即训练结果保存到了上述目录下, 这里看一下大概都是什么 "D:\Tech\Code\Program\runs\detect\train6"
+比方说 
+(1)模型权重(weights/):真正有价值的成果
+这是整个训练过程中最重要的产出, 是后续推理和部署的核心文件
+//best.pt: 这是你的'金牌选手'. 在整个训练过程中, 当模型在验证集上的综合性能(如 mAP)达到峰值是, 它的参数就被保存下来了. 进行模型推理或部署时, 应当优先使用这个文件, 因为它代表了模型在未见过的数据上所能达到的最佳泛化能力
+//last.pt: 这是'终点线'选手, 即训练结束后最后一个 epoch (最后一轮训练) 的模型权重. 它有两个主要用途: 一是当训练意外中断时, 用它 resume 恢复训练, 而是当你想让模型在现有基础上继续微调时, 它也是一个不错的起点
+
+(2)训练配置与核心指标:看懂模型的'学习报告'
+这部分文件记录了训练的'配方'和'成绩单', 是分析和调优的主要依据
+//args.yaml: 这份文件忠实地记录了本次训练的全部参数, 包括模型结构, 数据集路径, 训练轮数(epochs), 批大小(batch), 学习率, 优化器等. 它的主要价值在于'确保试验的可复现性'---无论是几个月后的自己, 还是其他研究者, 只要有了它, 就能完全重现你当前的训练设置  (arguments 参数)
+//results.csv: 存储训练过程中参数的变化, 这是一个以表格形式存储的详细数据文件, 记录了每个 epoch (每一轮训练) 的关键指标, 如各类损失(box_loss边界框损失(衡量模型预测的预测框(位置和大小)与人工标注的真实框的差异), cls_loss分类损失(衡量模型预测的类别概率分布和真实类别的差异)), 精确率(Precision), 召回率(Recall), 以及mAP50 和 mAP50-95 等 (mAP50 和 mAP50-95 是衡量模型性能的两个核心指标, 它们都基于 mAP(平均精度均值)计算, 区别在于使用的 IoU(交并比, 详见上侧)阈值不同, mAP50 的 IoU阈值固定为 0.50,当预测框与真实框的重叠面积达到50%以上即认为检测正确(TP), 是一个相对宽松的标准. mAP50-95 的 IoU 阈值从 0.50 到 0.95, 共10个阈值(0.50, 0.55, 0.60...0.95), 计算每个阈值下的mAP, 然后对这10个mAP值取平均值), 可以用 Excel 或 python的 pandas 库打开它, 进行更深入的数据分析, 或根据其中的数据自行绘图
+//results.png: 这是对 results.csv 的可视化总结, 它通常包含训练/验证的损失下降曲线和 mAP 上升曲线. 通过观察曲线是否平稳下降并最终收敛, 可以用于直观判断模型训练是否充分, 以及有没有出现过拟合和欠拟合的迹象
+
+(3)训练过程快照:从多角度审视模型
+//labels.jpg: 这张图用于'审视你的数据集', 包含4个子图, 分别展示每个类别的数量, 表述框的中心点分布, 宽高尺寸分布等. 用于验证数据标注质量, 比如你可以从中发现某个类别样本过少(类别不平衡), 或所有目标都集中在图像中心等问题
+//BoxF1_curve: F1分数是精确率和召回率的调和平均数, 是衡量模型整体性能的单一指标, 可以帮助你选择一个合适的置信度阈值, 以平衡精确率和召回率
+//confusion_matrix.png, confusion_matrix_normalized.png: 混淆矩阵是模型误检和漏检的'X光片', 非对角线上的高亮方块,清晰地指出了模型容易把哪一类错误地预测成另一类。归一化版本则用比例代替了绝对数量,更方便比较不同类别间的混淆程度。
+//BoxP_curve.png, BoxPR_curve.png, BoxR_curve.png 这组曲线共同描述了模型在置信度阈值变化下的性能表现
+P为 Precision 精确率, BoxP_curve.png 为精确率曲线, R为 Recall 召回率, BoxR_curve.png为召回率曲线, BoxPR_curve.png为精确率-召回率曲线
+其中BoxPR_curve.png为精确率-召回率曲线尤为重要, 其曲线下的面积就是 mAP 值, 它综合反映了模型在不同阈值下的性能, 通常曲线越靠近右上角, 模型性能越好.
+===
+精确率Precision 和 召回率Rrecall 是评估分类模型(尤其是目标检测、信息检索等任务)性能的两个核心指标, 它们从不同角度回答了"模型预测得怎么样?"这个问题。
+
+先理解几个基本概念
+在二分类问题中, 样本的真实类别和模型预测类别会形成四种结果:
+-------------预测为'正类'           预测为'负类'
+实际'正类'    TP(真正例)            FN(假负例, 漏检)
+实际'负类'    FP(假正例, 误报)       TN(真负例)
+
+TP(True Positive, 真正例): 真实为正类, 模型也预测为正类 --> 正确检出    # 真实即人工标注的真实框(的label信息), 模型预测即预测框
+FN(False Negative, 假负例): 真实为正类, 模型却预测为负类 --> 漏检  # 假的负类, 故为正类, 且预测错误
+FP(False Positive, 假正例): 真实为负类, 模型却预测为正类 --> 误报  
+TN(True Negative, 真负例): 真实为负类, 模型也预测为负类 --> 正确排除
+
+精确率(Precision):准不准?
+在所有被模型预测为'正类'的样本中, 有多少是真正的'正类'  (即模型说'这是正类'的时候, 它说的有多靠谱)
+Precision = TP / (TP + FP)
+精确率越高, 说明模型的误报(FP)越少
+举例: 模型从100张图片中找出了10张包含“猫”的图片, 但其中只有8张真的有猫, 那么精确率 = 8/10 = 0.8
+
+召回率(Recall):全不全?
+在所有真正的'正类'样本中, 有多少被模型成功找了出来  (即真实存在的正类, 模型找回了多少)
+Recall = TP / (TP + FN)
+召回率越高, 说明模型的漏检(FN)越少
+举例: 同一批100张图片中, 实际有20张包含猫, 模型只找出了其中的8张, 那么召回率 = 8/20 = 0.4
+
+以安检搜毒为例
+假设有一个安检系统用于检测行李中是否携带毒品
+精确率高: 系统报警10次, 其中9次真的查出毒品(只有1次误报)。—— 误报少,警察不会白跑一趟
+召回率高: 实际有20件藏毒行李, 系统成功查出18件(只漏掉2件)。—— 漏报少,毒贩不容易蒙混过关
+但两者往往不可兼得
+若想提高召回率(尽量不漏掉毒品),可以降低报警阈值,但会导致更多误报(精确率下降)
+若想提高精确率(尽量不误报),可以抬高报警阈值,但可能导致漏掉真正的毒品(召回率下降)
+
+为什么两者都需要
+一个模型即使精确率很高(100%),但如果召回率极低(只找出1个真正的正类),它也是无用的(漏掉太多)
+反之,召回率很高(找出所有正类),但精确率很低(误报一大堆),同样不可用(比如垃圾邮件过滤器把大量正常邮件也归为垃圾)
+
+在目标检测中,通常用 平均精度(AP) 来综合考量精确率和召回率,它计算的是一个特定类别(例如'猫')精确率-召回率曲线下的面积, 简单理解：AP 衡量的是“模型对于这一个类别,检测得有多好”
+mAP 是 mean Average Precision 的缩写,中文常译为平均精度均值, 即所有类别的平均精度均值, 就是将所有类别的 AP 值相加, 再除以类别总数。它是目标检测领域最核心、最通用的综合性能评估指标,用于衡量模型在多类别检测任务中的整体表现
+简单来说,mAP 综合了模型两个方面的能力
+定位准不准：预测框与真实框的重叠程度(IoU)
+分类对不对：预测的类别是否正确
+它同时考虑了精确率和召回率,并通过计算 PR 曲线下的面积(AP)来得出一个单一数值。数值越高(越接近 1),模型性能越好
+===
+//train_batch: 训练的时候先做了下预处理, 这里让我们看下batch里面的数据长什么样子
+//val_batch: 在模型训练完成之后, 模型在验证数据集跑的结果是怎么样的
+
+训练所得的模型会存放到 weights(权重) 文件夹下 ("D:\Tech\Code\Program\runs\detect\train6\weights"), .pt文件, 即模型权重文件, 就是我们训练好的模型
+一个是 best.pt, 另一个是 last.pt, 
+best.pt 存放当前训练过程中所得到的最好的模型
+last.pt 存放最后一轮(epoch)所得的模型, 可以结合resume参数再搭配 last.pt 就可以继续训练了
+
+现在我们已经训练完了, 可以看一下训练的效果
+在激活yolov8环境的终端中运行predict, 检测下视频, 看下我们训练好的模型能达到什么样的效果
+yolo detect predict model=D:\Tech\Code\Program\runs\detect\train6\weights\best.pt source=D:\Tech\Code\Program\yolov8\ultralytics-main\ultralytics\assets\sample.mp4 show=True
+//yolo 启动命令
+//detect 指定任务为'目标检测'
+//predict: 指定模式为'预测/推理'
+//model= 用于指定训练好的模型权重文件(.pt文件)的路径
+//source= 指定要检测的图片或视频的路径
+//show=True 我们要把它可视化出来, 包含取帧(模型会逐帧读取提供的视频), 检测(对每一帧画面进行目标识别), 绘制(在识别到的目标周围绘制边界框, 并表上类别和置信度), 显示(最后将这些处理过的画面, 拼接成一个带有实时监测效果的视频流, 并弹出一个独立的OpenCV窗口进行播放)
+因为show参数默认为False, 所以如果不在命令行或代码中明确加上 show=True, 是不会弹出窗口的
+并且show参数与save独立, 即使加了 show=True, 如果你没有设置 save=True, 检测结果的视频文件并不会被自动保存到本地
+
+运行上述命令行后, 会发现这个时候它就可以正常检测了, 会把检测结果实时更新在弹出的窗口上, 整体上看初步还好, 可能是因为大部分图片都已经在训练集里面了
+如果我们不想跑的话, 直接在终端 ctrl+c 即可
+
+到这里, 模型训练的大部分内容就说完了.
