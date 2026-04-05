@@ -364,7 +364,7 @@ yolov8并不像yolov5一样, 数据集放在根目录的哪都可以,
 这里我们看一下, 
 ===
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
-path: D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game  # 数据集根目录, 告诉我们的数据集的图片具体在哪, 这个path的名称不能从整个项目的根目录开始写起, 而要从整个项目的 datasets 下的目录开始写起, 故这里为 fighting_game
+path: D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game  # 或直接写为fight_game(因为我们在下面调整了数据集目录, 这样可以避免很多不必要的错误), 数据集根目录, 告诉我们的数据集的图片具体在哪, 这个path的名称不能从整个项目的根目录开始写起, 而要从整个项目的 datasets 下的目录开始写起, 故这里为 fighting_game
 train: images/train  # 训练集文件夹名, 训练数据集的图片的位置(fighting_game数据集文件夹下)
 val: images/val  # 验证集文件夹名, 验证数据集图片的位置(fighting_game数据集文件夹下)
 test:  # 测试集文件夹名, 可写可不写
@@ -565,3 +565,31 @@ yolo detect predict model=D:\Tech\Code\Program\runs\detect\train6\weights\best.p
 如果我们不想跑的话, 直接在终端 ctrl+c 即可
 
 到这里, 模型训练的大部分内容就说完了.
+
+这里还要再说几个要点, 这也是yolov8我们非常需要注意的地方
+(1)以代码方式运行时, workers 要设置成0 (windows系统下是这样的)
+(2)页面文件太小, 无法完成操作, 即你的物理内存或虚拟内存不足, 导致系统无法为YOLO的训练任务分配足够的内存空间. YOLO造训练启动时, 尤其是使用DataLoader加载数据时, 会瞬间向系统申请大量连续内存空间.在Windows下, 当 num_workers > 0 时, 主进程会创建多个子进程来并行加载数据, 这会大量消耗内存, 从而触发该错误.
+调整训练参数中的workers, 设置为 1/0
+修改虚拟内存, 将环境安装位置所在的盘, 设置一个较大的参数
+(3)数据集描述文件
+数据地址从datasets目录开始写起, 且就放在根目录下, 会避免很多坑  (比方说"D:\Tech\Code\Program\yolov8\ultralytics-main"目录下放数据集描述文件'yolo-fighting_game.yaml', 数据集'fightint_game'放在根目录下的datasets文件夹下, 但由于下述的settings.yaml数据集目录尚未调整, 这里数据集描述文件中的path这里暂且写为"D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game"), 若想path直接写数据集文件(夹)的名称, 则需要在如下述所示的settings.yaml做修改
+(4)调整数据集目录后再次训练
+我们每次在跑模型的时候, 不管是在做检测, 还是再做训练的时候, 他都会往当前的用户目录下, ("C:\Users\MayeKnight\AppData\Roaming\Ultralytics\settings.json", 需要打开'隐藏的项目'), 生成一个settings.yaml
+'settings.yaml'这里做了些限定, 比方说 datasets_dir, weights_dir, runs_dir 是什么
+这里datasets_dir指明datasets文件夹的位置
+为了每次从datasets目录开始写起, 即将数据集描述文件数据集描述文件'yolo-fighting_game.yaml'中的path直接写为datasets文件夹下的 'fighting_game' 数据集
+需要对'settings.yaml'中datasets_dir修改为我们所创建的datasets文件夹. 
+---
+"datasets_dir": "D:\\Tech\\Code\\Program\\yolov8\\ultralytics-main\\datasets",
+---
+
+这样就可以在'yolo-fighting_game.yaml'直接写datasets下的相对目录, 即我们先前的'fighting_game'数据集, 而不用再写为绝对路径(若不这样修改而直接使用相对路径, 则会报错, 提示在settings.yaml下的datasets_dir目录下找不到数据集)
+---
+path: fighting_game # dataset root dir  
+---
+
+即实质上, 我们在'yolo-fighting_game.yaml'所写的相对路径 fighting_game 的时候,它还会将settings.yaml中的 datasets_dir 写在 fighting_game 前面 
+
+另外, 当我们想换文件夹进行训练的时候, 我们要先将 settings.yaml 先删掉再执行训练的命令, 执行完后 settings.yaml 就又有了, 只不过datasets_dir切换了个目录
+
+以上就是训练部分的全部内容了, 通过以上这些, 就可以在自己的数据集上进行训练, 进行预测, 去完成一些非常实际的项目了
