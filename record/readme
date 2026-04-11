@@ -25,9 +25,9 @@ record文件夹用于收录技术文档, 即在学习过程中的'日志'记录�
 本节主要结合近期的毕设环节开展'基于yolo算法的细胞识别及移动路径规划'
 经过收集数据集, 通过labelimg对8001张图片进行标注构建数据集, 构建数据集描述文件, 并通过yolov8n.pt做迁移训练得到初步的细胞识别模型, 
 所得结果详见当前'record'目录下的'record\train12', 包含
-P-R图: [查看图片](./record/train12/BoxPR_curve.png) 
-训练时的loss曲线: [查看图片](./record/train12/results.png)
-最终的验证集的检测结果: [查看图片](./record/train12/val_batch2_labels.jpg)
+P-R图("record\train12\BoxPR_curve.png"), 
+训练时的loss曲线("record\train12\results.png"), 
+最终的验证集的检测结果("record\train12\val_batch2_labels.jpg")
 等等内容
 在训练过程中该细胞识别模型 mAP50 达到了 0.926, mAP50-95 达到了 0.594, 说明模型几乎能检测出数据集中所有目标, 且大致位置正确, 但精细定位能力尚需改善, 预测框不够紧贴
 虽然对于许多实际应用(如人流计数, 车辆检测, 缺陷存在性判断等), mAP50=0.926依然足够, 但对于需要精确定位的任务(如机器人抓取, 医学图像病灶分割等)mAP=0.594偏低, 尚需优化。
