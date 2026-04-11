@@ -34,9 +34,9 @@
 
 所得结果详见当前 `record` 目录下的 `record/train12`，包含：
 
-- [P-R 图](./record/train12/BoxPR_curve.png)
-- [训练时的 loss 曲线](./record/train12/results.png)
-- [最终验证集的检测结果](./record/train12/val_batch2_labels.jpg)
+- [P-R 图](./train12/BoxPR_curve.png)
+- [训练时的 loss 曲线](./train12/results.png)
+- [最终验证集的检测结果](./train12/val_batch2_labels.jpg)
 
 等等内容。
 
