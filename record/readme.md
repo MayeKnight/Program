@@ -36,7 +36,7 @@
 
 - [P-R 图](./train12/BoxPR_curve.png)
 - [训练时的 loss 曲线](./train12/results.png)
-- [最终验证集的检测结果](./train12/val_batch2_labels.jpg)
+- [最终验证集的检测结果](./train12/val_batch2_pred.jpg)
 
 等等内容。
 
