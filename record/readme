@@ -1,0 +1,43 @@
+一.前言
+record文件夹用于收录技术文档, 即在学习过程中的'日志'记录文件(这里称为'basic_code'文件), 详见当前目录下的'tech_record'文件夹
+
+'basic_code'文件有两个主要用途, 
+一是作为个人知识框架使用, 用于在未来可能的开发过程中作为锚点进行查询, 学习和强化. 
+二是考虑到robotmaster等相关经历, 或可作为参考教程和可行, 可借鉴的路线给小登学习.  (请各位佬后续可以扩充下awa, 比方说增添些'basic_code'等学习记录内容之类的)
+
+对于'yolov8_basic_code', 该文件描述了从创建yolov8环境, 自行构建数据集, labelimg标注, 构建数据集描述文件, 以及进行yolov8迁移训练的完整过程, 和部分相关疑难点, 如Iou, mAP等相关内容, 方便后续的消融实验和量化模型等内容的学习
+如用于robotmaster的学习, 可以将构建数据集的视频文件换成装甲板视频(可自行录制).
+若完成学习, 最终将会收获一份 从零到一 的基于yolov8n.pt的识别装甲板的模型.
+
+对于'pytorch_basic_code', 该文件记录了学习pytorch的基本架构的过程, 包含了如何自行构建一个神经网络等内容
+对于robotmaster的学习, 该'basic_code'有助于深入理解yolov8, 如dataloader()等加载数据的过程
+
+二.文件组织(如何看'basic_code')
+(1)对于'basic_code'中提及的, 如 '即训练结果保存到了上述目录下, 这里看一下大概都是什么 "D:\Tech\Code\Program\runs\detect\train6"' 之类的描述
+对于"D:\Tech\Code\Program\runs\detect\train6", 我们要以'Tech'作为根目录往下看, 亦即'\Tech\Code\Program\runs\detect\train6'即为所指路径, 
+并且, 如果想试着跑一下代码的话, 也要自行修改下文件路径, 避免因文件所处的计算机不同而导致文件路径不同, 出现报错
+
+(2)需要注意的是'pytorch_basic_code'对应文件目录中部分vgg数据集过大, 不能上传到github上, 故这里以压缩包的形式保存在网盘中, 确保文件的完整性
+夸克网盘:https://pan.quark.cn/s/a2946268f7a0 
+对于robotmaster, 该文件在"\Tech\pytorch_program"目录下也能找到
+
+
+
+
+
+
+提交日志:
+版本   ---    日期    ---    作者   ---     修改内容
+v1.0       2026-04-11     MayeKnight       初版创建  
+
+
+
+
+
+
+
+
+
+
+
+
