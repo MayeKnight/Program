@@ -87,7 +87,7 @@ Note:
 1. std::lower_bound(arr.begin(), arr.end(), element target) {}
 在一个有序(默认为升序)的序列中, 查找第一个大于等于目标值元素的位置 >= target, 并返回一个迭代器it
 auto it = lower_bound(arr.begin(), arr.end(), element target);
-int res = it - arr.begin();     //迭代器it - arr.begin() 得到的res为数组中 >= target 对应的数组下标
+int res = it - arr.begin();     //迭代器it - arr.begin() 得到的res为数组中 >= target 对应的数组下标  (这里是迭代器-迭代器)
 
 2. std::upper_bound(arr.begin(), arr.end(), element target) {}
 在一个有序(默认为升序)的序列中, 查找第一个大于目标值元素的位置 > target, 并返回一个迭代器it

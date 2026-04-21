@@ -368,9 +368,23 @@ C++ 默认 a/b 是向下取整
 若想要 a/b 向上取整, 应写为 (a + b - 1) / b
 
 
-24.二分查找(折半查找)
+24.二分查找(折半查找)  
 详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\2.二分算法\前言.cpp"
 但手写二分查找可能会导致部分样例超时而不通过, 此时可以考虑使用 "前言.cpp" 中的 Note.
+亦即如下,
+Note:
+手写lower_bound()可能会导致部分样例因超时而不能通过
+这时建议使用 C++ STL 中的 lower_bound() 和 upper_bound() 函数解决
+
+1. std::lower_bound(arr.begin(), arr.end(), element target) {}
+在一个有序(默认为升序)的序列中, 查找第一个大于等于目标值元素的位置 >= target, 并返回一个迭代器it
+auto it = lower_bound(arr.begin(), arr.end(), element target);
+int res = it - arr.begin();     //迭代器it - arr.begin() 得到的res为数组中 >= target 对应的数组下标  (这里是迭代器-迭代器)
+
+2. std::upper_bound(arr.begin(), arr.end(), element target) {}
+在一个有序(默认为升序)的序列中, 查找第一个大于目标值元素的位置 > target, 并返回一个迭代器it
+auto it = lower_bound(arr.begin(), arr.end(), element target);
+int res = it - arr.begin();     //迭代器it - arr.begin() 得到的res为数组中 >= target 对应的数组下标
 
 
 25.数位和
@@ -396,6 +410,8 @@ for (初始化; 条件判断; 更新语句) {
 (3)执行循环体(如果条件为真)
 (4)执行更新语句(对x的处理, 例如 i++)
 (5)回到第2步, 再次判断条件
+即
+在 for(int i = 10; i > 0; i--){} 循环中，每次循环体执行完毕后，才会执行 i-- 进行自减操作，然后再判断条件 i > 0 决定是否继续下一次循环。
 
 
 27.遍历map或unordered_map键值对中的值, 基于范围for循环实现  (很常用)
@@ -430,6 +446,7 @@ for(auto& [_, c] : cnt){
 //是C++17引入的结构化绑定在范围for循环中的用法, 编译器会自动将cnt中的每个元素(即 键值对pair<const int, int>) 解构成两个变量: "_"绑定到键"const int", "c" 绑定到值"int", 
 //这里的"_"只是一个普通的变量名, 通常用作占位符, 表示我们不关心键, 它并非特殊语法, 只是习惯用法, 这样写可以避免显式地使用 pair.first 和 pair.second , 使代码更简洁
 //与上述"27.遍历map中的值, 基于范围for循环实现"等效
+//即与上述的"27.遍历map或unordered_map键值对中的值, 基于范围for循环实现  (很常用)"等效
 
 
 30."1LL"保证乘法在 long long 范围内进行, 避免整数溢出
@@ -463,6 +480,11 @@ int j = s.rfind(alpha);
 for(char alpha = 'a'; alpha <= 'z'; alpha++){}
 //枚举字符串中的字母
 
+//在字符串s中找字符alpha的判断语句
+if (s.find(alpha) != string::npos) {
+    // 找到了 alpha
+}
+
 
 33.bool has[26]{};  
 //声明has数组, 并置空
@@ -474,7 +496,7 @@ vector数组的相关用法
 
 
 34.reduce(arr.begin(), arr.end()) 累加函数
-reduce是C++标准库算法, 在头文件<numeric>, 类似于 std::accumulate 累加函数, 但支持并行执行, 通常用于对一个范围内的元素进行求和.
+reduce是C++标准库算法, 在头文件<numeric>, 类似于上述的 std::accumulate 累加函数, 但支持并行执行, 通常用于对一个范围内的元素进行求和.
 这里是计算从 arr.begin() 到 arr.end() 所有元素的和.
 
 
@@ -507,4 +529,3 @@ for(int i = 0; i < nums.size(); i++){
 }
 
 
-38.

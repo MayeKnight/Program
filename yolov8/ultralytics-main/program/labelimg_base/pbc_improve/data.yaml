@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 8
+names: ['Basophills', 'Eosinophills', 'Erythroblast', 'Ig', 'Monocytes', 'Platelets', 'lymphocytes', 'neutrophils']
+
+roboflow:
+  workspace: home-uwdia
+  project: pbc-labelling
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/home-uwdia/pbc-labelling/dataset/1

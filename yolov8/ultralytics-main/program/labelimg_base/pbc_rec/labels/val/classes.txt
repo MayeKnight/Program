@@ -1,0 +1,9 @@
+Basophills
+Eosinophills
+Erythroblast
+Ig
+Monocytes
+Platelets
+lymphocytes
+neutrophils
+erythrocyte

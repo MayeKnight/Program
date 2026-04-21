@@ -1,6 +1,6 @@
 Reflection:
 (1)模型训练过程中, 一个在 Windows 上使用 PyTorch 进行多进程训练(例如 YOLO 训练)时非常经典的错误. 根本原因是 Windows 缺乏 fork机制
-
+(2)后续在用labelimg对数据集进行标注时, 首先要根据-(1)中所述'data.yaml'修改labelimg的'预定义类别'文件, 即修改下述所说的predefined_classes.txt
 
 1.环境安装
 Note: ultralytics(yolov8, yolov8现在改名了..)
@@ -292,6 +292,52 @@ make sense 除了能在线进行标注以外, 还有个功能是非常强大的,
 里面有 YOLOv5, COCO SSD, POSE-NET, 这里我们选择 YOLOv5, 选择 Use model
 随后就会跳出窗口, 让我们把 yolov5 模型传上来, 这里尝试过将 yolov8 模型传上来也是用不了的, 只支持 yolov5, 这里暂且跳过
 
+实质上, labelimg也可以实现这样的功能, 可以用训练好的模型best.pt("D:\Tech\Code\Program\runs\detect\train12\weights\best.pt")来打'草稿', 生成一批初步的标注文件, 再用 labelimg 打开对数据集标注情况进行人工检查, 修改和补充, 这个流程也被称为'半自动标注', 能节省大量时间.
+整个过程主要分为三步
+---
+-用模型自动生成标注'草稿'
+-(1)创建数据目录: 新建两个文件夹, 比如一个叫images, 存放待标注的图片 (这里取"D:\Tech\Code\Program\yolov8\ultralytics-main\program\labelimg_base\pbc_improve\images\train")
+而这里我们是对原pbc数据集进行优化, 所以实质上我们只需要将原pbc数据集中的labels文件导入到'change save dir' (或为选择'open dir'后弹出的'save annotations to the directory'窗口中选择), 这里选择("D:\Tech\Code\Program\yolov8\ultralytics-main\program\labelimg_base\pbc_improve\labels\train") 中即可, 即这里预处理的labels文件我们已经有了, 而不用执行下述第 -(2)步操作
+但要注意的是, labelimg 在加载 YOLO 格式的标注文件时, 需要读取一个 classes.txt 文件, 类似于("D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game\labels\train\classes.txt"), 即labelimg会在当前labels文件夹目录下寻找一个名为classes.txt的文件
+我们可以通过训练模型是用的'data.yaml'确定类别列表, 并且顺序很重要, 必须与训练时的ID一一对应(即data.yaml中类别的顺序, ID从0开始), 这里我们自行创建, 如"D:\Tech\Code\Program\yolov8\ultralytics-main\program\labelimg_base\pbc_improve\labels\train\classes.txt"所示
+后续再val, test目录下编辑标注, 也需要把classes.txt复制到那些目录中. 否则会报错
+Note: YOLO 训练时是直接从 data.yaml 读取类别名称, 而 labelimg 作为一个独立标注工具, 需要手动通过classes.txt提供类别列表文件, 并要确保classes.txt中的类别顺序与训练时的data.yaml完全一致, 否则标签的类别ID会错乱
+
+-(2)运行预测命令: 激活先前创建的yolov8环境后, 输入以下命令 (若为上述-(1)中所描述的情况, 则不用再执行这一步)
+===
+yolo tast=detect mode=predict model=D:\Tech\Code\Program\runs\detect\train12\weights\best.pt source=D:\Tech\Code\Program\yolov8\ultralytics-main\program\labelimg_base\pbc_improve\images\train save_txt=True save_conf=False
+===
+//model: 选取训练好的模型文件best.pt的路径
+//source: 指向存放待标注图片的文件夹
+//save_txt=True: 核心参数, YOLO为每张图片生成一个同名的.txt文件, 并存放在它创建的labels文件夹下
+//save_conf=False: 建议设置为False, 因为labelimg的标注文件里通常不包含置信度, 这样能避免后续可能出现的格式兼容问题.
+
+-(3)在labelimg中进行人工修正和补充
+注意如上述-(1)中所述, 检查下对应labels目录下是否已有classes.txt文件, 如若没有, 需按正确的顺序自行创建(如上述-(1)中内容所述), 即如 (如"D:\Tech\Code\Program\yolov8\ultralytics-main\datasets\fighting_game\labels\val\classes.txt"所示), 并要更新labelimg的'预定义类别', 如下述所示
+左侧格式栏, 确保选中的是'YOLO'格式
+打开labelimg后, 点击左侧的'open dir', 选择你的images文件夹
+点击'change save dir', 选择labels文件夹
+就会发现每个图片都注释了一部分了, 
+随后便可以按先前关于labelimg所述, 继续对数据集进行人工审核和标注了
+
+但是我们在随后的补充标注过程中会发现, 在往labelimg导入images和labels文件夹后, 进行进一步标注操作时, classes.txt文件会发生改变, 进而导致标注文件labels中的内容发生改变
+如新增的 erythrocyte 应为8(在classses.txt中的下标顺序), 但在labels文件中却为 1.
+这是因为我们没有更新labelimg的'预定义类别', 这时, labelimg会依据当前标注的类别, 动态地重写或更新classes.txt文件, 导致其内容不稳定, 与我们期望的固定类别列表相冲突.
+
+故而我们要设置labelimg的'预定义类别', 即设置 predefined_classes.txt 
+这个方案能从根本上解决问题, 因为它为labelimg提供了一个全局的, 固定的类别列表, classes.txt 的改动将不再影响标注
+激活yolov8环境后,
+pip show labelimg  //找到labelimg的安装位置
+即在安装labelimg的目录下, 找到data文件夹, 在data文件夹中, 创建一个名为 predefined_classes.txt 的文本文件
+并写入类别, 用记事本或vscode按正确的顺序输入类别, 每行一个(如上述-(1)中所述)并保存
+彻底关闭并重新打开 labelimg, 之后所有的标注都将基于你预设的这个类别列表进行.
+
+如"D:\Tech\anaconda\envs\yolov8\Lib\site-packages\labelImg"所示
+在文件夹下创建一个新的子文件夹 data, 然后在 data 文件夹内创建一个 predefined_classes.txt 文件, 并按正确的顺序写入类别, 每行一个(如上述-(1)所述)
+如"D:\Tech\anaconda\envs\yolov8\Lib\site-packages\labelImg\data\predefined_classes.txt"所示
+后续在用labelimg对数据集进行标注时, 首先要根据-(1)中所述'data.yaml'修改labelimg的'预定义类别'文件, 即修改上述所说的predefined_classes.txt
+---
+这里精简了数据集, 详见"D:\Tech\Code\Program\yolov8\ultralytics-main\program\labelimg_base\pbc_improve"
 
 (2)roboflow公开数据集
 前面介绍了数据集标注, 但是如果你真的不想标数据, 你就可以去网上找, 但是具体去哪找呢? 现在你打开网页去找, 大部分的可能就是找到一些比较常见的数据集, 什么活塞, 烟雾, 带没带头盔, 车辆, 行人, 等等这些, 而且可能是大家做的比较烂(大街), 比较透的那种
