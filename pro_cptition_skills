@@ -27,6 +27,7 @@ s.count(x) 返回0或1, 判断是否包含x
 s.find(x) 返回指向x的迭代器, 找不到返回s.end()
 s.clear(x) 清空所有元素
 s.size() 返回元素个数
+s.contains(x) 判断集合中是否包含某个元素
 
 
 5.关于vector
@@ -106,9 +107,13 @@ while (fruitCount.size() > 2) {
 unordered_map<char, int> res;
 res.size() 返回的是键值对的数量， 即当前存储的唯一键的种类数 (因为unordered_map要求键(key)必须唯一)
 
-(2)unordered_set<type> 哈希集合
+(2)unordered_set<type> 哈希集合, 用法与上述set类似
 可用于在不定长滑动窗口中记录在当前窗口中存储有哪些元素(可用于避免窗口内有重复字符.)
 详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\1.滑动窗口\不定长滑动窗口\3. 无重复字符的最长子串.cpp"
+//用迭代器(nums.begin(), nums.end()) 将数组nums(或其他容器, 如vector, array, list等)元素转成哈希集合 st
+unordered_set<int> st(nums.begin(), nums.end());
+详见"D:\Tech\Code\Program\leetcode\hot_100\128. 最长连续序列.cpp"
+
 
 (3)map<type, type> 映射(有序映射)
 其与unordered_map的区别和联系如下
@@ -275,6 +280,18 @@ ranges::sort(a, greater());  //对数组arr进行排序(降序排序, 即从大�
 using namespace std;
 sort(arr.begin(), arr.end()); //对数组arr进行排序(默认是升序排序, 即从小到大排序)
 sort(arr.begin(), arr.end(), greater<ElementType>());  //对数组arr进行排序(降序排序, 即从大到小排序), 其中'ElementType'需指明具体元素类型, 如int
+//字符串s中的字符也可以使用 std::sort(s.begin(), s.end()); 对字符进行排序
+eg.
+#include <iostream>
+#include <algorithm>  //<algorithm>头文件中提供了大量算法函数, 其中就包括了 std::sort
+#include <string>
+using namespace std;
+int main() {
+    string s = "bca";
+    sort(s.begin(), s.end());  //对字符串s中的字符进行排序
+    cout << s << endl;   //输出"abc"
+    return 0;
+}
 
 
 20.计算前缀和
@@ -529,3 +546,52 @@ for(int i = 0; i < nums.size(); i++){
 }
 
 
+38.fill函数
+定义在头文件<algorithm>中, 其作用是将容器中从某个位置开始到末尾的所有元素设置为value
+fill(nums.begin() + size, nums.end(), 0);  //是将容器nums中从某个位置开始到末尾所有元素设置为0
+
+
+39.原地栈
+见"D:\Tech\Code\Program\leetcode\hot_100\283. 移动零.cpp"
+把 nums 当作栈, 用一个栈记录非零元素
+最后，在栈的末尾添加两个 0, 即为答案 [1,3,12,0,0]
+为了做到 O(1) 空间复杂度，直接把 nums 当作栈，用一个变量 stackSize 表示栈的大小，初始值为 0。
+入栈就是把 nums[stackSize] 置为 nums[i]，然后把 stackSize 加一。
+最后把 nums 中的下标从 stackSize 到 n-1 的数都置为 0。
+
+
+40.两个数组支持比较运算符 ==
+C++标准库std::array 提供了 operator==, 即相等比较运算符 ==, 它会'逐个元素比较两个数组的内容', 只有当所有对应位置的元素都相等时, 才返回 True
+eg.
+arr1 = [1, 2, 3]
+arr2 = [1, 2, 3]
+arr3 = [2, 3, 4]
+arr1 == arr2  //返回True
+arr1 == arr3  //返回False
+这个在用于统计字符串中各个字符的数量时常用
+for(char c : p){
+    cnt_p[c - 'a']++;  //统计字符串中各个字符的数量并转化为从下标为0开始的数组
+}
+见"D:\Tech\Code\Program\leetcode\hot_100\438. 找到字符串中所有字母异位词.cpp"
+
+
+41.双指针见"D:\Tech\Code\Program\leetcode\hot_100\11. 盛最多水的容器.cpp"及其灵茶山的题解
+//如果数组有序, 就可以使用双向双指针了
+//见"https://www.bilibili.com/video/BV1bP411c7oJ?vd_source=d87bfce5f3f31ab12142d953a0599436&spm_id_from=333.788.videopod.sections"
+//"https://www.bilibili.com/video/BV1Qg411q7ia?vd_source=d87bfce5f3f31ab12142d953a0599436&spm_id_from=333.788.player.switch"
+
+
+42.三元运算符 :?
+int a = 10, b = 20;
+int max = (a > b) ? a : b;  //如果a>b成立, 则max=a, 否则max=b
+故而
+若对于一个指向ListNode(链表节点)的指针p
+p = p ? p->next : headB
+当p为空指针时, 条件p为假(第二个p), False, 所以执行 p = headB, 即让p调到链表B的头结点
+当p为非空时, 条件p为真, True, 所以执行 p = p->next, 即让p向后移动一步
+详见
+
+
+43.相交链表见"D:\Tech\Code\Program\leetcode\hot_100\160. 相交链表.cpp"及其灵茶山的题解
+反转链表见"D:\Tech\Code\Program\leetcode\hot_100\206. 反转链表.cpp"及题解
+通过快, 慢指针找链表的中间节点见"D:\Tech\Code\Program\leetcode\hot_100\876. 链表的中间结点.cpp"及题解
