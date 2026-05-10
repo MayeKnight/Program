@@ -14,7 +14,7 @@ train: images/train # train images (relative to 'path') 118287 images
 val: images/val # val images (relative to 'path') 5000 images
 test: images/test # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794
 
-# Classes   Basophills嗜碱性粒细胞  Eosinophills嗜酸性粒细胞   成红血细胞Erythroblast   B淋巴细胞Ig   单核细胞 Monocytes    巨核细胞Platelets   淋巴细胞lymphocytes   中性粒细胞neutrophils
+# Classes   Basophils嗜碱性粒细胞  Eosinophils嗜酸性粒细胞   成红细胞Erythroblast   B淋巴细胞Ig   单核细胞 Monocytes    血小板Platelets   淋巴细胞lymphocytes   中性粒细胞neutrophils
 names:
   0: Basophills
   1: Eosinophills
