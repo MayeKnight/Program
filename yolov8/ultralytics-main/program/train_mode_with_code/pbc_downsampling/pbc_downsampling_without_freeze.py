@@ -10,6 +10,7 @@ if __name__ == '__main__':
     trainer=CustomTrainer,
     lr0=0.001,                 # 降低学习率         
     batch=16,
-    workers=8
+    workers=8,
+    mosaic=0.0
     )
 

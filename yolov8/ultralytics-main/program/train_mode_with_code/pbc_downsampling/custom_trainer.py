@@ -27,7 +27,7 @@ class CustomTrainer(DetectionTrainer):  # 自定义训练器 CustomTrainer
                 pad=0.0,                         # 填充
                 prefix="train: ",
                 red_cell_class_id=8,             # 红细胞类别ID（第9类，索引为8）
-                max_red_cells_per_image=3        # 每张图最多保留3个红细胞
+                max_red_cells_per_image=12      # 每张图最多保留3个红细胞
             )
         else:
             # 验证模式：直接使用官方方法构建数据集，不做下采样

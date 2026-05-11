@@ -11,6 +11,7 @@ if __name__ == '__main__':
     lr0=0.001,                 # 降低学习率
     freeze=10,                 # 可选：冻结前10层（或 backbone）
     batch=16,
-    workers=8
+    workers=8,
+    mosaic=0.0
     )
 

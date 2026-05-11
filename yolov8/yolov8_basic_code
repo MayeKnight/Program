@@ -774,7 +774,7 @@ yolov8模型结构通常有20 ~ 30层(根据版本略有不同)
 然后根据经验冻结前n层(n约等于总层数的1/3到1/2). freeze=10是一个安全且常用的起始值.
 
 # 以下内容 class_weights参数 在YOLO的训练接口中已经移除, 不再直接支持
-# 而对于class_weights参数, class_weights='[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3]'则是用于给不同类别的分类损失(cls_loss)分配权重, 用于缓解类别不平衡问题(一张图片目标细胞与红细胞比例达到1:17)
+# 而对于class_weights参数, class_weights='[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3]'则是用于给不同类别的分类损失(cls_loss)分配权重, 用于缓解类别不平衡问题(部分图片目标细胞与红细胞比例达到1:20)
 # 他得知是一个浮点数列表, 长度等于类别总数(这里为9). 列表中每个位置的数字对应该类别的损失权重.
 # 这里是指前8个类别为1.0, 表示8类目标细胞的分类损失权重为正常值.
 # 第9个类别(红细胞)为0.3, 表示红细胞的分类损失权重降低到0.3倍.
@@ -811,27 +811,27 @@ yolo train model=D:\Tech\Code\Program\runs\detect\train13\weights\best.pt data=D
 最终得到"D:\Tech\Code\Program\runs\detect\train13"所示训练结果
 
 
-在上述内容中, 针对数据集中存在单个样本中的红细胞与目标细胞的数量比高达17:1的情况, 我们采用了两阶段迁移学习策略, 实质上是一种类别增量学习方法(CIL, Class-Incremental Learning)
+在上述内容中, 针对数据集中存在单个样本中的红细胞与目标细胞的数量比高达20:1的情况, 我们采用了两阶段迁移学习策略, 实质上是一种类别增量学习方法(CIL, Class-Incremental Learning)
 第一阶段是对8类目标细胞的原始数据集通过yolov8n.pt做迁移训练, 第二阶段则是对补充标注所得到的9类细胞的增强数据集, 基于第一阶段所得的识别8类目标细胞的模型best.pt("D:\Tech\Code\Program\runs\detect\train12\weights\best.pt")做迁移训练
 得到9类细胞(包含红细胞)的细胞识别模型("D:\Tech\Code\Program\runs\detect\train13\weights\best.pt"), all classes mAP50 达到 0.931 
 
-在上述场景中, 我们采用冻结主干网络+仅微调检测头的类别增量学习策略, 得到9类细胞识别模型, 但相较于8类细胞识别模型, 会发现目标细胞(8类目标细胞, 不包含红细胞)的AP值有较明显减小, 这是因为虽然冻结了主干网络, 但由于每个batch中, 红细胞的正样本数量仍是原先的8类目标细胞的10倍以上(约17:1), 导致检测头的更新过度拟合红细胞的检测, 而旧类别(8类目标细胞)的检测头权重被抑制, 导致旧类别的召回率、精确率下降.
+在上述场景中, 我们采用冻结主干网络+仅微调检测头的类别增量学习策略, 得到9类细胞识别模型, 但相较于8类细胞识别模型, 会发现目标细胞(8类目标细胞, 不包含红细胞)的AP值有较明显减小, 这是因为虽然冻结了主干网络, 但由于每个batch中, 红细胞的正样本数量仍是原先的8类目标细胞的20倍以上(约20:1), 导致检测头的更新过度拟合红细胞的检测, 而旧类别(8类目标细胞)的检测头权重被抑制, 导致旧类别的召回率、精确率下降.
 故而我们这里提出对红细胞进行下采样, 从多数类中减少样本数量, 从而平衡batch中红细胞与目标细胞的占比.
 具体操作是先编写了一个自定义的 Dataset类 ("D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\pbc_downsampling\balanced_dataset.py") 用于平衡处理数据集, 实现一个batch中红细胞与8类目标细胞占比相近.
 随后自定义训练器 CustomTrainer  ("D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\pbc_downsampling\custom_trainer.py")
 再基于8类目标细胞识别模型进行迁移学习 ("D:\Tech\Code\Program\yolov8\ultralytics-main\program\train_mode_with_code\pbc_downsampling\pbc_downsampling.py")
-得到9类细胞识别模型 ("D:\Tech\Code\Program\runs\detect\train-5\weights\best.pt")
+得到9类细胞识别模型 ("D:\Tech\Code\Program\runs\detect\train-13\weights\best.pt")
 模型的 all classes mAP50 达到 0.937, 各类别的 AP 值都相较于不进行下采样所得到的模型有所提高
 上述为 冻结主干网络+仅微调检测头+下采样 的类别增量学习策略.
 
 增量学习前的模型, 即第一阶段所得到的识别8类目标细胞的模型("D:\Tech\Code\Program\runs\detect\train12\weights\best.pt")
 先前所述冻结主干, 不下采样 所得模型 ("D:\Tech\Code\Program\runs\detect\train13\weights\best.pt")
 补充了不进行冻结主干网络微调检测头,也不进行下采样 的训练所得到的模型  ("D:\Tech\Code\Program\runs\detect\train-6\weights\best.pt")
-以及不冻结主干, 仅进行下采样所得到的模型  ("D:\Tech\Code\Program\runs\detect\train-7\weights\best.pt")
-对比mAP50, mAP50-95, 遗忘率, 混淆矩阵等的消融实验.(混淆矩阵例子见"D:\Tech\Code\Program\runs\detect\train13\confusion_matrix.png")
+以及不冻结主干, 仅进行下采样所得到的模型  ("D:\Tech\Code\Program\runs\detect\train-14\weights\best.pt")
+对比mAP50, mAP50-95, 遗忘率, 混淆矩阵等的消融实验.(混淆矩阵例子见"D:\Tech\Code\Program\runs\detect\train-13\confusion_matrix.png")
 
 最终经过消融实验, 发现
-(1)冻结主干网络 + 下采样 (mAP最高, 0.937)  train-5
-(2)不冻结主干 + 不下采样 (mAP第二高, 0.936)  train-6
-(3)不冻结主干网络 + 下采样 (mAP第三高, 0.934) train-7
+(1)不冻结主干网络 + 下采样 (mAP第一高, 0.939) train-14, 但是唯一的AP小于0.9的 Basophills 为 0.879, 相较于冻结主干网络 + 下采样的方法 唯一的AP小于0.9的 Basophills 为 0.891, 显然冻结主干网络 + 下采样的方法各个类别更接近0.9以上, 故而优先考虑冻结主干网络 + 下采样方法
+(2)冻结主干网络 + 下采样 (mAP第二高, 0.938)  train-13   选用该方法
+(3)不冻结主干 + 不下采样 (mAP第三高, 0.936)  train-6
 (4)冻结主干 + 不下采样 (mAP最低, 0.931)  train13

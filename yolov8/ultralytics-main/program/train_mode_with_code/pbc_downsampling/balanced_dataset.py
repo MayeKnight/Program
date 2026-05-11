@@ -3,7 +3,7 @@ import torch
 from ultralytics.data import YOLODataset
 
 class BalancedYOLODataset(YOLODataset):  # 用于平衡处理数据集
-    def __init__(self, *args, red_cell_class_id=8, max_red_cells_per_image=3, **kwargs):
+    def __init__(self, *args, red_cell_class_id=8, max_red_cells_per_image=12, **kwargs):
         super().__init__(*args, **kwargs)
         self.red_cell_class_id = red_cell_class_id
         self.max_red_cells = max_red_cells_per_image
