@@ -592,6 +592,42 @@ p = p ? p->next : headB
 详见
 
 
-43.相交链表见"D:\Tech\Code\Program\leetcode\hot_100\160. 相交链表.cpp"及其灵茶山的题解
-反转链表见"D:\Tech\Code\Program\leetcode\hot_100\206. 反转链表.cpp"及题解
-通过快, 慢指针找链表的中间节点见"D:\Tech\Code\Program\leetcode\hot_100\876. 链表的中间结点.cpp"及题解
+43.亦或(XOR)计算
+C++中, 亦或(XOR)计算可以通过使用 ^ 运算符, 直接对整数类型的变量进行按位异或.  (其数学运算符号为⊕, 在C++中 ^ 为按位异或运算符)
+eg.
+int a = 5;      //二进制 0101
+int b = 3;      //二进制 0011
+int c = a ^ b;  //结果为 0110 -> 6,  实现了 a XOR b, 即a与b之间的亦或计算
+并且, 亦或(XOR, ^)计算所具有计算性质如下
+若 a ^ b = c, 已知 a 和 c
+则 b = c ^ a.
+
+亦或计算还具有
+交换律     a ^ b = b ^ a,  顺序不影响结果
+结合律     (a ^ b) ^ c = a ^ (b ^ c),  可以任意分组计算
+恒等率     a ^ 0 = a,  任何数与0 亦或 等于自身
+自反律(归零率)  a ^ a = 0,  任何数与自身亦或得0
+与1亦或(取反)   1 ^ 0 = 0, 1 ^ 1 = 0,  某位与1亦或等价于取反
+消去律       若 a ^ b = a ^ c, 则 b = c, 两边同时亦或a所得
+
+衍生特性
+可逆性: 加密时用 key 疑惑, 再用同一 key 亦或即可解密
+(a ^ k) ^ k = a
+
+
+44.创建函数时参数按值传递导致超时
+(1)错误写法(超时)
+int sol(vector<int> res, int left, int right) {   // ❌ 按值传递，每次拷贝整个数组
+    return res[right+1] ^ res[left];
+}
+超时原因:
+每个查询调用 sol() 时, 实参 res 会被完整拷贝 (长度n+1)
+若 n=1e5, 执行 q=1e5 次包含 sol 的循环, 时间复杂度 O(n * q) = 1e10, 必然超时.
+
+(2)正确写法(通过)
+int sol(const vector<int>& res, int left, int right) { // ✅ 常量引用，无拷贝
+    return res[right+1] ^ res[left];
+}
+改进点:
+使用了 vector<int>& 传递, 只传递地址(引用), O(1)时间.
+其中的 const 定义了res为常量, 避免因 sol() 函数内不小心写了类似 res[0]=100, 可能会导致外部函数(sol()函数外的主函数内容)中的 res数组, 导致错误.
