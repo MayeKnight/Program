@@ -849,8 +849,8 @@ yolo train model=D:\Tech\Code\Program\runs\detect\train13\weights\best.pt data=D
 采用下采样策略时遇到的问题:
 在采用下采样时我们发现了一个很重要的问题, 下采样红细胞数量 max_red_cells_per_image=3 (即最多只取3个红细胞), 并且打开增强学习时, 会发现训练所得到的模型的mAP能达到0.937, 且红细胞AP达到0.981  ("D:\Tech\Code\Program\runs\detect\train-5\BoxPR_curve.png")
 但是通过观察归一化混淆矩阵, 发现存在红细胞的非主对角线颜色高亮, 在 True=erythrocyte, Predicted=background 对应单元格为1.00, 
-这说明该模型非常倾向于将背景误判为红细胞(误检 FP)  ("D:\Tech\Code\Program\runs\detect\train-5\confusion_matrix_normalized.png")      
-并且这里的background行的红细胞所在列的 1.0 说明模型在固定置信度阈值下(通常默认0.5), 将几乎所有背景都预测为了红细胞(假阳性). 
+这说明该模型非常倾向于将红细胞误判为背景(漏检FN)  ("D:\Tech\Code\Program\runs\detect\train-5\confusion_matrix_normalized.png")      
+并且这里的background行的红细胞所在列的 1.0 说明模型在固定置信度阈值下(通常默认0.5), 几乎漏检了所有红细胞
 
 红细胞的AP很高达到0.981, 但归一化混淆矩阵中 True=erythrocyte, Predicted=background 对应非对角线元素高亮, 且高达1.0
 这实质上是由于经典的"阈值敏感性"不同所导致的. 这两者同时出现并不矛盾, 它们实质上是在'不同条件'下衡量模型表现
@@ -921,7 +921,7 @@ p
 这是因为我们在该策略(冻结主干网络+下采样)中引入了数据增强.
 yolov8默认的数据增强(尤其是Mosaic和随机缩放裁剪)会改变图像内容, 导致部分红细胞被裁剪出画面或变得极小, 从而在增强后的图像中丢失. 在随后的下采样中, 基于数据增强后的结果, 部分图像中的红细胞数量可能大幅减少, 甚至降为0.
 并且第二阶段(冻结主干网络+下采样做类别增量学习)中, 相较于第一阶段(8类目标细胞的训练), 我们还降低了学习率(降低了10倍, 从0.01降到了0.001)
-又考虑到我们所用数据集, PBC labelling Extended (pbc_improve)中, 普遍存在红细胞与目标细胞之间的比值约为 20:1. 
+又考虑到我们所用数据集, PBC labeling Extended (pbc_improve)中, 普遍存在红细胞与目标细胞之间的比值约为 20:1. 
 故而在下采样时, 我们应取的红细胞数量, 取到10个左右即可(对应学习率降低了10倍, 使红细胞与目标细胞数量接近10:1即可)
 实质上,
 学习率可以理解为步长, 决定参数更新时"迈多大步子". 步长太大容易跨过最优解, 太小则收敛太慢.
