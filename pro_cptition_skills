@@ -631,3 +631,7 @@ int sol(const vector<int>& res, int left, int right) { // ✅ 常量引用，无
 改进点:
 使用了 vector<int>& 传递, 只传递地址(引用), O(1)时间.
 其中的 const 定义了res为常量, 避免因 sol() 函数内不小心写了类似 res[0]=100, 可能会导致外部函数(sol()函数外的主函数内容)中的 res数组, 导致错误.
+
+
+45.快速知道是否有奇偶性相同或不同的临近元素？
+见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\前缀和\3152. 特殊数组 II.cpp"对应题解
