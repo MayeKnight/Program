@@ -27,7 +27,7 @@ s.count(x) 返回0或1, 判断是否包含x
 s.find(x) 返回指向x的迭代器, 找不到返回s.end()
 s.clear(x) 清空所有元素
 s.size() 返回元素个数
-s.contains(x) 判断集合中是否包含某个元素
+s.contains(x) 判断集合中是否包含某个元素, 返回bool型变量, 包含返回1, 否则返回0.
 
 
 5.关于vector
@@ -502,6 +502,16 @@ if (s.find(alpha) != string::npos) {
     // 找到了 alpha
 }
 
+-string字符串也有 push_back(), pop_back()的用法
+实质上, string 可以理解为一种专门存储字符的容器(用法类似于vector), 它和 vector<char> 在很多方面非常相似
+都有以下函数 (后面的注释 // 以string为对象说明)
+push_back()  //但需注意, string字符串 push_back() 的()里要是单引号的 char 类型, 因为实质上 s[0], s[1], 是一个个 char类型, 比方说 push_back('a');
+pop_back()  //删除字符串末尾的一个字符, ()里为空即可
+size()/length()  //返回字符串大小/长度
+clear()  //清空字符串所有内容, 使其变为空字符串
+empty()  //string空返回true(1), 否则返回false(0)
+resize()  //同文档所述(可ctrl+f搜索对应节)
+
 
 33.bool has[26]{};  
 //声明has数组, 并置空
@@ -510,11 +520,16 @@ if (s.find(alpha) != string::npos) {
 vector数组的相关用法
 //vector<int> has;
 //has.push_back(a); //向数组添加a
+//has.pop_back();  //直接删除数组最后一个元素, 使用前要先通过 .empty() 检查数组是否为空.
+//has.empty();  //检查数组是否为空, 若为空, 返回true(1), 否则返回false(0), 返回bool型变量.
 
 
 34.reduce(arr.begin(), arr.end()) 累加函数
 reduce是C++标准库算法, 在头文件<numeric>, 类似于上述的 std::accumulate 累加函数, 但支持并行执行, 通常用于对一个范围内的元素进行求和.
 这里是计算从 arr.begin() 到 arr.end() 所有元素的和.
+eg.
+vector<int> arr = {1, 2, 3, 4, 5};
+sum = reduce(arr.begin(), arr.end());  // sum = 15
 
 
 35.遍历(枚举)矩阵
@@ -544,6 +559,13 @@ res.resize(nums.size() + 1); //数组res的大小变为 nums.size() + 1
 for(int i = 0; i < nums.size(); i++){
     res[i + 1] += nums[i];
 }
+
+并且 .resize()函数 可以用于保留前cur个元素(下标从 0 到 cur - 1), 删除下标 cur 及之后的所有元素.
+eg.
+vector<int> history = {10, 20, 30, 40, 50}
+int cur = 3;            //你想保留下标 0, 1, 2 (即10, 20, 30)
+history.resize(cur);    //结果: {10, 20, 30}
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\栈\1472. 设计浏览器历史记录.cpp"
 
 
 38.fill函数
@@ -635,3 +657,149 @@ int sol(const vector<int>& res, int left, int right) { // ✅ 常量引用，无
 
 45.快速知道是否有奇偶性相同或不同的临近元素？
 见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\前缀和\3152. 特殊数组 II.cpp"对应题解
+
+
+46.容器的 .back() 成员函数
+返回容器里最后一个元素.
+eg.
+vector<int> arr = {4, 7, 8, 10, 12};   //arr.back() == 12
+
+返回容器里倒数第二个元素
+return arr[a.size() - 2];
+
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\栈\682. 棒球比赛.cpp"
+
+
+47.""与''
+""双引号表示字符串
+''单引号表示字符
+eg.
+string s = "abcde";  
+if (s[2] == 'c') {}  //s[2]为char类型, 故要用''单引号表示字符, 而不能用双引号.
+
+
+48.switch多分支选择语句
+switch是C++中的多分支选择语句, 用于基于一个整形表达式(int, char等)的值, 跳转到不同的执行路径, 它比多个 if-else if 更清晰高效
+eg.
+int score = 85;
+switch (score / 10) {   //取十位数
+    case 10:
+    case 9:
+        cout << "A" << endl;
+        break;
+    case 8:
+        cout << "B" << endl;
+        break;
+    case 7:
+        cout << "C" << endl;
+        break;
+    default:
+        cout << "不及格" << endl;
+}
+
+工作规则:
+1.表达式必须是整型、枚举或能隐式转换为整型的类型 (不能是 float、string)
+2.case 后面必须是编译时常量 (即在编译阶段就能确定其值的量, 如 int MAX = 100, (然后 case MAX: 等同于 case 100:) 而不是在程序运行时才能知道)
+3.从上到下匹配，匹配成功后执行该 case 及后续所有代码 (称为“穿透”)
+4.break 跳出 switch, default 在所有 case 都不匹配时执行
+
+//双引号为 string 字符串, 这里遍历 vector<string> ops 
+//即直接 for(auto& x: ops) {}   // x 为 string, x[0]表示 字符串string 中第一个字符, 转为 char 类型
+//直接 x[0] 表示第一个字符即可, 变为 char 类型, switch表达式必须是整形, 字符型, 枚举型, (而不能是 float/double, string, 指针), 故在下面的 switch 语句中, 要用单引号, 类似于 case '5':   //而不能是 "5"
+//应用例子详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\栈\682. 棒球比赛.cpp"
+//"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\栈\2390. 从字符串中移除星号.cpp"
+
+//case 和 switch 也可以同一列写, 就是case可以没有两个空格缩进(另一种代码风格)
+eg.
+int score = 85;
+switch (score / 10) {   //取十位数
+case 10:
+case 9:
+    cout << "A" << endl;
+    break;
+case 8:
+    cout << "B" << endl;
+    break;
+case 7:
+    cout << "C" << endl;
+    break;
+default:
+    cout << "不及格" << endl;
+}
+
+
+
+49.数字的char类型转为int类型 (两种方法)
+-1.stoi() 函数 (最常用, 最高效, 优先使用)
+stoi()是C++标准库函数, 用于将 字符串string 转换为 int类型.
+eg.
+string op = "123";
+int num = stoi(op);  // num = 123
+
+-2.减去字符'0', 这个方法在通过遍历vector<string> s, 通过for(auto& x : s) {// x[0]} 提取string中的字符, 若存在负号, 如"-3", 可能因为只提取了'-'而报错, 故优先要使用 stoi()
+eg.
+char c = '5';
+int num = c - '0';   // num = 5 
+
+
+50.关于return
+对于一个函数, 若写 retuan ..; 
+则其后面的都不再执行, 注意顺序.
+
+
+51.关于用 vector<int> 来模拟栈时, 调用 .back() 需要注意的判断栈是否为空
+用 vector<int> 来模拟栈时, 调用 .back() 访问最后一个元素时, 要写 !arr.empty(), 以避免 arr为空时, arr.back() 访问最后一个元素未定义而报错
+eg.
+while (!a.empty() && a.back() == popped[rec]) {  //!a.enpty()保证栈不为空时才访问a.back(), 否则会出现未定义而报错 (这里是用vector<int> 来模拟栈)
+    a.pop_back();
+    rec++;
+}
+
+
+52.关于 stack栈, 以及其区别于 用vector数组模拟栈
+stack 是C++标准库中的容器适配器, 实现了 LIFO(后进先出) 的数据结构.  (容器适配器并非容器, 不支持迭代器或随机访问.), 在明确需要 LIFO语义(后进先出), 且不需要随机访问(通过下标访问)时, 可以使用 stack.
+eg1.
+stack<int> stk[26];     // 声明了一个包含26个 stack<int> 对象的数组 (即数组中有26个元素, 每个是stack), 并且 stack没有类似vector那样形如 stack<int> stk(26) 的构造函数, 而应为 stack<int> stk; 或 stack<int> stk[26] 等
+
+===
+stk[0]  ->  stack<int> (独立的栈)     
+stk[1]  ->  stack<int> (独立的栈) 
+stk[2]  ->  stack<int> (独立的栈)             
+...
+stk[25]  ->  stack<int> (独立的栈)        
+===
+
+//向不同栈压入元素
+stk[0].push(10);        // stack压入元素是用 .push(), 而不是类似于 vector模拟栈的 .push_back()
+stk[0].push(20);
+
+stk[1].push(100);
+stk[1].push(200);
+
+stk[2].push(5);
+
+//访问栈顶
+cout << stk[0].top() << endl;   //输出20, stack访问栈顶元素是用 .top(), 而不是类似于 vector模拟栈的 .back()
+cout << stk[1].top() << endl;   //输出200
+cout << stk[2].top() << endl;   //输出5
+
+//弹出元素
+stk[0].pop();   //弹出该栈栈顶的元素20, stk[0]现在只有10, stack弹出栈顶元素是用 .pop(), 而不是类似于 vector模拟栈的 .pop_back()
+
+//判断是否为空, top()访问栈顶元素前要检查 empty(), 看栈是否为非空, 否则在栈空时访问栈顶会因为未定义行为而报错.
+if(!stk[0].empty()){
+    cout << stk[0].top() << endl;  //输出10
+}
+
+===
+//栈允许的操作
+stk[2].top();   //只能看栈顶
+stk[2].pop();   //只能删栈顶
+stk[2].push();  //只能加在栈顶
+stk[2].empty(); //判空
+stk[2].size();  //获取该栈大小
+
+//不允许的操作
+不能通过索引(下标)随机访问, 也没有类似.begin()的迭代器, 
+也没有.clear()函数清空栈, 只能循环 .pop() 清空栈
+===
