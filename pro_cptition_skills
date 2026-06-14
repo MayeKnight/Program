@@ -482,7 +482,7 @@ C++中, 取余 % 运算符遵循向零取整规则, 即"余数的符号与被除
 101 % 2 = 1
 
 
-32.C++字符串用法
+32.C++ string字符串用法
 string s;
 
 int i = s.find(alpha);
@@ -511,6 +511,36 @@ size()/length()  //返回字符串大小/长度
 clear()  //清空字符串所有内容, 使其变为空字符串
 empty()  //string空返回true(1), 否则返回false(0)
 resize()  //同文档所述(可ctrl+f搜索对应节)
+
+-字符串拼接的几种方式
+(1)string + string  字符串拼接字符串
+===
+string s1 = "Hello";
+string s2 = "World";
+
+string s3 = s1 + s2;           // "HelloWorld"
+string s4 = s1 + " " + s2;     // "Hello World"
+===
+
+(2)string + char  字符串拼接字符
+===
+string s = "Hello";
+char c = '!';
+string result = s + c;   // "Hello!"
+===
+
+(3)char + string  字符拼接字符串
+===
+string s = "ello";
+char c = 'H';
+string result = c + s;   // "Hello"
+===
+
+(4)string + 字符串字面量
+===
+string s = "Hello";
+string result = s + "World";  // "Hello World"
+===
 
 
 33.bool has[26]{};  
@@ -757,7 +787,7 @@ while (!a.empty() && a.back() == popped[rec]) {  //!a.enpty()保证栈不为空�
 
 
 52.关于 stack栈, 以及其区别于 用vector数组模拟栈
-stack 是C++标准库中的容器适配器, 实现了 LIFO(后进先出) 的数据结构.  (容器适配器并非容器, 不支持迭代器或随机访问.), 在明确需要 LIFO语义(后进先出), 且不需要随机访问(通过下标访问)时, 可以使用 stack.
+stack 是C++标准库中的容器适配器, 实现了 LIFO(后进先出) 的数据结构.  (容器适配器并非容器, 不支持迭代器或随机访问.), 在明确需要 LIFO语义(后进先出), 且不需要随机访问(通过下标访问)时, 可以使用 stack.  (stack底层是基于deque实现的)
 eg1.
 stack<int> stk[26];     // 声明了一个包含26个 stack<int> 对象的数组 (即数组中有26个元素, 每个是stack), 并且 stack没有类似vector那样形如 stack<int> stk(26) 的构造函数, 而应为 stack<int> stk; 或 stack<int> stk[26] 等
 
@@ -802,4 +832,282 @@ stk[2].size();  //获取该栈大小
 //不允许的操作
 不能通过索引(下标)随机访问, 也没有类似.begin()的迭代器, 
 也没有.clear()函数清空栈, 只能循环 .pop() 清空栈
+===
+
+
+51.istringstream ss(path);  字符串转为字符串流 + getline 实现按指定分隔符读取  (常用于解决路径简化相关问题)
+istringstream 是 C++ 标准库中的一个输入字符串流类(只读, 还有ostringstream只写, 和stringstream可读可写), 定义在 <sstream> 头文件中, 它可以把字符串当做一个输入流来操作, 就像从键盘(cin)读取数据一样。
+(1)基本用法
+===
+#include <sstream>
+#include <string>      //后面的搭配getline实现按指定分隔符读取, getline 定义在 <string> 头文件中
+using namespace std;
+
+string path = "/home/user/./docs/../file.txt";
+string text = "Hello   World\tC++\nProgramming 2024";
+istringstream ss1(path);   //创建字符串流, 绑定到 path
+istringstream ss2(text);
+
+//1. 按空白字符(包含空格)分割读取.  使用 >> 自动处理所有空白字符, 不需要指定分隔符 
+string word;
+while(ss2 >> word){    //每次循环时, ss2 >> word 会从流中提取一个单词, 并复制到 word 变量中. 字符流 ss2 结束时, ss2 >> word 会返回一个可以转换为 false 的流对象, 退出循环.
+    cout << "word[" << count++ << "]: \"" << word << "\"" << endl;   //以空白字符作为分隔, 逐个单词处理, 空白字符有哪些见下侧(2)
+}
+//输出
+//word[0]: "Hello"
+//word[1]: "World"
+//word[2]: "C++"
+//word[3]: "Programming"
+//word[4]: "2024"
+
+//2.配合getline按指定分隔符读取, 详见下侧(3).  使用 getline 需要指定分隔符时, 遇到反斜杠需要转义, 因为 \ 是转义字符, 一个 \ 不完整, 编译器会以为你要写转义序列但没写完, 而导致编译错误, 故不能写为 \(两侧单引号这里省略), 而应写为'\\', 来表示反斜杠本身 \  (表示一个反斜杠字符)
+string token;                       
+while(getline(ss1, token, '/')){    //每次循环时, getline(ss1, token, '/') 会从流中提取一行(这里以'/'逗号为分隔), 并复制到 token 变量中. 字符流 ss1 结束时, getline(ss1, token, '/') 会返回一个可以转换为 false 的流对象, 退出循环.
+    cout << token << endl;  //按 '/'分隔
+}
+
+//在路径简化相关应用中, 可以将token装进栈stk, 经过一系列对栈的处理后, 可以通过一个 for(string&s : stk) {}, 通过字符串拼接(上面已整理), 得到对应最终路径简化的答案
+//随后可以通过token为空时, 即通过 token.empty() 时, continue (路径简化中\\的情况).
+===
+
+(2)字符串string 与 字符串流stringstream 对比
+本质上, 字符串string 是'静态字符序列容器', 字符串流stringstream 则为'动态输入输出缓冲区'
+操作方式上, 字符串string支持直接索引, 拼接, 查找, 而 字符串流stringstream 则为流式操作 (<< 和 >>), 并且会自动以空白字符为分隔符
+---
+空白字符包括
+空格        ' '
+制表符      '\t'
+换行符      '\n'
+回车符      '\r'
+换页符      '\f'
+垂直制表符  '\v'
+---
+类型转换上, 字符串string需要手动转换(如通过stoi()将字符串string 转换为 int类型), 而 字符串流stringstream 能自动类型转换
+解析能力上, 字符串string需要手动分割, 而 字符串流stringstream 内置解析功能
+
+//字符串-静态存储
+===
+# include <string> 
+using namespace std;
+
+string str = "123 456 789";
+
+//直接访问
+char ch = str[0];  // '1'
+string sub = str.substr(0, 3); // "123";
+
+//查找第一个大于目标值元素的位置
+size_t pos = str.find(' ');  // 3, 其中 size_t 为 C/C++ 中无符号整数类型, 专门用于表示对象的大小(以字节为单位)和数组索引, 这里用于表示数组索引
+
+//拼接
+str += " 000";   // "123 456 789 000"
+
+//❌️ 不能自动解析数字
+int num = str;  // 编译错误, 不能自动从 string类型转为 int类型.
+int num = stoi(str);  //需要手动转换
+===
+
+//字符串流-动态缓冲区
+===
+#include <sstream>
+using namespace std;
+
+stringstream ss("123 456 789");  //创建
+
+//✅️ 自动解析不同类型
+int a, b, c;
+ss >> a >> b >> c;   //a=123, b=456, c=789, 流式操作(<<或>>)自动以空白字符(包括空格)作为分隔符, 并且会将 string类型 自动转换为 int类型
+
+//✅️ 自动格式转换
+ss.clear();  //清空字符串流中的内容
+ss.str("");  //清空字符串流的状态符, 清空字符串流时必须与 ss.clear() 搭配使用, 否则会报错
+ss << "PI = " << 3.14159;
+string result = ss.str();  // "PI = 3.14159", 自动将int类型转为string类型, .str()是stringstream类的成员函数, 用于获取字符串缓冲区内容
+
+//✅️ 以空白字符为分隔符, 逐个单词处理, 见上面的(1)
+string word;
+while (ss >> word){
+    //逐个单词处理
+}
+===
+
+(3)getline详解
+getline 是C++ 中用于从输入流中读取一行或按分隔符读取的函数, 定义在 <string> 头文件中
+
+//从字符串流读取整行(默认以换行符为分隔)  getline(istream& is, string& str);
+===
+#include <iostream> 
+#include <sstream>
+#include <stream>
+using namespace std;   //下面所要写的 int main(){} 暂且省略 (可读性)
+
+string data = "Hello World\nC++ Programming\n2024";
+istringstream ss(data);  //创建字符串流, 绑定到 data
+
+string line;   
+while(getline(ss, line)){  //每次循环时, getline(ss, line) 会从流中提取一行(默认以换行符为分隔), 并复制到 line 变量中
+    cout << "Line: " << line << endl;
+}
+//输出
+//Line: Hello World
+//Line: C++ Programming
+//Line: 2024
+===
+
+//从字符串流按指定分隔符读取(以按逗号分隔为例)   getline(istream& is, string& str, char delim);
+===
+#include <iostream> 
+#include <sstream>
+#include <stream>
+using namespace std;   //下面所要写的 int main(){} 暂且省略 (可读性)
+
+string csv = "apple,banana,cherry,date";
+istringstream ss(csv);  //创建字符串流, 绑定到 csv
+
+string fruit;
+while(getline(ss, fruit, ',')){  //每次循环时, getline(ss, line) 会从流中提取一行(这里以','逗号为分隔), 并复制到 line 变量中
+    cout << "Fruit: " << fruit << endl;
+}
+//输出
+//Fruit: apple
+//Fruit: banana
+//Fruit: cherry
+//Fruit: date
+===
+
+应用详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\栈\71. 简化路径.cpp"
+
+
+53.关于 queue队列
+std::queue 是 C++ 标准库中的容器适配器, 实现了先进先出(FIFO, First in First Out) 的数据结构. (容器适配器并非容器, 不支持迭代器或随机访问.)  定义在 <queue> 头文件中.  (queue底层是基于deque实现的)
+---
+核心特点:
+只能从一端添加元素(队尾push)  
+只能从另一端移除元素(队头pop)
+只能访问队头和队尾, 不能访问中间元素
+没有迭代器, 不能遍历
+---
+
+eg.
+===
+#include <iostream>
+#include <queue>
+using namespace std;  (以下声明main主函数省略以保证可读性)
+
+queue<int> q;
+
+//入队
+q.push(10);   //queue队列入队是用 .push(), stack栈压入元素也是用 .push(), 而 vector模拟栈 压入元素则是用 .push_back()
+q.push(20);
+q.push(30);
+
+//访问队头, 队尾, 及队列大小
+cout << "队头: " << q.front() << endl;  //输出10, queue队列访问队头是用 .front(), stack访问栈顶元素是用 .top(), 而 vector模拟栈则是用 .back() 访问最后一个元素
+cout << "队尾: " << q.back() << endl;   //输出200, queue队列访问队尾元素用 .back()
+cout << "大小: " << q.size() << endl;   //输出3, 获取 queue队列的大小用 .size()
+
+//出队
+while(!q.empty()){               //进行出队操作时要判断队列是否为空, 否则会报错
+    cout << q.front() << " ";    //说明接下来哪个元素要出队
+    q.pop();                     //队头元素出队, queue队列中队头元素出队是用 .pop(), stack栈中, 弹出栈顶元素是用 .pop(), vector模拟栈则是用 .pop_back() 弹出末尾元素
+
+}                                //输出10 20 30
+===
+
+队列queue允许的操作如下:
+push(x)   将元素x放入队尾(入队)
+pop()     移除队头元素(无返回值)(出队)
+front()   返回队头元素
+back()    返回队尾元素
+empty()   判断队列是否为空
+size()    返回元素个数(队列大小)
+
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\933. 最近的请求次数.cpp"
+
+以及"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\3829. 设计共享出行系统.cpp", queue队列 搭配 unordered_set哈希集合 记录队列中有效元素的应用
+另外创建一个unordered_set记录当前还有哪些rider(即队列中还有哪些rider是有效的), 执行前通过while循环检查队列.front(), 即队头元素是否存在于unordered_set中, 若unordered_set中不存在该rider, 则在循环体中循环删除 队列.front()
+
+
+54.deque双端队列
+deque双端队列(double-ended queue) 是 C++标准库中的序列容器, 定义在 <deque> 头文件中 (即deque双端队列是容器, 支持随机访问(基于下标的访问)和遍历(非破坏性), 而基于deque实现的 stack栈 和 queue队列 则为容器适配器, 不能随机访问(即不能通过下标访问), 只能进行破坏性遍历)
+deque支持在头部和尾部进行高效的插入和删除操作(O(1)时间复杂度), 与 vector数组 类似支持随机访问
+===
+//基本声明与初始化
+#include <iostream>
+#include <deque>
+deque<int> dq1;                         //空deque
+deque<int> dq2(10);                     //10个元素, 值初始化为0
+deque<int> dq3(10, 5);                  //10个元素, 每个都是5, vector也支持这种构造
+deque<int> dq4 = {1, 2, 3, 4, 5};       //初始化列表
+deque<int> dq5(dq4);                    //拷贝构造
+
+//基本操作(增删改查)    下述为了可读性, 省去声明main函数
+deque<int> dq;
+
+//1.尾部插入
+dq.push_back(10);      //类似于vector, 也用 push_back(), 区别于 queue队列入队是用 .push(), stack栈压入元素也是用 .push(), 而 vector模拟栈 压入元素则是用 .push_back()
+dq.push_back(20);     
+
+//2.头部插入
+dq.push_front(5);      //deque双端队列, 尾部插入 .push_back(), 头部插入 .push_front()
+dq.push_front(1);      //当前 [1, 5, 10, 20], 其中1为队首元素, 20为队尾元素
+
+//3.随机访问(通过下标)  
+cout << dq[0] << endl;  //输出1, deque和vector是容器, 支持随机访问(通过下标), 而stack栈和queue队列则是容器适配器, 不支持随机访问
+cout << dq[2] << endl;  //输出10
+
+//4.访问首尾元素
+cout << dq.front() << endl;  //输出1, deque双端队列访问队头用.front(), queue队列访问队头是用 .front(), queue队列访问队尾元素用 .back(), stack访问栈顶元素是用 .top(), 而 vector模拟栈则是用 .back() 访问最后一个元素 
+cout << dq.back() << endl;   //输出20, deque双端队列访问队尾用.back()
+
+//5.删除首尾元素
+dq.pop_front();  //删除队首元素, 即删除1, 现在[5. 10, 20]
+dq.pop_back();   //删除队尾元素, 即删除20, 现在[5, 10], 类似vector, 也用 pop_back(), deque双端队列, 尾部删除 .pop_back(), 头部删除 .pop_front()
+
+//6.插入元素(中间)
+auto it = dq.begin() + 1;   //声明迭代器 it, 因为 .insert()函数要求传入的是迭代器, 不是下标(索引), .insert() 是STL容器的通用接口, 必须适用于所有容器类型, 故而这么设计 
+dq.insert(it, 7);           //在位置1插入7, 现在 [5, 7, 10]
+
+//7.删除元素(中间)
+dq.erase(dq.begin() + 1);  //删除7, 现在[5, 10], deque双端队列和vector容器的.erase()函数要求传入的是迭代器(位置), 而不是元素值, 不同容器的erase接口不同, set, multiset, map, unordered_set, unordered_map等则既支持传入迭代器按位置删除, 也支持传入值按值删除
+
+//8.遍历
+for(int x : dq) {
+    cout << x << " ";
+}
+
+//9.清空
+dq.clear();
+cout << "清空后大小: " << dq.size() << endl;   //输出0
+
+//10.判断
+dq.empty();   //若为空返回true(bool型变量为1), 否则为false(bool型变量为0)
+===
+
+//关于何时用deque双端队列, 何时用queue队列 
+-需要严格的FIFO行为, 且不需要随机访问或双端操作时可以采用 queue队列   (可以与unordered_set结合标记queue中的有效元素, 应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\3829. 设计共享出行系统.cpp")
+-需要双端操作(头尾部插入/删除), 或需要随机访问(下标访问), 遍历所有元素且不破坏队列, 可采用双端队列 deque
+-queue能做的deque都能做, deque能做的queue不一定能做
+
+应用见 排序+双端队列逆向模拟 "D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\950. 按递增顺序显示卡牌.cpp"
+
+
+55.deque双端队列转为vector数组
+deque<int> dq;  
+return vector<int>(dq.begin(), dq.end());   //用deque中的所有元素来构造并返回一个 vector<int> 对象
+
+也可通过声明封装一个函数用于将 deque<int> 转换为 vector<int>
+===
+vector<int> convertToVector(const deque<int>& dq){
+    return vector<int>(dq.begin(), dq.end());
+}
+int main(){
+    deque<int> dq= {10, 20, 30, 40, 50};
+    vector<int> vec = convertToVector(dq);  //将deque<int> 类型的dq 转为了 vector<int> 类型的 vec;
+
+    //输出vector验证
+    for(int x : vec){
+        cout << x << " ";    //输出10, 20, 30, 40, 50
+    }
+}
 ===
