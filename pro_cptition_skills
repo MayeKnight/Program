@@ -1070,6 +1070,9 @@ dq.insert(it, 7);           //在位置1插入7, 现在 [5, 7, 10]
 
 //7.删除元素(中间)
 dq.erase(dq.begin() + 1);  //删除7, 现在[5, 10], deque双端队列和vector容器的.erase()函数要求传入的是迭代器(位置), 而不是元素值, 不同容器的erase接口不同, set, multiset, map, unordered_set, unordered_map等则既支持传入迭代器按位置删除, 也支持传入值按值删除
+或写为
+auto it = dq.begin() + 1;
+dq.erase(it);
 
 //8.遍历
 for(int x : dq) {
@@ -1090,6 +1093,7 @@ dq.empty();   //若为空返回true(bool型变量为1), 否则为false(bool型�
 -queue能做的deque都能做, deque能做的queue不一定能做
 
 应用见 排序+双端队列逆向模拟 "D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\950. 按递增顺序显示卡牌.cpp"
+deque通过迭代器插入、删除中间元素 "D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\1670. 设计前中后队列.cpp"
 
 
 55.deque双端队列转为vector数组
@@ -1110,4 +1114,134 @@ int main(){
         cout << x << " ";    //输出10, 20, 30, 40, 50
     }
 }
+===
+
+
+56. priority_queue堆(heap) (又称为优先队列(数据结构教材的标准翻译), 但一般普遍可以叫为堆)
+C++标准库提供了以下两种堆的使用方式
+定义在 <queue> 头文件中的 容器适配器: std::priority_queue (最常用)          (并没有像是队列那样直接提供名为heap的容器或容器适配器.)
+定义在 <algorithm> 头文件中的 堆算法: std::push_heap, std::pop_heap等      (vector + heap算法, 较为灵活但略麻烦)
+
+priority_queue 堆(又称为优先队列) 是容器适配器, 类似于队列里面的 queue队列, 不能随机访问(即不能通过下标访问)
+
+(1)定义在 <queue> 头文件中的 容器适配器: std::priority_queue (最常用)  (相当于自动管理堆)
+代码最简洁, 但不能通过下标遍历内部元素, 不能直接修改
+eg.
+===
+#include <queue> 
+using namespace std;    //下面为可读性, 暂且省略声明 main函数
+
+//大顶堆 (默认), 建堆
+priority_queue<int> maxHeap;    //也可直接声明为 pq, 简写
+
+//小顶堆
+priority_queue<int, vector<int>, greater<int>> minHeap;    //堆默认为大顶堆, sort 的 greater 是降序（大在前）, 堆的 greater 是小顶堆（小在前）, vector<int> 参数表明底层是通过vector实现的
+
+//入堆
+maxHeap.push(3);        //入堆, priority_queue堆类似于queue队列, 也是容器适配器, 入堆用push(), deque双端队列用 push_back(), push_front() 区别于 queue队列入队是用 .push(), stack栈压入元素也是用 .push(), 而 vector模拟栈 压入元素则是用 .push_back()
+maxHeap.push(1);
+maxHeap.push(4);        //此时堆的状态为[4, 3, 1] (堆顶为4)
+
+//访问堆顶元素
+cout << maxHeap.top();  //访问堆顶元素, priority_queue堆是用 .top()访问堆顶元素, deque双端队列访问队头用.front(), queue队列访问队头是用 .front(), queue队列访问队尾元素用 .back(), stack访问栈顶元素是用 .top(), 而 vector模拟栈则是用 .back() 访问最后一个元素 
+
+//弹出堆顶元素
+maxHeap.pop();          //弹出了原先堆顶元素4, 此时堆的状态变为[3, 1]
+
+//判空
+maxHeap.empty();        //若堆为空返回True(bool型变量, 为1), 非空返回false(为0)
+
+//堆大小
+maxHeap.size();         //返回堆大小
+===
+
+(2)vector+heap堆算法    (相当于手动管理堆)
+可以通过下标访问和修改所有元素, 但每次操作都要手动调用 heap 函数
+eg.
+===
+#include <algorithm>
+#include <vector>
+using namespace std;              //下面为可读性, 暂且省略声明 main函数
+
+vector<int> v;
+
+//插入末尾元素建堆
+v.push_back(5);
+push_heap(v.begin(), v.end());    //将末尾元素加入堆, 使用前提是前 n-1 个元素已经是堆, 每次push后调用, 但实质上这里 v = [5], 且是堆(单元素自然是堆, 其实第一个元素入堆时可省略调用push_heap())
+
+v.push_back(2);                   //此时[5, 2], 不再是(大顶)堆, 所以需要调用 push_heap() 来 "修复"
+push_heap(v.begin(), v.end());    //把刚加入的2向上调整, 现在 v = [5, 2] 是合法的大顶堆
+
+v.push_back(7);
+push_heap(v.begin(), v.end());    //把7向上调整, 结果 v = [7, 2, 5] (大顶堆)
+
+//make_heap建堆
+vector<int> v1 = {7, 5, 3, 1, 4};       //声明了一个数组
+make_heap(v1.begin(), v1.end());        //将整个区间建成大顶堆, v1变成大顶堆结构, v1 = [7, 5, 4, 3, 1]
+cout << is_heap(v1.begin(), v1.end());  //判断是否是堆, 输出 1(true)
+
+//移除堆顶元素
+pop_heap(v1.begin(), v1.end());     //把堆顶7放到末尾, 但没有删除, v1 = [5, 4, 3, 1, 7]
+v1.pop_back();                      //需要手动pop_back()才能真正删除7, 此时 v1 = [5, 4, 3, 1] (仍是大顶堆)
+
+//堆排序
+vector<int> v2 = {9, 5, 4, 1, 1, 3, 2};  //声明了一个数组
+make_heap(v2.begin(), v2.end());         //将整个区间建成大顶堆, v2 = [9, 5, 4, 3, 2, 1, 1]
+sort_heap(v2.begin(), v2.end());         //对大顶堆v2进行堆排序 (从小到大), 此时 v2 = {1, 1, 2, 3, 4, 5, 9}
+cout << is_heap(v2.begin(), v2.end());   //输出0(false), sort_heap后 v2 就不再是堆了
+===
+
+(3)priority_queue 与 vector + heap算法(堆算法)实现小顶堆的比较
+===
+//priority_queue堆(优先队列) 实现小顶堆
+priority_queue<int, vector<int>, greater<int>> pq;
+pq.push(3);
+
+//vector + heap算法实现小顶堆
+vector<int> v;
+v.push_back(3);
+push_heap(v.begin(), v.end(), greater<int>());    //注意第三个参数的区别, vector + heap算法有(), 而priority_queue堆(优先队列)则没有
+===
+
+Note:关于容器适配器和容器在设计哲学上的核心区别
+---
+类型            删除操作(为例)                      特点                            代表
+容器适配器        pop()                           无参数, 只能从"固定端删除"         stack栈, queue队列, priority_queue堆(又称优先队列)
+容器             pop_back() / pop_front()        明确指定从哪端删除                 vector数组, deque双端队列, list双向链表 
+---
+容器适配器的设计哲学: 约束 + 语义明确, 目的是简化接口, 强制你遵循特定的数据结构行为
+容器的设计哲学: 灵活 + 操作自由, 容器提供完整的操作接口, 让你自由控制
+
+完整对比表如下
+---
+数据结构                 删除操作                       插入操作                             访问操作
+stack栈                  pop()                         push(val)                            top()
+queue队列                pop()                         push(val)                            front() / back()
+priority_queue堆         pop()                         push(val)                            top()
+vector数组               pop_back()                    push_back(val)                       下标访问
+deque双端队列            pop_back() / pop_front()      push_back(val) / push_front(val)     下标访问
+list双向链表             pop_back() / pop_front()      push_back(val) / push_front(val)      front() / back()
+---
+
+
+57.万能头文件 #include <bits/stdc++.h>
+<bits/stdc++.h> 头文件包含了 C++ 标准库中"几乎所有常用的头文件"
+===
+// 大致包含以下内容（简化）
+#include <iostream>      // 输入输出
+#include <vector>        // 动态数组
+#include <string>        // 字符串
+#include <algorithm>     // 排序、查找等算法
+#include <queue>         // queue, priority_queue
+#include <stack>         // stack
+#include <deque>         // deque
+#include <list>          // list
+#include <set>           // set, multiset
+#include <map>           // map, multimap
+#include <unordered_set> // 哈希集合
+#include <unordered_map> // 哈希映射
+#include <cmath>         // 数学函数
+#include <ctime>         // 时间
+#include <cstring>       // C 风格字符串
+// ... 还有更多
 ===
