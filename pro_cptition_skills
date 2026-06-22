@@ -35,6 +35,47 @@ vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组（ve
 for (ll i = 0; i < n; i++) {
     cin >> a[i];
 }
+或
+vector<int> res;
+for(int i = 0; i < n; i++){
+    res.push_back(a[i])
+}
+
+(2)vector按值查找, 使用<algorithm>头文件中的find函数, 返回对应元素的迭代器it, 并可通过 (it - v.begin()) 得到对应数组下标
+===
+vector<int> v = {10, 20, 30, 40, 50};
+
+//查找元素30的下标
+auto it = find(v.begin(), v.end(), 30)  //返回迭代器, auto 就是让编译器自动推导变量类型
+if(it != v.end()){
+    cout << "找到了, 位置在: " << (it - v.begin()) << endl;   //输出2, 即 (it - v.begin()) 为 30 对应的数组下标
+    cout << "值为: " << *it << endl;    //输出30
+}
+else{
+    cout << "未找到" << endl;
+}
+===
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3264. K 次乘运算后的最终数组 I.cpp"
+
+(3)vector寻找数组中的最大, 最小元素, 并返回指向最小, 最大元素的迭代器it, 并可通过 (it - nums.begin()) 得到对应数组下标
+C++标准库 <algorithm> 头文件提出了 std::min_element 和 std::max_element, 用于在给定范围内找出最小/最大元素, 返回指向最小/最大元素的迭代器
+eg.
+===  //实质上, 下述头文件可以直接用 #include <bits/stdc++.h>  这个万能头文件代替
+#inlcude <iostream>
+#include <vector>
+#include <algorithm>     
+using namespace std;       //为保证可读性, 下述省略声明 main 函数
+
+vector<int> nums = {42, 7, 15, 3, 29, 8};
+auto min_it = min_element(nums.begin(), nums.end());    //返回nums数组中最小元素的迭代器, auto 就是让编译器自动推导变量类型
+auto max_it = max_element(nums.begin(), nums.end());    //返回nums数组中最大元素的迭代器
+
+cout << "最小值: " << *min_it << "\n";                        //最小值: 3
+cout << "最大值: " << *max_it << "\n";                        //最大值: 42
+cout << "最小元素索引: " << (min_it - nums.begin()) << "\n";   //最小元素索引: 3, 即 (min_it - nums.begin()) 为最小元素索引(数组下标)
+cout << "最大元素索引: " << (max_it - nums.begin()) << "\n";   //最大元素索引: 0, 即 (max_it - nums.begin()) 为最大元素索引(数组下标)
+===
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2558. 从数量最多的堆取走礼物.cpp"
 
 
 6.map<int, int> mp; //round 1032 C 图 用于对行列分别操作
@@ -380,9 +421,49 @@ for(size_t i = 0; i < s.size(); i++) {
 }
 
 
-23.向上取整
-C++ 默认 a/b 是向下取整
-若想要 a/b 向上取整, 应写为 (a + b - 1) / b
+23.关于向下取整 std::floor(x), 向上取整 std::ceil(x)
+C++ 的除法默认是"向零取整"(即截断小数部分), 而不是向下取整.
+---
+正数:等价于向下取整.
+5 / 2 = 2
+
+负数:等价于向上取整.
+-5 / 2 = -2  (因为向零靠近, 实际 -2.5 截断为 -2)
+---
+这里给出 向下取整 和 向上取整的通用写法.
+C++标准库中的 <cmath> 头文件提供了 std::floor(x) 与 std::ceil(x), 用于实现向下取整和向上取整.
+它们是重载函数, 输入x接受 double, float, long double, 整数类型(int, long, short, char等)
+但需要注意的是 std::floor(x) 与 std::ceil(x) 返回的是 double 数据类型, 若要为整数, 需要进行整数转换. 通过 static_cast<int>(std::floor(x)) 与 static_cast<int>(std::ceil(x)) 实现  (关于static_cast强制类型转换(相比C风格, 更安全), 已整理到文档中)
+
+并且结合C风格的强制类型转换, 可以将其中一个 int 类型运算数转换为 double 类型, 然后进行double类型的除法运算, 如下述 (double)a 就是将 a 从 int 类型转为了
+eg.
+===
+#include <iostream>
+#include <cmath>       
+using namespace std;       //为保证可读性, 以下暂且省略main函数
+
+int a = 5, b = 2;
+
+//❌错误:a/b先进行整数除法, 结果为2(截断小数)
+floor(a / b);      // a/b得2作为输入, floor向下取整函数返回double类型, floor(2) = 2.0
+ceil(a / b);       // a/b得2作为输入, ceil向上取整函数返回double类型, ceil(2) = 2.0, 显然错误
+
+//✔正确:(double)a先将a转为浮点数, 进行浮点数类型的除法运算, 结果为2.5  (C++中, 如果除法操作数中至少有一个是浮点类型(float, double, long double), 那么整个除法运算的结果就是浮点类型)
+floor((double)a / b);   //(double)a / b得2.5作为输入, floor向下取整函数返回double类型, floor(2.5) = 2.0
+ceil((double)a / b);    //(double)a / b得2.5作为输入, ceil向上取整函数返回double类型, floor(2.5) = 3.0, 正确
+也可写为
+floor(static_cast<double>(a) / b);  //通过static_cast将 a 强制转为 double类型, 同理
+ceil(static_cast<double>(a) / b);
+上述输出的double类型转为整形int, 如下
+double x = floor(static_cast<double>(a) / b); //floor()返回double类型, 赋给x
+int result1 = static_cast<int>(x);   //static_cast强制类型转换为int, 保存到result1中
+
+//如果想把结果转为整形(另一个例子)
+double x = 5.0 / 2.0;    //2.5
+double down = floor(x);  //向下取整 -> 2.0
+double up = ceil(x);     //向上取整 -> 3.0
+int result = static_cast<int>(floor(x));  //static_cast强制类型转换, result=2
+===
 
 
 24.二分查找(折半查找)  
@@ -417,18 +498,29 @@ int f(int num) {
 }
 
 
-26.关于for循环
+26.关于for循环, while循环
+(1)for循环
 for (初始化; 条件判断; 更新语句) {
-    循环体;
+    //循环体;
 }
 完整执行步骤：
 (1)初始化(只执行一次)
 (2)判断条件 → 如果为假，直接结束循环
-(3)执行循环体(如果条件为真)
+(3)执行循环体(如果条件为真), 再(下述4)对i执行自增或自减操作等1
 (4)执行更新语句(对x的处理, 例如 i++)
 (5)回到第2步, 再次判断条件
 即
 在 for(int i = 10; i > 0; i--){} 循环中，每次循环体执行完毕后，才会执行 i-- 进行自减操作，然后再判断条件 i > 0 决定是否继续下一次循环。
+
+(2)while循环
+while(i--){
+    //循环体;
+}
+完整执行步骤:
+(1)判断条件:检查 i-- 的值 (及当前i的值), 非0为真, 0为假.  (若为--i, 则这里检查 --i 的值, 即 i 自减后的值(i-1))
+(2)自减操作:判断完成后, i立即减1 
+(3)根据(1)判断条件再执行循环体
+(4)循环体执行完毕后, 回到第一步 
 
 
 27.遍历map或unordered_map键值对中的值, 基于范围for循环实现  (很常用)
@@ -560,6 +652,19 @@ reduce是C++标准库算法, 在头文件<numeric>, 类似于上述的 std::accu
 eg.
 vector<int> arr = {1, 2, 3, 4, 5};
 sum = reduce(arr.begin(), arr.end());  // sum = 15
+
+Note: std::reduce的返回值类型取决于迭代器指向的元素类型, 而不是接收变量
+eg.
+===
+vector<int> gifts = {2144864793, 47038251};
+
+//❌️错误写法
+long long sum = reduce(gifts.begin(), gifts.end());    //❌️错误, reduce的返回值类型取决于迭代器指向的元素类型, 而不是接受变量, 这里gifts数组元素类型为int, 故reduce返回为int, 而求和后该值明显超出了 INT_MAX = 2,147,483,647, 故会报错溢出
+
+//✅️正确写法, 通过std::reduce的函数签名, 即 reduce(v.begin(), v.end(), elementType_init), 函数签名 elementType_init指定了累加的初始值和类型, 从而决定了整个运算的类型, 如这里 0LL 指定了累加的初始值的类型为 long long 类型, 故而最终返回 long long 类型, 从而避免溢出
+long long sum = reduce(gifts.begin(), gifts.end(), 0LL);    //通过函数签名 0LL, 指定了运算的初始值为 long long 类型, 从而在最终返回时, 返回 long long 类型, 避免运算结果溢出而报错
+===
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2558. 从数量最多的堆取走礼物.cpp"
 
 
 35.遍历(枚举)矩阵
@@ -1096,9 +1201,9 @@ dq.empty();   //若为空返回true(bool型变量为1), 否则为false(bool型�
 deque通过迭代器插入、删除中间元素 "D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\队列\1670. 设计前中后队列.cpp"
 
 
-55.deque双端队列转为vector数组
+55.deque双端队列转为vector数组  (在注释中补充了priority_queue堆(优先队列)转为vector数组的方法)
 deque<int> dq;  
-return vector<int>(dq.begin(), dq.end());   //用deque中的所有元素来构造并返回一个 vector<int> 对象
+return vector<int>(dq.begin(), dq.end());   //用deque中的所有元素来构造并返回一个 vector<int> 对象  (deque双端队列是容器，所以有这种方法，而priority_queue堆(优先队列)是容器适配器，所以没有这种方法, 若要转为vector数组则要逐个弹出(最常用, 最安全))  应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3264. K 次乘运算后的最终数组 I.cpp"
 
 也可通过声明封装一个函数用于将 deque<int> 转换为 vector<int>
 ===
@@ -1169,6 +1274,9 @@ vector<int> v;
 v.push_back(5);
 push_heap(v.begin(), v.end());    //将末尾元素加入堆, 使用前提是前 n-1 个元素已经是堆, 每次push后调用, 但实质上这里 v = [5], 且是堆(单元素自然是堆, 其实第一个元素入堆时可省略调用push_heap())
 
+;//若为小顶堆则用 
+;//push_heap(v.begin(), v.end(), greater<int>()); 
+
 v.push_back(2);                   //此时[5, 2], 不再是(大顶)堆, 所以需要调用 push_heap() 来 "修复"
 push_heap(v.begin(), v.end());    //把刚加入的2向上调整, 现在 v = [5, 2] 是合法的大顶堆
 
@@ -1180,9 +1288,16 @@ vector<int> v1 = {7, 5, 3, 1, 4};       //声明了一个数组
 make_heap(v1.begin(), v1.end());        //将整个区间建成大顶堆, v1变成大顶堆结构, v1 = [7, 5, 4, 3, 1]
 cout << is_heap(v1.begin(), v1.end());  //判断是否是堆, 输出 1(true)
 
+//访问堆顶元素
+int max = v1[0];                    //此时索引为0的元素即为堆顶
+
 //移除堆顶元素
 pop_heap(v1.begin(), v1.end());     //把堆顶7放到末尾, 但没有删除, v1 = [5, 4, 3, 1, 7]
 v1.pop_back();                      //需要手动pop_back()才能真正删除7, 此时 v1 = [5, 4, 3, 1] (仍是大顶堆)
+
+;//若为小顶堆则用
+;//pop_heap(v1.begin(), v1.end(), greater<int>());
+;//v1.pop_back();
 
 //堆排序
 vector<int> v2 = {9, 5, 4, 1, 1, 3, 2};  //声明了一个数组
@@ -1190,6 +1305,7 @@ make_heap(v2.begin(), v2.end());         //将整个区间建成大顶堆, v2 = 
 sort_heap(v2.begin(), v2.end());         //对大顶堆v2进行堆排序 (从小到大), 此时 v2 = {1, 1, 2, 3, 4, 5, 9}
 cout << is_heap(v2.begin(), v2.end());   //输出0(false), sort_heap后 v2 就不再是堆了
 ===
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2336. 无限集中的最小数字.cpp"
 
 (3)priority_queue 与 vector + heap算法(堆算法)实现小顶堆的比较
 ===
@@ -1201,6 +1317,41 @@ pq.push(3);
 vector<int> v;
 v.push_back(3);
 push_heap(v.begin(), v.end(), greater<int>());    //注意第三个参数的区别, vector + heap算法有(), 而priority_queue堆(优先队列)则没有
+或
+vector<int> v1 = {7, 5, 3, 1, 4};
+make_heap(v1.begin(), v1.end(), greater<int>());
+
+//并且由于priority_queue是一个封装好的容器(容器适配器), 而heap算法是裸的算法函数, 封装程度不同, 导致其使用方式的"一致性保障"也不同
+---
+//priority_queue进行入堆和出堆操作时, 小顶堆和大顶堆的入堆和出堆方式均为
+priority<int> pq1;    //大顶堆
+pq1.push(val);  //入堆
+pq1.pop();   //出堆
+
+priority<int, vector<int>, greater<int>> pq2;  //小顶堆
+pq2.push(val);   //入堆
+pq2.pop();    //出堆
+
+//而vector+heap算法进行入堆和出堆操作时, 小顶堆和大顶堆的入堆和出堆方式则不同, 小顶堆的heap算法需要传入比较器 greater<int>(), 来告知执行的是大顶堆还是小顶堆的入堆或出堆操作
+make_heap(v1.begin(), v1.end());   //大顶堆
+
+v1.push_back(val);                  
+push_heap(v1.begin(), v1.end());   //入堆
+
+pop_heap(v1.begin(), v1.end());
+v1.pop_back();                     //出堆
+
+make_heap(v2.begin(), v2.end(), greater<int>());   //小顶堆
+
+v2.push_back(val);
+push_heap(v2.begin(), v2.end(), greater<int>());   //入堆
+
+pop_heap(v2.begin(), v2.end(), greater<int>());
+v2.pop_back();                                     //出堆
+
+//说白了, 声明priority_queue这个容器适配器时, priority_queue会帮你把比较器(默认或greayer<int>)"绑定"到对象身上了, 在后续的入堆和出堆操作中, 不用每次都说一遍.
+//而 heap算法, 相当于调用对应函数, 则要说明.
+---
 ===
 
 Note:关于容器适配器和容器在设计哲学上的核心区别
@@ -1245,3 +1396,39 @@ list双向链表             pop_back() / pop_front()      push_back(val) / push
 #include <cstring>       // C 风格字符串
 // ... 还有更多
 ===
+
+
+58.取绝对值 abs()
+std::abs()在 <cstdlib> 和 <cmath> 头文件中均有定义, 为所有整数和浮点类型都做了重载(都可以处理), 用于转化为绝对值
+eg.
+===
+#include <cmath>
+using namespace std;
+auto val = abs(-3.14);    //val=3.14, 是double类型
+auto val2 = abs(-42);     //val2=42, 是int类型
+===
+
+
+59.取平方根 (开根号(二次根)) sqrt()
+C++中的 <cmath> 头文件提供了 std::sqrt() 函数用于取平方根.
+eg.
+===
+#include <cmath>
+#include <iostream>
+using namespace std;    //为保证可读性, 以下声明main函数省略
+
+//标准写法(以double类型为例)
+double x = 25.0;
+double result = sqrt(x);   //result = 5.0
+
+//处理整数(自动转换)
+int n = 16;
+double result = std::sqrt(n);  //整数会自动转为double, 结果4.0
+
+//自动重载(自动匹配类型)
+auto result = sqrt(9);       //返回double
+auto result2 = sqrt(9.0f);   //推导为float, 其中f为字面量后缀
+auto result3 = sqrt(9.0L);   //推导为long double, 其中L为字面量后缀
+===
+
+
