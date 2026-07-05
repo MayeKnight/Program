@@ -31,7 +31,7 @@ s.contains(x) 判断集合中是否包含某个元素, 返回bool型变量, 包�
 
 
 5.关于vector
-vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组（vector），包含 n 个元素，每个元素是 int 类型，初始值为 0。
+vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组（vector）, 包含 n 个元素, 每个元素是 int 类型, 初始值为 0。
 for (ll i = 0; i < n; i++) {
     cin >> a[i];
 }
@@ -41,6 +41,9 @@ for(int i = 0; i < n; i++){
     res.push_back(a[i])
 }
 
+int n = 3;
+vector<int> res(n, 1);    //初始化了一个名为res, 大小为n, 初始值为 1 的数组
+ 
 (2)vector按值查找, 使用<algorithm>头文件中的find函数, 返回对应元素的迭代器it, 并可通过 (it - v.begin()) 得到对应数组下标
 ===
 vector<int> v = {10, 20, 30, 40, 50};
@@ -77,9 +80,15 @@ cout << "最大元素索引: " << (max_it - nums.begin()) << "\n";   //最大元
 ===
 应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2558. 从数量最多的堆取走礼物.cpp"
 
+(4)vector数组类型转换
+用于将 vector<int> 类型的数组 转换为 vector<long long> 类型的数组, 避免因数组中部分元素数值过大而导致数据丢失而出错
+vector<int> nums = {1, 2, 3};                    //原容器为 vector<int> 类型, 数组中各元素为 int类型
+vector<long long> v(nums.begin(), nums.end());   //从原容器的迭代器范围创建新的vector, 并且新容器转换为了 vector<long long> 类型, 其中各元素类型为 long long 类型
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3066. 超过阈值的最少操作数 II.cpp"
+
 
 6.map<int, int> mp; //round 1032 C 图 用于对行列分别操作
-map"映射"是C++标准模板库(STL)中的一个关联容器，用于存储键值对
+map"映射"是C++标准模板库(STL)中的一个关联容器, 用于存储键值对
 如 map<string, double> studentGrades; //键类型为string, 值类型为double
 它的特点是:
 (1)键唯一性:每个键map中只能出现一次,如果插入相同的键, 新值会覆盖旧值
@@ -136,17 +145,17 @@ s2 = 7  // (3+4)
 unordered_map<int, int> fruitCount;
 fruitCount.size(); //.size()指的是元素种类的数量(即当前窗口中不同水果的种类数量)
 如:
-如果 fruitCount = { {3:2}, {1:3}, {2:1} }，那么 fruitCount.size() == 3 (因为有 3 种不同的水果: 3、1、2)。
+如果 fruitCount = { {3:2}, {1:3}, {2:1} }, 那么 fruitCount.size() == 3 (因为有 3 种不同的水果: 3、1、2)。
 例：
 // 如果窗口内水果种类超过2, 移动left缩小窗口
 while (fruitCount.size() > 2) {
     fruitCount[fruits[left]]--;
     if (fruitCount[fruits[left]] == 0) {
-        fruitCount.erase(fruits[left]); // 如果数量归零，移除该水果
+        fruitCount.erase(fruits[left]); // 如果数量归零, 移除该水果
     }
 
 unordered_map<char, int> res;
-res.size() 返回的是键值对的数量， 即当前存储的唯一键的种类数 (因为unordered_map要求键(key)必须唯一)
+res.size() 返回的是键值对的数量,  即当前存储的唯一键的种类数 (因为unordered_map要求键(key)必须唯一)
 
 (2)unordered_set<type> 哈希集合, 用法与上述set类似
 可用于在不定长滑动窗口中记录在当前窗口中存储有哪些元素(可用于避免窗口内有重复字符.)
@@ -199,7 +208,7 @@ multiset<type> 多重集合
 示例:
 std::multiset<int> ms;
 ms.insert(1);  // 成功
-ms.insert(1);  // 成功，集合现在包含两个1
+ms.insert(1);  // 成功, 集合现在包含两个1
 
 set<type>
 默认按值升序排序存储
@@ -209,10 +218,10 @@ set<type>
 示例:
 std::set<int> s;
 s.insert(1);  // 成功
-s.insert(1);  // 被忽略，集合仍只包含一个1
+s.insert(1);  // 被忽略, 集合仍只包含一个1
 
 需要注意的是, 其在erase删除操作上有所不同
-s.erase(a); 这里s为set， 没有影响, 只会删除集合s中一个a(因为集合中只有一个a)
+s.erase(a); 这里s为set,  没有影响, 只会删除集合s中一个a(因为集合中只有一个a)
 而 
 ms.erase(a); 这里ms为multiset, 则会删除多重集合ms中所有的a
 所以当我们想只删除ms中第一个a时, 就需要通过找到其迭代器实现
@@ -293,7 +302,22 @@ pair<int, int> p4(50, 60);
 需注意1e9为double类型, 不能与int类型的int进行取模运算
 
 如这里 ans 为 int 类型, 需写为
-return ans % 1'000'000'007                                                                                                            '
+return ans % 1'000'000'007                                                                                                         '
+
+"分步取模"完全等价于"最后取模"
+但即使这样, 以下述累乘为例, 若累乘数值过大, 仍可能超过 long long类型 限制的最大值, 这时若题干要求对运算结果取模, 可以利用取模具有分配律的性质, "分步取模"完全等价于"最后取模", 这样就可以避免溢出
+eg.
+---
+(a * b) % M = [(a % M) * (b % M)] % M
+---
+===
+//"分步取模"等价于"最后取模"
+for (int i = 0; i < nums2.size(); i++) {
+    ans = (ans * nums2[i]) % (1'000'000'000 + 7);                         '
+}
+return ans;
+===
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2233. K 次增加后的最大乘积.cpp"
 
 
 16.函数ranges::max(nums) 找到数组的最大值  ranges::min(nums) 找到数组的最小值
@@ -337,7 +361,7 @@ int main() {
 
 20.计算前缀和
 见"D:\Tech\Code\Program\leetcode\train\started_algorithms\2.二分算法\2389. 和有限的最长子序列.cpp"
-partial_sum 是C++标准库中的一个算法，用于计算序列的部分和(前缀和).它位于 <numeric> 头文件中.
+partial_sum 是C++标准库中的一个算法, 用于计算序列的部分和(前缀和).它位于 <numeric> 头文件中.
 
 #include <numeric>
 using namespace std;
@@ -505,12 +529,12 @@ for (初始化; 条件判断; 更新语句) {
 }
 完整执行步骤：
 (1)初始化(只执行一次)
-(2)判断条件 → 如果为假，直接结束循环
+(2)判断条件 → 如果为假, 直接结束循环
 (3)执行循环体(如果条件为真), 再(下述4)对i执行自增或自减操作等1
 (4)执行更新语句(对x的处理, 例如 i++)
 (5)回到第2步, 再次判断条件
 即
-在 for(int i = 10; i > 0; i--){} 循环中，每次循环体执行完毕后，才会执行 i-- 进行自减操作，然后再判断条件 i > 0 决定是否继续下一次循环。
+在 for(int i = 10; i > 0; i--){} 循环中, 每次循环体执行完毕后, 才会执行 i-- 进行自减操作, 然后再判断条件 i > 0 决定是否继续下一次循环。
 
 (2)while循环
 while(i--){
@@ -646,7 +670,7 @@ vector数组的相关用法
 //has.empty();  //检查数组是否为空, 若为空, 返回true(1), 否则返回false(0), 返回bool型变量.
 
 
-34.reduce(arr.begin(), arr.end()) 累加函数
+34.reduce(arr.begin(), arr.end()) 累加函数 (也提供了累乘函数的实现, 见下侧)
 reduce是C++标准库算法, 在头文件<numeric>, 类似于上述的 std::accumulate 累加函数, 但支持并行执行, 通常用于对一个范围内的元素进行求和.
 这里是计算从 arr.begin() 到 arr.end() 所有元素的和.
 eg.
@@ -666,6 +690,47 @@ long long sum = reduce(gifts.begin(), gifts.end(), 0LL);    //通过函数签名
 ===
 应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2558. 从数量最多的堆取走礼物.cpp"
 
+Note:reduce还提供了累乘操作, 只需传入 std::multiplies<>() 作为自定义二元操作即可(std::multiplies定义在 <functional> 头文件中, 专门用来做乘法运算. std::multiplies<>()是这个 <functional> 头文件中提供的一个函数对象(也叫做仿函数), 重载了一个operator()类(函数调用运算符, 一个类如果重载了operator(), 那么该类的对象就可以像函数一样被调用(实质上是std::multiplies 是一个类（结构体）, 这个类重载了 operator() 成员函数, 该函数的功能是执行乘法运算. 并且要实现对象能像函数一样被调用, 这个成员函数必须命名为 operator(), 这是 C++ 语法规定的固定关键字组合, 编译器只认这个名字.))), 
+并注意将初始值设为1(乘法的单位元, 类似于计算[2, 3, 4]累乘, 则相当于 1*2=2, 2*3=6, 6*4=24即为所求, 其中1为初始值), 即可完成累乘
+eg.
+===
+#include <numeric>
+#include <vector>
+#include <functional>
+#include <iostream>
+using namespace std;     //为保证可读性, 以下省略声明main函数
+
+vector<int> nums = {1, 2, 3, 4, 5};
+
+//使用 std::reduce 进行累乘
+//1. 初始值必须为 1
+//2. 传入 std::multiplies<>() 函数对象
+int product = reduce(nums.begin(), nums.end(), 1, multiplies<>());   //其中 1 为乘法初始值
+cout << "produce: " << produce << endl;    // 输出:120  (1*2*3*4*5=120)
+
+//Note:若reduce中间值过大, 应向先前类似于 reduce做累加时, 添加0LL参数那样(这里不能这样写), 应将 1 改写为 1LL, 其中 LL, 指代 long long, 这样就能使运算转为 long long 类型, 而避免溢出报错了.
+//int product = reduce(nums.begin(), nums.end(), 1LL, multiplies<>());   //其中 1LL 为乘法初始值(long long类型)
+//但即使这样, 若累乘数值过大, 仍可能超过 long long类型 限制的最大值, 这时若题干要求对运算结果取模, 可以利用取模具有分配律的性质, "分步取模"完全等价于"最后取模", 这样就可以避免溢出
+eg."分步取模"完全等价于"最后取模"
+(a * b) % M = [(a % M) * (b % M)] % M    
+---
+for (int i = 0; i < nums2.size(); i++) {
+    ans = (ans * nums2[i]) % (1'000'000'000 + 7);                         '
+}
+return ans;
+---
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2233. K 次增加后的最大乘积.cpp"
+
+//而对于 std::accumulate累加函数, 若进行累乘
+//语法与 std::reduce累加函数 进行累乘几乎一样
+int product = accumulate(nums.begin(), nums.end(), 1, multipiles<>());
+cout << "produce: " << produce << endl;    // 输出:120  (1*2*3*4*5=120)
+
+//关于 std::multiplies<>() 的基本用法 (它重载了operator()类, 专门用来做乘法运算)
+multiplies<> mul;            //创建了一个乘法函数对象, 上面的 multiplies<>(), 有() 是指函数调用, 而这里是对象声明, 故没有 () 
+int result = mul(3, 4);      //调用 operator(), 相当于
+cout << result;              //输出 12, (3*4=12)
+===
 
 35.遍历(枚举)矩阵
 例题详见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\常用枚举技巧\枚举中间\3128. 直角三角形.cpp"
@@ -711,9 +776,9 @@ fill(nums.begin() + size, nums.end(), 0);  //是将容器nums中从某个位置�
 39.原地栈
 见"D:\Tech\Code\Program\leetcode\hot_100\283. 移动零.cpp"
 把 nums 当作栈, 用一个栈记录非零元素
-最后，在栈的末尾添加两个 0, 即为答案 [1,3,12,0,0]
-为了做到 O(1) 空间复杂度，直接把 nums 当作栈，用一个变量 stackSize 表示栈的大小，初始值为 0。
-入栈就是把 nums[stackSize] 置为 nums[i]，然后把 stackSize 加一。
+最后, 在栈的末尾添加两个 0, 即为答案 [1,3,12,0,0]
+为了做到 O(1) 空间复杂度, 直接把 nums 当作栈, 用一个变量 stackSize 表示栈的大小, 初始值为 0。
+入栈就是把 nums[stackSize] 置为 nums[i], 然后把 stackSize 加一。
 最后把 nums 中的下标从 stackSize 到 n-1 的数都置为 0。
 
 
@@ -774,7 +839,7 @@ int c = a ^ b;  //结果为 0110 -> 6,  实现了 a XOR b, 即a与b之间的亦�
 
 44.创建函数时参数按值传递导致超时
 (1)错误写法(超时)
-int sol(vector<int> res, int left, int right) {   // ❌ 按值传递，每次拷贝整个数组
+int sol(vector<int> res, int left, int right) {   // ❌ 按值传递, 每次拷贝整个数组
     return res[right+1] ^ res[left];
 }
 超时原因:
@@ -782,7 +847,7 @@ int sol(vector<int> res, int left, int right) {   // ❌ 按值传递，每次�
 若 n=1e5, 执行 q=1e5 次包含 sol 的循环, 时间复杂度 O(n * q) = 1e10, 必然超时.
 
 (2)正确写法(通过)
-int sol(const vector<int>& res, int left, int right) { // ✅ 常量引用，无拷贝
+int sol(const vector<int>& res, int left, int right) { // ✅ 常量引用, 无拷贝
     return res[right+1] ^ res[left];
 }
 改进点:
@@ -835,7 +900,7 @@ switch (score / 10) {   //取十位数
 工作规则:
 1.表达式必须是整型、枚举或能隐式转换为整型的类型 (不能是 float、string)
 2.case 后面必须是编译时常量 (即在编译阶段就能确定其值的量, 如 int MAX = 100, (然后 case MAX: 等同于 case 100:) 而不是在程序运行时才能知道)
-3.从上到下匹配，匹配成功后执行该 case 及后续所有代码 (称为“穿透”)
+3.从上到下匹配, 匹配成功后执行该 case 及后续所有代码 (称为“穿透”)
 4.break 跳出 switch, default 在所有 case 都不匹配时执行
 
 //双引号为 string 字符串, 这里遍历 vector<string> ops 
@@ -1203,7 +1268,7 @@ deque通过迭代器插入、删除中间元素 "D:\Tech\Code\Program\leetcode\t
 
 55.deque双端队列转为vector数组  (在注释中补充了priority_queue堆(优先队列)转为vector数组的方法)
 deque<int> dq;  
-return vector<int>(dq.begin(), dq.end());   //用deque中的所有元素来构造并返回一个 vector<int> 对象  (deque双端队列是容器，所以有这种方法，而priority_queue堆(优先队列)是容器适配器，所以没有这种方法, 若要转为vector数组则要逐个弹出(最常用, 最安全))  应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3264. K 次乘运算后的最终数组 I.cpp"
+return vector<int>(dq.begin(), dq.end());   //用deque中的所有元素来构造并返回一个 vector<int> 对象  (deque双端队列是容器, 所以有这种方法, 而priority_queue堆(优先队列)是容器适配器, 所以没有这种方法, 若要转为vector数组则要逐个弹出(最常用, 最安全))  应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3264. K 次乘运算后的最终数组 I.cpp"
 
 也可通过声明封装一个函数用于将 deque<int> 转换为 vector<int>
 ===
@@ -1242,7 +1307,7 @@ priority_queue<int> maxHeap;    //也可直接声明为 pq, 简写
 //小顶堆
 priority_queue<int, vector<int>, greater<int>> minHeap;    //堆默认为大顶堆, sort 的 greater 是降序（大在前）, 堆的 greater 是小顶堆（小在前）, vector<int> 参数表明底层是通过vector实现的
 
-//入堆
+//入堆                   //.emplace(), 用法、作用与.push()相同, 区别是 .emplace() 是在容器内部直接构造一个元素, 而不是先在外面创建好再拷贝/移动进去.
 maxHeap.push(3);        //入堆, priority_queue堆类似于queue队列, 也是容器适配器, 入堆用push(), deque双端队列用 push_back(), push_front() 区别于 queue队列入队是用 .push(), stack栈压入元素也是用 .push(), 而 vector模拟栈 压入元素则是用 .push_back()
 maxHeap.push(1);
 maxHeap.push(4);        //此时堆的状态为[4, 3, 1] (堆顶为4)
@@ -1289,7 +1354,7 @@ make_heap(v1.begin(), v1.end());        //将整个区间建成大顶堆, v1变�
 cout << is_heap(v1.begin(), v1.end());  //判断是否是堆, 输出 1(true)
 
 //访问堆顶元素
-int max = v1[0];                    //此时索引为0的元素即为堆顶
+int max = v1[0];                    //此时索引为0的元素即为堆顶, 但索引1(nums[1])不一定是堆中第二大或第二小的元素, 而要使用 pop_heap后, 取新的nums[0]
 
 //移除堆顶元素
 pop_heap(v1.begin(), v1.end());     //把堆顶7放到末尾, 但没有删除, v1 = [5, 4, 3, 1, 7]
@@ -1352,6 +1417,21 @@ v2.pop_back();                                     //出堆
 //说白了, 声明priority_queue这个容器适配器时, priority_queue会帮你把比较器(默认或greayer<int>)"绑定"到对象身上了, 在后续的入堆和出堆操作中, 不用每次都说一遍.
 //而 heap算法, 相当于调用对应函数, 则要说明.
 ---
+
+(4)小顶堆注意比较器类型, 若比较元素过大, 应该用 greater<long long> 或 greater<long long>() 等, 使比较器基于 long long 类型进行比较, 而不能基于 int 类型进行比较, 否则会发生整数溢出, 而导致结果出错.
+并且常搭配vector数组类型转换
+---
+int minOperations(vector<int>& nums, int k) {
+    int res = 0;
+    vector<long long> v(nums.begin(), nums.end());   //后续经过一系列处理, 数组中元素可能达到 long long 量级, 故这里做数组类型转换, 将 vector<int> 类型的数组 转换为 vector<long long> 类型的数组, 避免因数组中部分元素数值过大而导致数据丢失而出错
+    ...其他操作
+    pop_heap(v.begin(), v.end(), greater<long long>());
+    v.pop_back();
+    v.push_back(res);
+    push_heap(v.begin(), v.end(), greater<long long>());
+}
+---
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3066. 超过阈值的最少操作数 II.cpp"
 ===
 
 Note:关于容器适配器和容器在设计哲学上的核心区别
@@ -1373,6 +1453,10 @@ vector数组               pop_back()                    push_back(val)         
 deque双端队列            pop_back() / pop_front()      push_back(val) / push_front(val)     下标访问
 list双向链表             pop_back() / pop_front()      push_back(val) / push_front(val)      front() / back()
 ---
+
+Note: 可以通过限定堆的大小, 解决类似 "动态求最值"问题 以及 "第k大", "第k近"的问题("TOP K问题").
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\703. 数据流中的第 K 大元素.cpp"
+"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3275. 第 K 近障碍物查询.cpp"
 
 
 57.万能头文件 #include <bits/stdc++.h>
@@ -1432,3 +1516,210 @@ auto result3 = sqrt(9.0L);   //推导为long double, 其中L为字面量后缀
 ===
 
 
+60.关于类class
+以以下类为例
+eg.
+===
+class KthLargest {
+private:  // 成员变量, 以下是私有成员, 外部不能直接访问, 外部不能调用该类中的 k 和 minHeap
+    priority_queue<int, vector<int>, greater<int>> minHeap;
+    int k;
+    
+public:   // 成员函数(也叫"方法"), 以下是公有成员, 外部可以访问, 即外部可以调用这两个函数.
+    KthLargest(int k, vector<int>& nums) {  //构造函数, 用于初始化对象
+        this->k = k;                        // this 是指向当前对象的指针, 比方说下面举例中声明了该类的名为 obj 的对象, 此时 this 就是指向 当前对象obj 的指针, this->k 就是当前对象的成员变量k(private私有变量), =右边的k 指的是构造函数传入的参数k, 整句意思: 把参数k的值赋给对象的成员变量k
+        for (int num : nums) {
+            add(num);
+        }
+    }
+    
+    int add(int val) {
+        if (minHeap.size() < k) {
+            minHeap.push(val);
+        } else if (val > minHeap.top()) {
+            minHeap.pop();
+            minHeap.push(val);
+        }
+        return minHeap.top();
+    }
+};
+
+//实际使用举例
+int main(){
+    KthLargest obj(3, {4, 5, 8, 2});  //初始化一个名为obj的对象
+
+    //✅可以调用public方法
+    int result = obj.add(3);
+
+    //❌不能访问private成员
+    //obj.minHeap.push(10);   //编译错误! minHeap 是私有的
+    //obj.k = 5;              //编译错误! k 是私有的
+
+    return 0;
+}
+===
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\703. 数据流中的第 K 大元素.cpp"
+
+
+61.关于链表
+这里以leetcode所定义的链表节点的结构体为例
+===
+//Definition for singly-linked list.(单链表, 这里所定义的单链表 不等于 C++SIL中的 std::list(双向链表), std::list有 next 和 prev, 而且封装了迭代器, 而我们这里所用的单链表, 结构体中只有一个 next 指针, 需要我们手动操作指针.)   (在实际笔试/面试中, 99.9%的考察链表的题都是手写单链表结构, 完全用不上std::list)
+struct ListNode {
+    int val;          //节点值
+    ListNode *next;   //指向下一个节点的指针
+
+    //构造函数 (方便初始化), 多个构造函数实质上时函数重载, 编译器会根据传入参数的数量/类型决定调用哪个函数(重载解析)
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+===
+(1)需要注意的是, 声明结构体, 如这里的 struct ListNode 本质上就是在 C++ 里自定义了一个新的数据类型, 和 int整数类型, float单精度浮点数类型, double双精度浮点数类型等 (基础数据类型), 在"类型"这一层面上, 是平起平坐的.
+故而也有类似于 
+int*       //指向 int类型 的指针类型, 也有
+ListNode*  //指向 ListNode类型 的指针类型
+同样也有
+int a;          //声明了一个名为a的int变量
+ListNode b;     //声明了一个名为b的ListNode变量(节点)(❌实质上不能这样声明节点), 但这种方式实质上创建的节点会被放到"栈(stack)"上, 如果在函数内部声明, 该函数执行完毕, 这块内存就自动销毁了. 但链表中的节点可不能销毁, 我们要让节点在不同函数里都能活着, 所以必须用 new 在内存的"堆"上开辟一块空间, 除非你手动 delete, 否则它永远不会消失. 这里给出若将其设置为全局变量(函数外声明), 存活时间与下面 new 相似, 但在"可见范围"上有本质区别: 假设你在函数 A 里用 new 建了一堆节点，组成了一个链表。为了让函数 B 也能用，你不需要把链表声明成全局的，你只需要把链表的头节点地址 return 回去（相当于把总地图交还给调用者）。调用者拿到这个地址，就能顺藤摸瓜找到所有节点。而在刷题时, 链表时动态生成的, 链表头 head 是题目传给你的（也就是题目把地图递到了你的手上）。你在函数内部操作时，通过 head 这个指针，一步步找 next，就能找到后续所有节点, 故而不能干脆定义全局变量来写算法题.
+即
+int, double等是 STL(标准库) 提前定义好的类型, ListNode 是你自己定义好的类型, 编译器对待他们的方式完全一样, 只是 int 不需要你自己去写 struct 定义而已.
+故而看到 ListNode* 可以将其看作"专门指向链表的指针", 这与 int* (专门指向整数的指针) 在语法层面上, 并没有任何区别.
+
+(2)关于结构体中的构造函数部分
+以第三个构造函数为例, 说明写法规则.
+===
+ListNode(int x, ListNode *next) : val(x), next(next) {}
+//                                  |             |           
+//                              成员变量val,       |
+//                         括号内参数x(把x赋给val)  |
+//                                            第一个next为成员变量next
+//                                            括号内参数next(把传入的next指针(即:前括号内的next指针)赋给成员变量next)
+
+:后面是真正的初始化阶段, 其中, :后括号外的是成员变量名, 括号内的是你传进来的参数
+{}是一个空的函数体, 表示"构造函数在完成初始化工作后, 不需要再执行任何额外的代码".  ({}不能省略, 因为再C++的语法规则里, 定义一个函数(构造函数也是函数)时, 函数体{}时必须存在的. 若省略, 编译器就不知道这个函数的定义在哪里结束, 会直接报错.)
+但再实际开发或复杂算法中, {}里经常写代码, 如 打印日志: {cout << "创建节点: " << x << endl;}
+
+虽然上述参数名和成员变量名都叫next, 但 next(next) 中的括号里指的是参数, 括号外的是成员变量, 编译器能分清, 这里只是leetcode习惯写法, 下面给出将传入参数名写成 nxt 的形式.
+
+ListNode(int x, ListNode *nxt) : val(x), next(nxt) {}
+//      -       传入参数      - | - 初始化成员变量 -| -函数体-     
+===
+
+(3)构造函数的使用(创建新节点)
+===
+//1.ListNode() : val(0), next(nullptr) {}  (默认构造函数) 用于创建节点
+ListNode* node1 = new ListNode();    //构造了一个名为 node1 的节点, 当你不传任何参数时, 该节点值为0, 并且把它的指向下一个节点的指针指向空(nullptr)
+
+//2.ListNode(int x) : val(x), next(nullptr) {}  (最常用的单参构造)
+ListNode* node2 = new ListNode(5);   //构造了一个名为 node2 的节点, 当只传入节点的数值, 则会调用这个构造函数, 新建以个值为5的节点, 并把指向下一个节点的指针指向空(nullptr)
+
+//3.ListNode(int x, ListNode *next) : val(x), next(next) {}  (完整构造)
+ListNode* node3 = new ListNode(5, node2);  //构造了一个名为 node3 的节点, 当传入节点的初值和所要指向的下一个节点时会调用该构造函数, 会将该节点的值设为5, 并将指向下一个节点的指针指向 node2.
+
+//其中 new 是 C++ 的关键字, 它的作用是在内存的"堆(heap)"上开辟一块空间, 用于装新建的 ListNode 对象, new 做完这件事后, 会返回这块内存的起始地址. 通过这种方式创建在堆上的节点在不同函数内都能活着, 不会因为某个函数结束而被销毁(直接写的 ListNode b; 则会被销毁(类似于 int a), 所以必须用 new 把房子(节点)盖在"堆"上, 除非你手动delete, 否则它永远不会消失)
+===
+
+(4)链表的使用 (所创建 链表结构体 的使用)
+链表的使用, 实质上就是"串珠子"和"拆珠子". 它不像数组那样通过下标(如arr[3])直接拿, 而是必须靠"门牌号(指针)"一步一步跳转.
+//1.遍历链表 (怎么"走路")
+拿到链表的头节点 head, 怎么访问所有节点? 只能使用"临时指针" cur
+===
+ListNode* cur = head;           //声明了一个临时指针 cur 作为探路者(见Note2), 从第一个房屋开始
+while(cur != nullptr) {         //只要门牌号不是空地址
+    cout << cur->val << " ";    //干点活(打印值)(见下侧 62.)
+    cur = cur->next;            //关键, cur向后走一步.
+}
+===
+Note1: ❌不能写 head = head->next 去遍历, 因为这相当于把原先的 head 弄丢了, 就再也找不到这串链表的开头了, 永远用临时指针 cur 去跑.
+
+Note2: 可以注意到声明节点是用 ListNode* node1 = new ListNode(), 声明临时指针是用 ListNode* cur = head
+这是因为
+ListNode* node1 = new ListNode();   //可以理解为造房者, new在堆上新盖了一间房, 返回新门牌号, 目的是扩展链表, 给链表新增一个永久节点.
+ListNode* cur = head;               //则是探路者, 直接把head里的门牌号抄了一份过来, 目的是遍历链表, 在不移动head的前提下, 走遍整条链.
+
+//2.插入节点 (怎么"串珠")
+插入分为头插, 尾插, 中间插. 其中头插法是建立新链表的神技.
+===
+//(1)头部插入
+ListNode* newNode = new ListNode(5);    //初始化一个值为5, 指向下一节点的指针为空的名为 newNode 的新节点. (盖新房)
+newNode->next = head;                   //访问新创建节点的成员变量next (ListNode*类型), 这里即将该节点指向下一节点的指针 next 指向下一间老房子(的门牌号) head.  关于 -> 运算符见下侧 62.
+head = newNode;                         //更新门牌号, 链表头变成新房(的门牌号)
+
+//(2)中间插入 (在 prev 节点后面插入), "先连后, 再连前" (一定先让新节点抓住后面的房子, 再让前面的房子断开指向新节点. 否则顺序反了, 后面的整条链就丢了.)
+ListNode* newNode2 = new ListNode(5);   //初始化一个值为5, 指向下一节点的指针为空的名为 newNode2 的新节点. (盖新房)
+newNode2->next = prev->next;            //新节点指向下一个节点的指针, 指向原先prev节点的下一个节点 (新房的下一间, 指向原来后面的房子) (防丢)
+prev->next = newNode2;                  //原先prev节点指向下一个节点的指针, 指向新创建的节点 (原先前面的房子指向新房)
+===
+
+//3.删除节点 (怎么"拆珠")
+删除节点 不需要delete (刷题时一般不管内存泄漏), 只需要把指向它的指针绕过去.
+===
+//想在 prev节点 后面删除 临时指针cur 指向的节点  
+prev->next = cur->next;    //直接让前面的 prev节点 指向下一节点的指针 跳过 临时指针cur 所指当前节点, 而指向临时指针所指节点的下一个节点. (直接让前面跳过cur, 指向cur后面的房子)
+=== 
+Note: 如果 cur 是头节点, 记得用 head = head->next 或者使用 "哑节点(Dummy Node)"技巧(见下侧), 这样我们就不用特殊判断了.
+
+//4.哑节点(Dummy Node) -----删除节点时再也不怕头节点被删除
+痛点: 删除节点时, 需要单独写 if(head == cur) 判断是否删除的是头节点, 较为麻烦
+解法: 在真正的头节点前挂一个临时的"假头节点"
+===
+ListNode* dummy = new ListNode(0);    //初始化一个值为0的名为 dummy 的新节点作为 假头节点
+dummy->next = head;                   //将假头节点dummy的指向下一节点的指针 指向 真头节点head
+ListNode* cur = dummy;                //声明一个临时指针 cur 指向 假头节点 dummy  (临时指针cur见上侧), 从假头节点开始遍历.
+
+while(cur->next != nullptr){          //由于我们下面所写的逻辑是 判断临时指针cur所指节点的下一个节点的值(val) 是否等于目标值 target, 来确定是否执行节点删除操作, 故这里是将临时节点的下一节点是否为空作为循环判断条件.
+    if(cur->next->val == target){     //若临时指针所指向节点的下一节点的值等于目标值target, 则执行删除操作
+        cur->next = cur->next->next;  //跳过原临时指针所指节点的下一个节点, 直接让临时指针指向下下个节点 (实质为让临时指针所指节点的指向下一个节点的指针 指向 临时节点的下一个节点的下一个节点)
+    }else{
+        cur = cur->next;              //若临时指针所指节点的下一个节点的指不等于 target, 则让临时指针指向当前所指节点的下一个节点           
+    }
+}
+return dummy->next;                   //返回假头节点的下一个(即真正的新头节点), 此时该链表是删除了目标节点后的链表
+===
+
+//5.快慢指针(龟兔赛跑) ---找中点  (两个快慢指针(龟兔赛跑)的应用(不同功能)分开成两个函数实现是从工程角度考虑的, 更好些)
+===
+ListNode* slow = head;                //慢指针
+ListNode* fast = head;                //快指针
+while(fast != nullptr && fast->next != nullptr){    
+    slow = slow->next;                //慢指针走一步 (慢指针指向其所指节点的下一个节点)
+    fast = fast->next->next;          //快指针走两步 (快指针指向其所指节点的下下个节点)
+}
+return slow;                          //循环结束, slow 就在链表正中间. return slow 即返回慢指针所指的节点.
+===
+
+//6.快慢指针(龟兔赛跑) ---判环 (如果链表有环, fast指针会先进入环, 并在里面一直绕圈, 因为速度差, 它最终会"追上"slow指针, 两者会在环内的某个节点相遇, 这时就可以判定链表有环.)
+===
+ListNode* slow = head;                //慢指针
+ListNode* fast = head;                //快指针
+while(fast != nullptr && fast->next != nullptr){    
+    slow = slow->next;                //慢指针走一步 (慢指针指向其所指节点的下一个节点)
+    fast = fast->next->next;          //快指针走两步 (快指针指向其所指节点的下下个节点)
+
+    //相比5.唯一的区别就是多了下面这个if判断
+    if(slow == fast){                 //fast指针追上了slow指针
+        return true;                  //相遇了, 说明有环
+    }
+}
+return false;                         //没相遇, 说明无环.
+===
+
+
+62.关于链表中的 ->
+-> 是 C/C++ 里专门为指针量身定做的"箭头运算符"(Member Access Operator), 它的作用非常简单粗暴:"去门牌号对应的房子里, 拿里面的东西."
+核心等式如下
+指针->成员  完全等价于  (*指针).成员
+(1)为什么要发明 -> (纯粹是为了省事)
+数学逻辑写法: *cur 表示"找到门牌号 cur 对应的那间房子" 然后再用 .val 去拿房子里的东西, 所以要写成 (*cur).val, 并且由于 C++ 中, .(点)运算符优先级要高于 *(星)运算符, 故 *cur 必须加括号为 (*cur).val, 告诉编译器:"先把*cur房子的门牌号解出来, 再去对应房子拿val"
+显然这种写法略显麻烦 (而且括号绝对不能省)
+故创造了 ->, 可以直接等价写成 cur->val
+
+(2)-> 和 . 有什么区别
+---
+符号           左边是谁?                  怎么用?         举例
+.(点)       对象本身(实体房子)             用 .           ListNode node;  则用  node.val      
+->(箭头)    对象的地址(门牌号本子)          用 ->         ListNode* node = new ...;  则用 node->val
+---
+记住一句话: 有 * 用箭头, 没 * 用点.
+如果变量定义时带了 * (是指针), 就用 ->,  如果没有 * (是普通对象), 就用 .
