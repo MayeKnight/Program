@@ -1735,7 +1735,7 @@ return false;                         //没相遇, 说明无环.
 当循环体内存在指针后移操作 (如 cur = cur->next)时, 必须在循环条件中加入 cur != nullptr 作为前置判断, 以防止指针移动到链表尾部(nullptr)后, 在下一轮循环或条件判断中被错误解引用.  (否则可能出现"runtime error: member access within null pointer of type 'ListNode' (solution.cpp)"的报错, 关键词"null pointer"即访问了空指针而报错)
 应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\遍历链表\817. 链表组件.cpp"
 
-Note:在解决链表类问题时, 若暂时没有头绪, "可考虑在纸上画图模拟链表的处理过程". 将指针转化为可视化的箭头移动, 能有效避免断链和边界错误.
+//8.解题策略: 在解决较为复杂的链表类问题时, 若感到指针绕不清、边界难把控, "可考虑在纸上画图模拟链表的处理过程". 通过将抽象的指针转化为可视化的箭头移动, 能直观地看到节点如何断开与连接, 从而有效避免断链和边界错误.
 如"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\删除节点\82. 删除排序链表中的重复元素 II.cpp", 就用了模拟链表的处理过程的方法解决.
 
 
