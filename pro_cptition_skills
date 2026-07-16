@@ -31,7 +31,7 @@ s.contains(x) 判断集合中是否包含某个元素, 返回bool型变量, 包�
 
 
 5.关于vector
-vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组（vector）, 包含 n 个元素, 每个元素是 int 类型, 初始值为 0。
+vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组(vector), 包含 n 个元素, 每个元素是 int 类型, 初始值为 0。
 for (ll i = 0; i < n; i++) {
     cin >> a[i];
 }
@@ -236,7 +236,7 @@ ms.erase(ms.find(a));
 示例:
 std::multiset<int> ms = {1, 2, 2, 3, 4};  //multiset默认按值升序排序存储
 auto it = ms.begin();
-std::advance(it, 1); // 移动到第二个元素（从0开始计数）
+std::advance(it, 1); // 移动到第二个元素(从0开始计数)
 ms.erase(it); // 删除第二个元素
 // 结果：{1, 2, 3, 4} (删除了第一个2)
 
@@ -690,7 +690,7 @@ long long sum = reduce(gifts.begin(), gifts.end(), 0LL);    //通过函数签名
 ===
 应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\2558. 从数量最多的堆取走礼物.cpp"
 
-Note:reduce还提供了累乘操作, 只需传入 std::multiplies<>() 作为自定义二元操作即可(std::multiplies定义在 <functional> 头文件中, 专门用来做乘法运算. std::multiplies<>()是这个 <functional> 头文件中提供的一个函数对象(也叫做仿函数), 重载了一个operator()类(函数调用运算符, 一个类如果重载了operator(), 那么该类的对象就可以像函数一样被调用(实质上是std::multiplies 是一个类（结构体）, 这个类重载了 operator() 成员函数, 该函数的功能是执行乘法运算. 并且要实现对象能像函数一样被调用, 这个成员函数必须命名为 operator(), 这是 C++ 语法规定的固定关键字组合, 编译器只认这个名字.))), 
+Note:reduce还提供了累乘操作, 只需传入 std::multiplies<>() 作为自定义二元操作即可(std::multiplies定义在 <functional> 头文件中, 专门用来做乘法运算. std::multiplies<>()是这个 <functional> 头文件中提供的一个函数对象(也叫做仿函数), 重载了一个operator()类(函数调用运算符, 一个类如果重载了operator(), 那么该类的对象就可以像函数一样被调用(实质上是std::multiplies 是一个类(结构体), 这个类重载了 operator() 成员函数, 该函数的功能是执行乘法运算. 并且要实现对象能像函数一样被调用, 这个成员函数必须命名为 operator(), 这是 C++ 语法规定的固定关键字组合, 编译器只认这个名字.))), 
 并注意将初始值设为1(乘法的单位元, 类似于计算[2, 3, 4]累乘, 则相当于 1*2=2, 2*3=6, 6*4=24即为所求, 其中1为初始值), 即可完成累乘
 eg.
 ===
@@ -752,6 +752,18 @@ for (auto& row : grid) {             //遍历(枚举)矩阵每一行
 
 
 37.resize()函数
+resize() 是 C++ 顺序容器(如 vector, deque, string)提供的成员函数, 专门用于改变容器中有效元素的个数.
+eg.
+===
+vector<int> v = {1, 2, 3};
+
+//用法一: 只指定新大小(新增元素用默认值填充)
+v.resizze(5);       //结果: {1, 2, 3, 0, 0} (int默认填充0)
+
+
+//用法二: 指定新大小 + 指定填充值
+v.resize(7, 100);   //结果: {1, 2, 3, 100, 100}
+===
 //使用实例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\前缀和\303. 区域和检索 - 数组不可变.cpp"
 resize()函数可以为声明的数组预先分配足够空间, 以便后续通过下标访问元素, 避免频繁扩容
 vector<int> res;
@@ -929,7 +941,7 @@ default:
 
 
 
-49.数字的char类型转为int类型 (两种方法)
+49.数字的 string 类型转为int类型 (两种方法)
 -1.stoi() 函数 (最常用, 最高效, 优先使用)
 stoi()是C++标准库函数, 用于将 字符串string 转换为 int类型.
 eg.
@@ -940,6 +952,16 @@ int num = stoi(op);  // num = 123
 eg.
 char c = '5';
 int num = c - '0';   // num = 5 
+
+Note: stoi()函数实质上可以通过指定字符串的进制基数实现其他进制向十进制的转换  (而不用再自己写循环)
+eg.
+===
+string binaryStr = "1010";  //十进制为10
+
+//stoi(字符串, 空指针, 基数2), 实质上这里基数是依据需求取(即可从其他进制数向十进制数进行转换), 这里目的是二进制数转十进制数, 故取基数为2.
+int res = stoi(binaryStr, nullptr, 2);
+cout << res << endl;        //输出: 10
+===
 
 
 50.关于return
@@ -1305,7 +1327,7 @@ using namespace std;    //下面为可读性, 暂且省略声明 main函数
 priority_queue<int> maxHeap;    //也可直接声明为 pq, 简写
 
 //小顶堆
-priority_queue<int, vector<int>, greater<int>> minHeap;    //堆默认为大顶堆, sort 的 greater 是降序（大在前）, 堆的 greater 是小顶堆（小在前）, vector<int> 参数表明底层是通过vector实现的
+priority_queue<int, vector<int>, greater<int>> minHeap;    //堆默认为大顶堆, sort 的 greater 是降序(大在前), 堆的 greater 是小顶堆(小在前), vector<int> 参数表明底层是通过vector实现的
 
 //入堆                   //.emplace(), 用法、作用与.push()相同, 区别是 .emplace() 是在容器内部直接构造一个元素, 而不是先在外面创建好再拷贝/移动进去.
 maxHeap.push(3);        //入堆, priority_queue堆类似于queue队列, 也是容器适配器, 入堆用push(), deque双端队列用 push_back(), push_front() 区别于 queue队列入队是用 .push(), stack栈压入元素也是用 .push(), 而 vector模拟栈 压入元素则是用 .push_back()
@@ -1462,7 +1484,7 @@ Note: 可以通过限定堆的大小, 解决类似 "动态求最值"问题 以�
 57.万能头文件 #include <bits/stdc++.h>
 <bits/stdc++.h> 头文件包含了 C++ 标准库中"几乎所有常用的头文件"
 ===
-// 大致包含以下内容（简化）
+// 大致包含以下内容(简化)
 #include <iostream>      // 输入输出
 #include <vector>        // 动态数组
 #include <string>        // 字符串
@@ -1577,11 +1599,13 @@ struct ListNode {
 ===
 (1)需要注意的是, 声明结构体, 如这里的 struct ListNode 本质上就是在 C++ 里自定义了一个新的数据类型, 和 int整数类型, float单精度浮点数类型, double双精度浮点数类型等 (基础数据类型), 在"类型"这一层面上, 是平起平坐的.
 故而也有类似于 
-int*       //指向 int类型 的指针类型, 也有
-ListNode*  //指向 ListNode类型 的指针类型
+int*                 //指向 int类型 的指针类型, 也有
+ListNode*            //指向 ListNode类型 的指针类型
+vector<int>          //声明一个数组, 数组元素类型为 int
+vector<ListNode*>    //声明一个数组, 数组元素类型为 ListNode* (实际为几个链表组成的数组, 因为每个 ListNode* 都可以是一个链表的头节点(head), 所以这个数组本质上就是"多个链表头节点的集合", 而链表则是由链表头节点一个一个往下找得到的, 链表名字也可以用头节点来表示)
 同样也有
 int a;          //声明了一个名为a的int变量
-ListNode b;     //声明了一个名为b的ListNode变量(节点)(❌实质上不能这样声明节点), 但这种方式实质上创建的节点会被放到"栈(stack)"上, 如果在函数内部声明, 该函数执行完毕, 这块内存就自动销毁了. 但链表中的节点可不能销毁, 我们要让节点在不同函数里都能活着, 所以必须用 new 在内存的"堆"上开辟一块空间, 除非你手动 delete, 否则它永远不会消失. 这里给出若将其设置为全局变量(函数外声明), 存活时间与下面 new 相似, 但在"可见范围"上有本质区别: 假设你在函数 A 里用 new 建了一堆节点，组成了一个链表。为了让函数 B 也能用，你不需要把链表声明成全局的，你只需要把链表的头节点地址 return 回去（相当于把总地图交还给调用者）。调用者拿到这个地址，就能顺藤摸瓜找到所有节点。而在刷题时, 链表时动态生成的, 链表头 head 是题目传给你的（也就是题目把地图递到了你的手上）。你在函数内部操作时，通过 head 这个指针，一步步找 next，就能找到后续所有节点, 故而不能干脆定义全局变量来写算法题.
+ListNode b;     //声明了一个名为b的ListNode变量(节点)(❌实质上不能这样声明节点), 但这种方式实质上创建的节点会被放到"栈(stack)"上, 如果在函数内部声明, 该函数执行完毕, 这块内存就自动销毁了. 但链表中的节点可不能销毁, 我们要让节点在不同函数里都能活着, 所以必须用 new 在内存的"堆"上开辟一块空间, 除非你手动 delete, 否则它永远不会消失. 这里给出若将其设置为全局变量(函数外声明), 存活时间与下面 new 相似, 但在"可见范围"上有本质区别: 假设你在函数 A 里用 new 建了一堆节点, 组成了一个链表。为了让函数 B 也能用, 你不需要把链表声明成全局的, 你只需要把链表的头节点地址 return 回去(相当于把总地图交还给调用者)。调用者拿到这个地址, 就能顺藤摸瓜找到所有节点。而在刷题时, 链表时动态生成的, 链表头 head 是题目传给你的(也就是题目把地图递到了你的手上)。你在函数内部操作时, 通过 head 这个指针, 一步步找 next, 就能找到后续所有节点, 故而不能干脆定义全局变量来写算法题.
 即
 int, double等是 STL(标准库) 提前定义好的类型, ListNode 是你自己定义好的类型, 编译器对待他们的方式完全一样, 只是 int 不需要你自己去写 struct 定义而已.
 故而看到 ListNode* 可以将其看作"专门指向链表的指针", 这与 int* (专门指向整数的指针) 在语法层面上, 并没有任何区别.
@@ -1628,7 +1652,7 @@ ListNode* node3 = new ListNode(5, node2);  //构造了一个名为 node3 的节�
 ListNode* cur = head;           //声明了一个临时指针 cur 作为探路者(见Note2), 从第一个房屋开始
 while(cur != nullptr) {         //只要门牌号不是空地址
     cout << cur->val << " ";    //干点活(打印值)(见下侧 62.)
-    cur = cur->next;            //关键, cur向后走一步.
+    cur = cur->next;            //关键, cur向后走一步. (要记得每次循环后更新 临时指针cur)
 }
 ===
 Note1: ❌不能写 head = head->next 去遍历, 因为这相当于把原先的 head 弄丢了, 就再也找不到这串链表的开头了, 永远用临时指针 cur 去跑.
@@ -1661,6 +1685,7 @@ prev->next = cur->next;    //直接让前面的 prev节点 指向下一节点的
 Note: 如果 cur 是头节点, 记得用 head = head->next 或者使用 "哑节点(Dummy Node)"技巧(见下侧), 这样我们就不用特殊判断了.
 
 //4.哑节点(Dummy Node) -----删除节点时再也不怕头节点被删除
+"涉及到删除节点时, 建议使用哑节点(Dummy Node)作答"
 痛点: 删除节点时, 需要单独写 if(head == cur) 判断是否删除的是头节点, 较为麻烦
 解法: 在真正的头节点前挂一个临时的"假头节点"
 ===
@@ -1668,15 +1693,16 @@ ListNode* dummy = new ListNode(0);    //初始化一个值为0的名为 dummy �
 dummy->next = head;                   //将假头节点dummy的指向下一节点的指针 指向 真头节点head
 ListNode* cur = dummy;                //声明一个临时指针 cur 指向 假头节点 dummy  (临时指针cur见上侧), 从假头节点开始遍历.
 
-while(cur->next != nullptr){          //由于我们下面所写的逻辑是 判断临时指针cur所指节点的下一个节点的值(val) 是否等于目标值 target, 来确定是否执行节点删除操作, 故这里是将临时节点的下一节点是否为空作为循环判断条件.
+while(cur->next != nullptr){          //由于我们下面所写的逻辑是 判断临时指针cur所指节点的下一个节点的值(val) 是否等于目标值 target, 来确定是否执行节点删除操作, 故这里是将临时节点的下一节点是否为空作为循环判断条件.  以避免后续 cur->next->val 和 cur->next->next 的可能存在的 cur->next 为空节点时, 对空节点解引用(->)而产生的报错.
     if(cur->next->val == target){     //若临时指针所指向节点的下一节点的值等于目标值target, 则执行删除操作
-        cur->next = cur->next->next;  //跳过原临时指针所指节点的下一个节点, 直接让临时指针指向下下个节点 (实质为让临时指针所指节点的指向下一个节点的指针 指向 临时节点的下一个节点的下一个节点)
+        cur->next = cur->next->next;  //跳过原临时指针所指节点的下一个节点, 直接让临时指针指向下下个节点 (实质为让临时指针所指节点的指向下一个节点的指针 指向 临时节点的下一个节点的下一个节点) (若要删除head节点, 会导致head节点被跳过, 故而后续要通过 return dummy->next 返回新头节点)
     }else{
         cur = cur->next;              //若临时指针所指节点的下一个节点的指不等于 target, 则让临时指针指向当前所指节点的下一个节点           
     }
 }
-return dummy->next;                   //返回假头节点的下一个(即真正的新头节点), 此时该链表是删除了目标节点后的链表
+return dummy->next;                   //返回假头节点的下一个(即真正的新头节点, (而不是head老头节点(删除了头节点的情况, head仍指向已经被移除的节点(或已失效的内存, 若写了delete释放内存), 若写成 return head, 输出会包含本应该删除的节点而报错))), 此时该链表是删除了目标节点后的链表
 ===
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\删除节点\83. 删除排序链表中的重复元素.cpp"
 
 //5.快慢指针(龟兔赛跑) ---找中点  (两个快慢指针(龟兔赛跑)的应用(不同功能)分开成两个函数实现是从工程角度考虑的, 更好些)
 ===
@@ -1705,6 +1731,13 @@ while(fast != nullptr && fast->next != nullptr){
 return false;                         //没相遇, 说明无环.
 ===
 
+//7.临时指针cur 移动前, 必须显式设置"安全栅门"
+当循环体内存在指针后移操作 (如 cur = cur->next)时, 必须在循环条件中加入 cur != nullptr 作为前置判断, 以防止指针移动到链表尾部(nullptr)后, 在下一轮循环或条件判断中被错误解引用.  (否则可能出现"runtime error: member access within null pointer of type 'ListNode' (solution.cpp)"的报错, 关键词"null pointer"即访问了空指针而报错)
+应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\遍历链表\817. 链表组件.cpp"
+
+Note:在解决链表类问题时, 若暂时没有头绪, "可考虑在纸上画图模拟链表的处理过程". 将指针转化为可视化的箭头移动, 能有效避免断链和边界错误.
+如"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\删除节点\82. 删除排序链表中的重复元素 II.cpp", 就用了模拟链表的处理过程的方法解决.
+
 
 62.关于链表中的 ->
 -> 是 C/C++ 里专门为指针量身定做的"箭头运算符"(Member Access Operator), 它的作用非常简单粗暴:"去门牌号对应的房子里, 拿里面的东西."
@@ -1723,3 +1756,68 @@ return false;                         //没相遇, 说明无环.
 ---
 记住一句话: 有 * 用箭头, 没 * 用点.
 如果变量定义时带了 * (是指针), 就用 ->,  如果没有 * (是普通对象), 就用 .
+
+
+63.reverse(res.begin(), res.end()) 反转算法
+reverse(res.begin(), res.end()) 是 C++标准库(STL) 中最常用的反转算法, 定义在 <algorithm> 头文件中.     (STL, Standard Template Library 标准模板库)
+起作用是将容器res 中 [first, last) 区间内的元素顺序完全颠倒.
+eg.
+===
+//vector数组反转
+vector<int> nums = {10, 20, 30, 40, 50};
+cout << "反转前: ";
+for(int x : nums) cout << x >> " ";     // 10 20 30 40 50
+
+//这里反转整个 vector数组
+reverse(num.begin(), num.end());
+cout << "\n反转后: ";
+for(int x : nums) cout << x << " ";     // 50 40 30 20 10
+
+
+//string字符串反转  (string字符串也是容器)
+string s = "Hello";
+cout << "反转前" << s << endl;           // Hello
+
+//这里反转整个 string字符串
+reverse(s.begin(), s.end());
+cout << "反转后: " << s << endl;         //olleH
+===
+
+
+64.进制转换 ----十进制数转二进制(以及其他进制)
+eg.
+===
+//除基取余法 (常见数学方法)
+string converToBinary(int num) {                    //Binary 译为 二进制的
+    if(num == 0) return "0";                        //0特殊判断
+
+    //关键: 针对负数, 先通过 static_cast 强制转为无符号整数统一处理
+    unsigned int n = static_cast<unsigned int>(num);
+    string res = "";                                //string 类似 vector 也是容器.
+
+    while(n > 0){
+        res += (n % 2 == 0) ? '0' : '1';            //见上述"字符串拼接的几种方式"  
+        n /= 2;
+    }
+
+    //因为是从低位往高位拼接, 最后要反转
+    reverse(res.begin(), res.end());
+    return res;
+}                              
+===
+Note: 字符串中的数字转为十进制数见上侧 stoi() 函数. (stoi()是C++标准库函数, 用于将 字符串string 转换为 int类型.)
+二进制(以及其他进制)转十进制数除了可以自己写循环, 也可以使用 stoi() 函数实现 (见上侧)
+stoi()函数要求输入为 string字符串 类型, 若提供的是 vector数组类型, 可结合上述 "除基取余法" 中涉及字符串拼接的部分, 将其化为 string 字符串类型, 在调用 stoi() 函数进行由其他进制数转为十进制数的进制转换.
+
+
+65.代码规范(核心原则) 
+在条件判断语句(如if, while的条件表达式)中, 严禁使用带有副作用的 ++(自增), --(自减) 运算符, 而应将"条件比较"与"变量修改"拆分为两条独立的语句. 先用 >, <, == 等关系运算符进行逻辑判断, 再在 {}代码块内部单独执行自增或自减操作.
+eg.
+---
+❌错误写法(雷区)               ✔正确写法(规范)                    原因分析
+if(mod--) {...}                if(mod > 0) {mod--; ...}          错误写法导致即使条件为假(mod == 0), mod 依然会被强行 减1 变成 -1, 导致后续逻辑出现问题, 若这个if语句是在一个循环中, 当下次循环再次执行到这条 if语句时, 会因判断条件为 -1, 而不等于0, 导致该if语句仍会执行, 而这显然不是我们所期望的操作.         故而应将"条件比较"与"变量修改"拆分为两条独立的语句, 就能避免这种情况.
+while(i-- > 0) {...}           while(i > 0) {i--; ...}           错误写法在循环结束的瞬间, i会变成 -1, 如果后续代码依赖 i 作为索引, 会产生越界访问.
+---
+
+
+
