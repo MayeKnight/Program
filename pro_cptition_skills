@@ -1902,7 +1902,7 @@ ListNode* process(ListNode* head) {
 ---
 
 
-67.求最大公约数
+67.求最大公约数 gcd(a, b)
 C++的 <numeric>头文件 中提供了 std::gcd(a, b) 用于求 a 和 b 的最大公约数.  (万能头文件<bits/stdc++.h> 中包含了 <numeric>头文件)
 ===
 #include <numeric>        //头文件
