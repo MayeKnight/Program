@@ -29,6 +29,33 @@ s.clear(x) 清空所有元素
 s.size() 返回元素个数
 s.contains(x) 判断集合中是否包含某个元素, 返回bool型变量, 包含返回1, 否则返回0.
 
+(4)通过迭代器访问 set集合 中的元素
+eg.访问set集合中的第二个元素
+===
+set<int> st = {1, 2, 3, 4, 5};
+
+if(st.size() >= 2) {        //必须确保有第二个元素
+    auto it = st.begin()    //.begin()返回了个迭代器, 定义了一个名为 it 的迭代器类型的变量, auto 自动匹配类型.  (迭代器内部封装了一个地址, 迭代器的设计目的, 就是让你像指针一样使用它)
+    ++it;                   //将迭代器从当前位置移动一位, 指向容器中的下一个元素.
+    int secondVal = *it;    //解引用获取值 2.  *it解引用, 用于访问迭代器当前指向的元素.
+}
+===
+
+(5)在涉及到链表或树的节点类的题目时, set<value_type>中, <>里的元素类型(value_type) 可为节点的类型, 例如 set<ListNode*>
+===
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+
+set<ListNode*> st;   声明了一个容器元素类型为 ListNode* 节点的集合set, ListNode* 节点(指针)实质上记录了地址, 故而 set<ListNode*> st; 可以记录已经遍历过了哪些节点.
+===
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\双指针\160. 相交链表.cpp"
+
 
 5.关于vector
 vector<ll> a(n); //注意这里为(), 定义一个名为 a 的 动态数组(vector), 包含 n 个元素, 每个元素是 int 类型, 初始值为 0。
@@ -85,6 +112,17 @@ cout << "最大元素索引: " << (max_it - nums.begin()) << "\n";   //最大元
 vector<int> nums = {1, 2, 3};                    //原容器为 vector<int> 类型, 数组中各元素为 int类型
 vector<long long> v(nums.begin(), nums.end());   //从原容器的迭代器范围创建新的vector, 并且新容器转换为了 vector<long long> 类型, 其中各元素类型为 long long 类型
 应用见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\堆\3066. 超过阈值的最少操作数 II.cpp"
+
+(5)比较两数组是否相等
+若使用的是标准库容器(如vector), 则可以直接使用 == 运算符, 会依次比较每个元素.
+===
+vector<int> a = {1, 2, 3};
+vector<int> b = {1, 2, 3};
+
+if(a == b) {
+    cout << "两数组相同" << endl;
+}
+===
 
 
 6.map<int, int> mp; //round 1032 C 图 用于对行列分别操作
@@ -866,6 +904,10 @@ int sol(const vector<int>& res, int left, int right) { // ✅ 常量引用, 无�
 使用了 vector<int>& 传递, 只传递地址(引用), O(1)时间.
 其中的 const 定义了res为常量, 避免因 sol() 函数内不小心写了类似 res[0]=100, 可能会导致外部函数(sol()函数外的主函数内容)中的 res数组, 导致错误.
 
+Note:写递归时, 若所设函数没有返回值 (如 void dfs()), 并且你想把结果带出来, 层层递归出来, 需要用引用(&) 声明参数(只传递地址), 否则函数栈中一个函数执行完毕后, 相关参数会销毁, 导致后面调用该辅助 DFS 函数时, 不能更新答案. [见 69.二叉树 DFS (深度优先搜索) ]
+即应写为形如 void dfs(TreeNode* root, int& res) {}
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\二叉树\遍历二叉树\404. 左叶子之和.cpp"
+
 
 45.快速知道是否有奇偶性相同或不同的临近元素？
 见"D:\Tech\Code\Program\leetcode\train\started_algorithms\3.数据结构\前缀和\3152. 特殊数组 II.cpp"对应题解
@@ -1611,6 +1653,22 @@ ListNode b;     //声明了一个名为b的ListNode变量(节点)(❌实质上�
 int, double等是 STL(标准库) 提前定义好的类型, ListNode 是你自己定义好的类型, 编译器对待他们的方式完全一样, 只是 int 不需要你自己去写 struct 定义而已.
 故而看到 ListNode* 可以将其看作"专门指向链表的指针", 这与 int* (专门指向整数的指针) 在语法层面上, 并没有任何区别.
 
+---
+除此以外, ListNode*节点(指针) 也可作为容器的元素类型. 例如:
+在涉及到链表或树的节点类的题目时, set<value_type>中, <>里的元素类型(value_type) 可为节点的类型, 例如 set<ListNode*>
+===
+//Definition for singly-linked list.
+//struct ListNode {
+//    int val;
+//    ListNode *next;
+//    ListNode(int x) : val(x), next(NULL) {}
+//};
+
+set<ListNode*> st;   声明了一个容器元素类型为 ListNode* 节点的集合set, ListNode* 节点(指针)实质上记录了地址, 故而 set<ListNode*> st; 可以记录已经遍历过了哪些节点.
+===
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\链表\双指针\160. 相交链表.cpp"
+---
+
 (2)关于结构体中的构造函数部分
 以第三个构造函数为例, 说明写法规则.
 ===
@@ -2026,11 +2084,11 @@ TreeNode* node3 = new TreeNode(5, node1, node2);   //构造了一个名为 node3
 ===
 -范式-                                    -核心思路-                     -返回值-                   -代码特征-                        -典型题目-
 范式一: 遍历(Traversal)              用一个外部变量记录答案,               void                     无返回值, 靠全局引用变量          二叉树的最大深度(单纯计数)
--                                   DFS只负责"走到每个节点",                                      收集结果.                        前序遍历打印.
+-即自顶向下dfs(先序遍历)              DFS只负责"走到每个节点",                                      收集结果.                        前序遍历打印.
 -                                   不返回具体值.
 
-范式二: 分解(Divide and Conquer)     递归调用左/右子树, 让它们             有具体类型                 有返回值, 后序位置处理           二叉树的最大深度(更推荐), 
--                                   分别返回结果, 然后在当前层            (如int, TreeNode*)        leftResult 和 rightResult      平衡二叉树, 最近公共祖先.
+范式二: 分治(Divide and Conquer)     递归调用左/右子树, 让它们             有具体类型                 有返回值, 后序位置处理           二叉树的最大深度(更推荐), 
+-即自底向上dfs(后序遍历)              分别返回结果, 然后在当前层            (如int, TreeNode*)        leftResult 和 rightResult      平衡二叉树, 最近公共祖先.
 -                                   组合这两个结果.
 ===
 "递归信任"在这里至关重要:
@@ -2041,9 +2099,9 @@ TreeNode* node3 = new TreeNode(5, node1, node2);   //构造了一个名为 node3
 这是二叉树独有的.
 ===
 void dfs(TreeNode* root) {
-    if(root == nullptr) return;    //终止条件
+    if(root == nullptr) return;           //终止条件, 在任何二叉树的递归函数中, 第一行永远应该是判空 (如左述所示), 这是二叉树递归的安全基石.
 
-    //1.前序位置: 刚进入当前节点时执行
+    //1.前序位置: 刚进入当前节点时执行      //其后, 在前序位置(或其他位置), 可做进一步的其他判断.              
     //适用场景: 需要先处理当前节点 (如复制树, 前序遍历输出)
 
     dfs(root->left);
@@ -2060,12 +2118,13 @@ void dfs(TreeNode* root) {
 
 (4)二叉树 DFS (深度优先搜索) 模板 (结合上侧(2))
 ===
-//范式一: 遍历(无返回值, Traversal) 
+//范式一: 遍历(无返回值, Traversal)   即自顶向下dfs(先序遍历) 
+//1.通用场景: 只需要访问节点值, 不依赖父节点传递的额外信息 (如求和, 节点最大值)
 void dfs(TreeNode* root, int& result) {       
-    //1.终止条件: 走到空节点, 直接返回
+    //1.终止条件: 走到空节点, 直接返回      (在任何二叉树的递归函数中, 第一行永远应该是, 如下述所示的"判空", 这是二叉树递归的安全基石.)
     if(root == nullptr) return;
 
-    //2.前序位置: 在这里更新 result
+    //2.前序位置: 在这里更新 result        (其后, 在前序位置(或其他位置), 可做进一步的其他判断)
     //例如: result = ranges::max(result, root->val);
 
     //3.递归遍历左右子树
@@ -2074,19 +2133,88 @@ void dfs(TreeNode* root, int& result) {
 
     //4.后序位置: 如果需要在回溯时做事情, 放到这里.
 }
+//例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\二叉树\遍历二叉树\144. 二叉树的前序遍历.cpp"
 
-//范式二: 分解(有返回值, Divide and Conquer) 
+//2.特化场景: 带"路径状态"的自顶向下dfs (如计算深度, 路径和)
+//当我们需要将"父节点的信息(如当前深度)"传递给子节点时, 需要在递归函数的参数中增加一个按值传递的状态变量(如 depth), 并通过 int& res 收集全局答案.
+void dfs(TreeNode* root, int depth, int& res) {   //这样写的目的是使得函数栈内每个 dfs函数 中的 depth 是相互独立的, 并通过 depth 去更新所有dfs函数所共有的 res  (全局res变量) 
+    //1.终止条件: 走到空节点, 直接返回              (在任何二叉树的递归函数中, 第一行永远应该是, 如下述所示的"判空", 这是二叉树递归的安全基石.)
+    if(root == nullptr) return;
+    
+    //2.前序位置: 更新全局res, 记录最大深度
+    res = ranges::max(res, depth);
+
+    //3.递归遍历左右子树, 递归信任: 把当前深度+1, 传给左右孩子.   
+    dfs(root->left, depth + 1, res);      
+    dfs(root->right, depth + 1, res);
+}
+---
+由下述"(5)二叉树 DFS (深度优先搜索) 的代码组织方式", 在该特化场景下 dfs函数 的调用示例如下.
+int maxDepth(TreeNode* root){
+    int ans = 0;
+    dfs(root, 1, ans);    //根节点深度为 1.
+    return ans;
+}
+---
+关键点在于"递归信任", 不需要去关心 dfs函数 内部是怎么处理左右子树的, 只需要坚信 dfs(root, depth, res) 能带着正确的深度, 把所有叶子节点都走一遍, 并把最大深度记录在 res 里.
+
+//范式二: 分治(有返回值, Divide and Conquer)  即自底向上dfs(后序遍历) 
 int dfs(TreeNode* root) {
-    //1.终止条件: 空节点返回 0 (或 -INF(负无穷大, 例如 INT_MIN), 取决于题目)
+    //1.终止条件: 空节点返回 0 (或 -INF(负无穷大, 例如 INT_MIN), 取决于题目)   (在任何二叉树的递归函数中, 第一行永远应该是, 如下述所示的"判空", 这是二叉树递归的安全基石.)
     if(root == nullptr) return 0;
 
     //2.递归信任: 坚信左右子树能返回正确答案
     int leftResult = dfs(root->left);
     int rightResult = dfs(root->right);
 
-    //3.后序位置: 组合左右子树的结果, 得到当前节点的答案
+    //3.后序位置: 组合左右子树的结果, 得到当前节点的答案                       (其后, 在前序位置(或其他位置), 可做进一步的其他判断)
     int currentResult = 1 + ranges::max(leftResult, rightResult);    //例如: 计算高度
     return currentResult;
 }
 ===
 若同时需要"无返回值"和"有返回值"的DFS, C++支持函数重载(参数不同), 故上述两函数在同一个Solution类中存在并不会冲突, 只要函数后跟的参数列表不同, 则会调用对应 DFS 函数.
+
+---
+Note:
+在任何二叉树的递归函数中, 第一行永远应该是判空. (如上述终止条件所示), 这是二叉树递归的安全基石.  //if(root == nullptr) return 0;
+其后, 在前序位置(或其他位置), 可做进一步的其他判断.
+---
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\二叉树\遍历二叉树\872. 叶子相似的树.cpp"
+
+(5)二叉树 DFS (深度优先搜索) 的代码组织方式
+---
+-1.主函数(题目提供的(函数)接口)只负责初始化结果容器, 调用辅助 DFS 函数, 返回最终结果.
+
+-2.另外自行构建的辅助 DFS 函数 (通常命名为 dfs 或 traverse) 则负责执行具体的遍历逻辑, 它通过引用参数 (如 TreeNode* root, vector<int>& res) 收集数据.
+
+-3.辅助 DFS 函数必须第一行判空, 这是二叉树递归的安全基石.
+---
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\二叉树\遍历二叉树\872. 叶子相似的树.cpp"
+
+Note:写递归时, 若所设函数没有返回值 (如 void dfs()), 并且你想把结果带出来, 层层递归出来, 需要用引用(&) 声明参数(只传递地址), 否则函数栈中一个函数执行完毕后, 相关参数会销毁, 导致后面调用该辅助 DFS 函数时, 不能更新答案. [见 69.二叉树 DFS (深度优先搜索) ]
+即应写为形如 void dfs(TreeNode* root, int& res) {}
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\二叉树\遍历二叉树\404. 左叶子之和.cpp"
+
+(6)判断一个节点是否为左叶子节点, 是否为右叶子节点
+带你给你遍历到某个节点 root 时, 可以直接检查它的左孩子是否满足条件
+===
+//判断一个节点是否为左叶子节点
+//判断: 当前节点的左孩子存在, 且这个左孩子是叶子节点
+if(root->left && !root->left->left && !root->left->right){                        //通过if的"短路求值", 前面的 root->left 作为外层守卫, 避免因访问空指针的值而报错. 当 root->left->left 或 root->left->right 为 nullptr 时, if语句会隐式的将其转化为 false(0), 前加 ! 变为 true(1).  (同理 root->left 不是 nullptr, if 语句会隐式的将其转化为 true(1), 若是 nullptr, 则会隐式的转化为 false(0)).
+    //此时 root->left 就是左叶子节点
+    sum += root->left->val;    //其他操作
+}                
+
+//判断一个节点是否为右叶子节点
+//判断: 当前节点的右孩子存在, 且这个右孩子是叶子节点
+if(root->right && !root->right->left && !root->right->right){                        //通过if的"短路求值", 前面的 root->left 作为外层守卫, 避免因访问空指针的值而报错. 当 root->left->left 或 root->left->right 为 nullptr 时, if语句会隐式的将其转化为 false(0), 前加 ! 变为 true(1).
+    //此时 root->right 就是左叶子节点
+    sum += root->right->val;    //其他操作
+} 
+===
+例见"D:\Tech\Code\Program\leetcode\train\started_algorithms\4.链表、树、回溯\二叉树\遍历二叉树\404. 左叶子之和.cpp"
+
+Note:关于部分题单中 dfs 是必做内容, 但没有提到 bfs 的缘由.
+DFS(深度优先搜索)的通用性更强, 很多 BFS(广度优先搜索) 能解决的问题, 用 DFS 也能解决. 但反之, 大量只能用 DFS 解决的复杂问题, BFS却束手无策.
+这主要是因为 DFS 基于递归, 和"回溯"紧密相连, 这种一条路走到黑, 走不通就退回换一条的特性, 让它成为了解决排列, 组合, 子集, 棋盘放置, 路径搜索等需要"穷举所有可能性"问题的通用模板.
+而 BFS 的应用场景相对集中, 主要解决无权图中的最短路径和层级遍历等问题.
